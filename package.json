@@ -1,0 +1,12 @@
+{
+  "name": "dba-site",
+  "private": true,
+  "description": "Static site for [DBA name]. The build is Python standard library only; Node is used only to pin Wrangler for Workers Builds.",
+  "scripts": {
+    "build": "python3 src/build.py --release",
+    "preview": "python3 src/build.py"
+  },
+  "devDependencies": {
+    "wrangler": "4.45.0"
+  }
+}
