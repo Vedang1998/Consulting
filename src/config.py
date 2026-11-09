@@ -57,11 +57,12 @@ PROMISES = {
     "call_length": "30-minute",  # 14 pipeline, "Discovery booked"; used as "a 30-minute call"
     "proposal_after_call": "within 3 business days of our call",  # 14 R4
     "support_reply": "by the end of the next business day",  # 08 package 5
+    "reply_short": "Next business day",  # hero fact; must match first_reply
 }
 
 # ---------------------------------------------------------------------------
 # Packages and prices. Source: 08-Service-Catalog-and-Delivery-Playbook,
-# "Price config for the website" (DRAFT v1, Nov 7, 2026). Change 08 first,
+# "Price config for the website" and package names settled Nov 7, 2026 (threads 11, 12). Change 08 first,
 # then 05's math, then this file, in one PR.
 # ---------------------------------------------------------------------------
 
@@ -99,8 +100,8 @@ PACKAGES = [
     },
     {
         "slug": "store-move",
-        "name": "Shopify Store Move",
-        "kind": "Fixed-scope package",
+        "name": "Store Move",
+        "kind": "Move your store to Shopify",
         "price": ("store_move_min", "store_move_max"),
         "timeline": "3–8 weeks",
         "summary": (
@@ -125,8 +126,8 @@ PACKAGES = [
     },
     {
         "slug": "odoo-launch",
-        "name": "Odoo Launch",
-        "kind": "Fixed-scope package, 5 to 15 users",
+        "name": "Back Office Launch",
+        "kind": "Odoo for 5 to 15 users",
         "price": ("odoo_launch_min", "odoo_launch_max"),
         "timeline": "6–12 weeks",
         "summary": (
@@ -147,12 +148,12 @@ PACKAGES = [
             "Custom modules, manufacturing (MRP), multi-company setups, payroll, "
             "full transaction history, and accounting or tax advice."
         ),
-        "payment": "30% at signing, 30% at design sign-off, 30% at the start of testing, 10% after the four weeks of support.",
+        "payment": "40% at signing, 40% at the start of testing, 20% at go-live. The four weeks of support after go-live are included.",
     },
     {
         "slug": "connection",
-        "name": "Shopify and Odoo Connection",
-        "kind": "Fixed-scope package",
+        "name": "Store to Back Office Sync",
+        "kind": "Connect Shopify and Odoo",
         "price": ("connection_min", "connection_max"),
         "timeline": "3–6 weeks",
         "summary": (

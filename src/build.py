@@ -26,6 +26,7 @@ ROOT = SRC.parent
 DIST = ROOT / "dist"
 sys.path.insert(0, str(SRC))
 import config as C  # noqa: E402
+import mockups as M  # noqa: E402
 
 RELEASE = "--release" in sys.argv
 TODAY = _dt.date.today()
@@ -296,7 +297,7 @@ def layout(page, assets):
 <a class="skip" href="#main">Skip to content</a>
 {preview}
 {offer_bar()}
-<header class="site-head">
+<header class="site-head{' on-dark' if page.get('dark_head') else ''}">
   <div class="wrap head-grid">
     {wordmark()}
     <nav aria-label="Main">{nav}</nav>
@@ -331,117 +332,100 @@ def layout(page, assets):
 
 
 # ---------------------------------------------------------------------------
-# Diagram (inline SVG, colors from CSS tokens). Wide and narrow versions.
-# ---------------------------------------------------------------------------
-
-def diagram():
-    def box(x, y, w, h, title, rows):
-        out = [f'<rect class="d-box" x="{x}" y="{y}" width="{w}" height="{h}"/>',
-               f'<text class="d-title" x="{x + 16}" y="{y + 30}">{title}</text>']
-        for i, r in enumerate(rows):
-            out.append(f'<text class="d-row" x="{x + 16}" y="{y + 62 + i * 26}">{r}</text>')
-        return "".join(out)
-
-    shop = ["Online store", "Shopify POS", "Customers"]
-    odoo = ["Inventory", "Purchasing", "Invoicing and accounting"]
-    arrows_r = ["Orders and refunds", "New customers"]
-    arrows_l = ["Stock levels", "Fulfillments and tracking"]
-
-    wide = ['<svg class="diagram wide" viewBox="0 0 880 220" role="img" '
-            'aria-labelledby="dg-t dg-d"><title id="dg-t">How Shopify and Odoo share data</title>'
-            '<desc id="dg-d">Shopify sends orders, refunds and new customers to Odoo through a connector. '
-            'Odoo sends stock levels, fulfillments and tracking back to Shopify.</desc>',
-            box(0, 20, 250, 180, "Shopify", shop),
-            '<rect class="d-conn" x="330" y="70" width="220" height="80"/>',
-            '<text class="d-title" x="440" y="105" text-anchor="middle">Connector</text>',
-            '<text class="d-row" x="440" y="131" text-anchor="middle">chosen in the Roadmap</text>',
-            box(630, 20, 250, 180, "Odoo", odoo)]
-    for i, t in enumerate(arrows_r):
-        y = 40 + i * 20
-        wide.append(f'<text class="d-small" x="440" y="{y}" text-anchor="middle">{t} &#8594;</text>')
-    for i, t in enumerate(arrows_l):
-        y = 180 + i * 20
-        wide.append(f'<text class="d-small" x="440" y="{y}" text-anchor="middle">&#8592; {t}</text>')
-    wide.append('<line class="d-line" x1="250" y1="110" x2="330" y2="110"/>'
-                '<line class="d-line marker" x1="550" y1="110" x2="630" y2="110"/></svg>')
-
-    narrow = ['<svg class="diagram narrow" viewBox="0 0 340 560" role="img" '
-              'aria-labelledby="dn-t"><title id="dn-t">How Shopify and Odoo share data</title>',
-              box(20, 0, 300, 150, "Shopify", shop),
-              '<text class="d-small" x="170" y="178" text-anchor="middle">&#8595; Orders, refunds, new customers</text>',
-              '<rect class="d-conn" x="60" y="196" width="220" height="74"/>',
-              '<text class="d-title" x="170" y="228" text-anchor="middle">Connector</text>',
-              '<text class="d-row" x="170" y="254" text-anchor="middle">chosen in the Roadmap</text>',
-              '<text class="d-small" x="170" y="296" text-anchor="middle">&#8593; Stock, fulfillments, tracking</text>',
-              box(20, 316, 300, 150, "Odoo", odoo),
-              '</svg>']
-    return (f'<figure class="figure">{"".join(wide)}{"".join(narrow)}'
-            f'<figcaption>Diagram of a typical setup. The connector, and which system owns each record, '
-            f'are decided in the Systems Roadmap for your plan and hosting.</figcaption></figure>')
-
-
-# ---------------------------------------------------------------------------
 # Pages
 # ---------------------------------------------------------------------------
 
 def page_home():
-    pk = C.PACKAGES
-    rows = "".join(
-        f'<li><a href="/services#{p["slug"]}"><span class="pk-name">{e(p["name"])}</span>'
-        f'<span class="pk-kind">{e(p["kind"])}</span><span class="price">{price(*p["price"])}</span>'
-        f'<span class="pk-time">{e(p["timeline"])}</span></a></li>' for p in pk)
-    support = (f'<li><a href="/services#support"><span class="pk-name">{e(C.SUPPORT["name"])}</span>'
-               f'<span class="pk-kind">Prepaid hours</span><span class="price">'
-               f'{price("support_10h")} for 10 hours</span><span class="pk-time">after go-live</span></a></li>')
+    cards = []
+    for i, p in enumerate(C.PACKAGES):
+        cards.append(f"""
+<a class="svc reveal" style="--d:{i}" href="/services#{p['slug']}">
+  {M.MINIS[p['slug']]()}
+  <span class="svc-kind">{e(p['kind'])}</span>
+  <span class="svc-name">{e(p['name'])}</span>
+  <span class="svc-sum">{e(p['summary'].split('. ')[0].rstrip('.'))}.</span>
+  <span class="svc-foot"><span class="price">{price(*p['price'])}</span><span>{e(p['timeline'])}</span></span>
+</a>""")
+    cards.append(f"""
+<a class="svc reveal" style="--d:4" href="/services#support">
+  {M.MINIS['support']()}
+  <span class="svc-kind">After go-live</span>
+  <span class="svc-name">{e(C.SUPPORT['name'])}</span>
+  <span class="svc-sum">Prepaid hours for questions, small changes, reports and training. We reply
+  {e(C.PROMISES['support_reply'])}.</span>
+  <span class="svc-foot"><span class="price">{price('support_10h')}</span><span>10 hours</span></span>
+</a>""")
     cta = primary_cta("hero")
+    works = ["Shopify", "Shopify POS", "Odoo 19", "Odoo.sh", "Odoo Online", "QuickBooks Online", "WooCommerce", "Square"]
+    works_html = "".join(f"<li>{w}</li>" for w in works)
     body = f"""
-<section class="hero">
-  <div class="wrap">
-    <p class="eyebrow">Shopify and Odoo consulting</p>
-    <h1 class="display">Shopify, Shopify POS and Odoo setup for US small and mid-size businesses</h1>
-    <p class="lead">{e(NAME)} connects your Shopify store and POS to an Odoo back office for inventory,
-    purchasing and accounting. Every project has a written scope and a fixed fee before work starts,
-    and we stay through go-live.</p>
-    {f'<div class="hero-cta">{cta}</div>' if cta else ''}
+<section class="hero hero-dark">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Shopify and Odoo consulting</p>
+      <h1 class="display">Shopify, Shopify POS and Odoo setup for US small and mid-size businesses</h1>
+      <p class="lead">{e(NAME)} connects your Shopify store and POS to an Odoo back office for inventory,
+      purchasing and accounting. Every project has a written scope and a fixed fee before work starts,
+      and we stay through go-live.</p>
+      {f'<div class="hero-cta">{cta}</div>' if cta else ''}
+      <dl class="hero-facts">
+        <div><dt>Fixed fees from</dt><dd>{price('roadmap_min')}</dd></div>
+        <div><dt>Replies</dt><dd>{e(C.PROMISES['reply_short'])}</dd></div>
+        <div><dt>Hours</dt><dd>{e(C.TIMEZONE_LABEL)}</dd></div>
+      </dl>
+    </div>
+    {M.hero_stage()}
   </div>
+</section>
+
+<section class="works" aria-label="Platforms we work with">
+  <div class="wrap"><p class="small">Platforms we set up, connect and move data between</p><ul>{works_html}</ul></div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <h2>Services and price ranges</h2>
-    <p class="lead narrow">Each project has a fixed fee agreed in writing. The ranges are what most
-    projects of each kind cost; your exact fee comes from a scoping call or a Systems Roadmap.</p>
-    <ul class="pk-list">{rows}{support}</ul>
+    <div class="sec-head reveal">
+      <p class="eyebrow">Services</p>
+      <h2>Services and price ranges</h2>
+      <p class="lead">Each project has a fixed fee agreed in writing. The ranges are what most projects of
+      each kind cost; your exact fee comes from a scoping call or a Systems Roadmap.</p>
+    </div>
+    <div class="svc-grid">{''.join(cards)}</div>
     <p class="small">{e(C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from")))}
     Shopify, Odoo and app vendors bill you directly for plans and licenses.</p>
   </div>
 </section>
 
 <section class="section alt">
-  <div class="wrap">
-    <div class="two">
-      <h2 class="span">How Shopify and Odoo share orders, stock and products</h2>
-      <div>
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">How the sync works</p>
+      <h2>How Shopify and Odoo keep stock counts in step</h2>
       <p>Shopify stays where customers buy, online and at the counter. Odoo holds the stock count,
       purchase orders, vendor bills and the accounting. A connector moves orders into Odoo and sends
-      stock and fulfillment updates back, so a sale in one store is reflected everywhere you sell.</p></div>
-      <div><p>Which records sync, in which direction and how often depends on the connector and your Odoo
+      stock and fulfillment updates back, so a sale in one store is reflected everywhere you sell.</p>
+      <p>Which records sync, in which direction and how often depends on the connector and your Odoo
       plan. Third-party connector modules can't be installed on Odoo Online, and connectors that use
-      Odoo's API need its Custom plan, so we check the fit in a trial database before you buy anything.</p></div>
+      Odoo's API need its Custom plan, so we check the fit in a trial database before you buy anything.</p>
+      <ul class="flow-list">
+        <li><b>Shopify to Odoo</b><span>orders, refunds, new customers, POS sales</span></li>
+        <li><b>Odoo to Shopify</b><span>stock by location, fulfillments, tracking numbers</span></li>
+        <li><b>Set in the Roadmap</b><span>connector, sync interval, which system owns products and prices</span></li>
+      </ul>
     </div>
-    {diagram()}
+    {M.stock_showcase()}
   </div>
 </section>
 
 <section class="section">
   <div class="wrap two">
-    <div>
+    <div class="reveal">
       <h2>Who we work with</h2>
       <p>Businesses with roughly 5 to 50 people that sell on Shopify, online, in stores or both, and
       run Odoo or are moving to it from spreadsheets or QuickBooks. Typical clients are multi-location
       retailers, and wholesalers who also sell direct to consumers.</p>
     </div>
-    <div>
+    <div class="reveal" style="--d:1">
       <h2>Work we don't take on</h2>
       <p>Custom theme design, Shopify Plus or headless storefronts, Odoo setups for more than 50 users
       or several companies, and regulated products such as cannabis, alcohol and pharmacy. For those,
@@ -452,13 +436,13 @@ def page_home():
 
 <section class="section alt">
   <div class="wrap">
-    <h2>How a project starts</h2>
-    <ol class="steps">
-      <li><h3>A {e(C.PROMISES['call_length'])} call</h3><p>You describe your setup and what isn't
+    <div class="sec-head reveal"><p class="eyebrow">Process</p><h2>How a project starts</h2></div>
+    <ol class="steps draw">
+      <li class="reveal"><h3>A {e(C.PROMISES['call_length'])} call</h3><p>You describe your setup and what isn't
       working. If we are not the right fit, we say so on the call.</p></li>
-      <li><h3>A Systems Roadmap</h3><p>A paid review that ends in a written plan and a fixed quote.
+      <li class="reveal" style="--d:1"><h3>A Systems Roadmap</h3><p>A paid review that ends in a written plan and a fixed quote.
       You own the plan whether or not you continue with us.</p></li>
-      <li><h3>A signed scope, then the build</h3><p>Work starts after the agreement, the statement of
+      <li class="reveal" style="--d:2"><h3>A signed scope, then the build</h3><p>Work starts after the agreement, the statement of
       work and the deposit are in. Changes to scope are priced in writing first.</p></li>
     </ol>
     <p><a href="/how-it-works">See every step of a project</a></p>
@@ -470,7 +454,7 @@ def page_home():
         "title": f"Shopify, Shopify POS and Odoo setup | {NAME}",
         "desc": (f"{NAME} sets up Shopify, Shopify POS and Odoo as one system for US retailers and "
                  f"wholesalers. Fixed fees, written scope, remote from {C.STATE}."),
-        "body": body,
+        "body": body, "dark_head": True,
     }
 
 
@@ -486,7 +470,7 @@ SERVICE_FAQS = [
      "connectors that use Odoo's API need its Custom plan, so the Systems Roadmap confirms the right plan "
      "and hosting before you commit."),
     ("Can you start without a Systems Roadmap?",
-     "For a Store Move or a Shopify and Odoo Connection with a clear scope, a scoping call is often "
+     "For a Store Move or a Store to Back Office Sync with a clear scope, a scoping call is often "
      "enough. Odoo projects over $20,000 always start with a Roadmap."),
 ]
 
@@ -496,10 +480,11 @@ def page_services():
     for p in C.PACKAGES:
         inc = "".join(f"<li>{e(x)}</li>" for x in p["includes"])
         blocks.append(f"""
-<section class="pkg" id="{p['slug']}" aria-labelledby="{p['slug']}-h">
+<section class="pkg reveal" id="{p['slug']}" aria-labelledby="{p['slug']}-h">
   <div class="pkg-head">
     <p class="eyebrow">{e(p['kind'])}</p>
     <h2 id="{p['slug']}-h">{e(p['name'])}</h2>
+    {M.MINIS[p['slug']]()}
     <dl class="facts"><div><dt>Price</dt><dd class="price">{price(*p['price'])}</dd></div>
     <div><dt>Typical timeline</dt><dd>{e(p['timeline'])}</dd></div></dl>
   </div>
@@ -514,10 +499,11 @@ def page_services():
     opts = "".join(f'<div><dt>{e(h)}</dt><dd><span class="price">{price(k)}</span> {e(v)}</dd></div>'
                    for h, k, v in s["options"])
     blocks.append(f"""
-<section class="pkg" id="support" aria-labelledby="support-h">
+<section class="pkg reveal" id="support" aria-labelledby="support-h">
   <div class="pkg-head">
     <p class="eyebrow">Prepaid hours</p>
     <h2 id="support-h">{e(s['name'])}</h2>
+    {M.MINIS['support']()}
     <dl class="facts">{opts}</dl>
   </div>
   <div class="pkg-body">
@@ -594,7 +580,7 @@ STEPS = [
 
 
 def page_how():
-    items = "".join(f'<li><div class="step-meta">{e(t)}</div><div><h2 class="h3">{e(h)}</h2>'
+    items = "".join(f'<li class="reveal"><div class="step-meta">{e(t)}</div><div><h2 class="h3">{e(h)}</h2>'
                     f'<p>{e(d)}</p></div></li>' for h, t, d in STEPS)
     body = f"""
 <section class="hero slim"><div class="wrap">
@@ -603,7 +589,7 @@ def page_how():
   <p class="lead">The same steps for every project, whatever its size. Each one ends with something you
   can check before the next begins.</p>
 </div></section>
-<div class="wrap"><ol class="timeline">{items}</ol>
+<div class="wrap"><ol class="timeline draw">{items}</ol>
 <section class="section-tight">
   <h2>Changes to scope</h2>
   <p>If you need something that isn't in your statement of work, we stop that part, send a written
