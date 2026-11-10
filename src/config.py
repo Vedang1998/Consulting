@@ -239,6 +239,12 @@ CF_WEB_ANALYTICS_TOKEN = ""  # CONFIRM: Cloudflare Web Analytics site token (coo
 FIRST_PARTY_COUNTER = True  # the /api/e Worker (worker/index.js); needs the Analytics Engine binding in wrangler.jsonc
 INDEXNOW_KEY = "fb31ef10d63c118be35bdd53e0d6fb4b"  # public by design; served at /<key>.txt
 
+# Real screen recordings for the home page demo. Blank = the drawn demo shows.
+# Keys: "pos-sale", "online-order", "purchase-receipt", "refund". Value: a file under src/,
+# e.g. "media/pos-sale.mp4". Record only in our own demo store and demo database (04, shot list),
+# never in a client system, and only once Shopify's and Odoo's screenshot terms are confirmed.
+DEMO_VIDEOS = {}  # CONFIRM
+
 # Pages last changed on (ISO date). Shown as "Updated" only on guides; the sitemap
 # omits lastmod unless a real date is set here.
 LAST_CHANGED = {}

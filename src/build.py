@@ -90,11 +90,14 @@ def label(text):
 FONT_FILES = [
     # (family, weight, file in src/fonts/) - OFL fonts, self-hosted. Add the
     # woff2 files to src/fonts/; missing files fall back to the system stack.
-    ("Archivo", 600, "archivo-latin-600-normal.woff2"),
+    ("Archivo", "100 900", "archivo-latin-wght-normal.woff2"),  # variable weight
     ("IBM Plex Sans", 400, "ibm-plex-sans-latin-400-normal.woff2"),
+    ("IBM Plex Sans", 500, "ibm-plex-sans-latin-500-normal.woff2"),
     ("IBM Plex Sans", 600, "ibm-plex-sans-latin-600-normal.woff2"),
     ("IBM Plex Mono", 400, "ibm-plex-mono-latin-400-normal.woff2"),
+    ("IBM Plex Mono", 500, "ibm-plex-mono-latin-500-normal.woff2"),
 ]
+PRELOAD = ["archivo-latin-wght-normal.woff2", "ibm-plex-sans-latin-400-normal.woff2"]
 
 
 def build_assets():
@@ -113,6 +116,13 @@ def build_assets():
             missing.append(fname)
     if missing:
         NOTES.append("fonts not in src/fonts/ yet, system fallback used: " + ", ".join(missing))
+    for key, fname in C.DEMO_VIDEOS.items():
+        f = SRC / fname
+        if not f.exists():
+            ERRORS.append(f"DEMO_VIDEOS[{key!r}]: {fname} is not in src/")
+            continue
+        (DIST / fname).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(f, DIST / fname)
     css = "\n".join(faces) + "\n" + (SRC / "site.css").read_text()
     js = (SRC / "site.js").read_text()
     names = {}
@@ -144,7 +154,7 @@ def primary_cta(where):
         return (f'<a class="btn" href="{e(C.BOOKING_URL)}" data-track="booking" data-where="{where}" '
                 f'rel="noopener">Book a scoping call</a>')
     if C.EMAIL:
-        return (f'<a class="btn" href="mailto:{e(C.EMAIL)}" data-track="email" data-where="{where}">'
+        return (f'<a class="btn" href="mailto:{e(C.EMAIL)}?subject=Scoping%20call" data-track="email" data-where="{where}">'
                 f'Email {e(C.EMAIL)}</a>')
     return ""
 
@@ -162,17 +172,45 @@ def booking_band():
     cta = primary_cta("band")
     if not cta:
         return ""
+    nxt = [("Pick a time" if C.BOOKING_URL else "Send a short email",
+            "Tell us what you sell, where you sell it and what runs your stock and books today."),
+           (f"A {C.PROMISES['call_length']} video call",
+            "We go through your setup and timeline. If we are not the right fit, we say so."),
+           ("A written proposal",
+            f"A proposal or Roadmap quote reaches you {C.PROMISES['proposal_after_call']}.")]
+    steps = "".join(f"<li><b>{e(h)}</b><span>{e(t)}</span></li>" for h, t in nxt)
     return f"""
-<section class="band" aria-labelledby="band-h">
+<section class="band" aria-labelledby="band-h" data-sec="band">
   <div class="wrap band-grid">
-    <div>
+    <div class="band-copy">
       <h2 id="band-h">Talk through your setup on a {e(C.PROMISES['call_length'])} call</h2>
-      <p>Tell us what you sell, where you sell it and what runs your stock and books today. We reply
-      {e(C.PROMISES['first_reply'])}, {e(C.PROMISES['business_days'])}, {e(C.TIMEZONE_LABEL)} time.</p>
+      <p>There is no charge for the call. We reply {e(C.PROMISES['first_reply'])},
+      {e(C.PROMISES['business_days'])}, {e(C.TIMEZONE_LABEL)} time.</p>
+      <ol class="next">{steps}</ol>
+      <div class="band-cta">{cta}<p class="small">{secondary_contacts()}</p></div>
     </div>
-    <div class="band-cta">{cta}<p class="small">{secondary_contacts()}</p></div>
+    <div class="band-art">{M.scene_flow()}</div>
   </div>
 </section>"""
+
+
+def head_cta(path):
+    """Small header button. Outlined, so the page keeps one primary button per screen."""
+    if path == "/book" or not (C.BOOKING_URL or C.EMAIL):
+        return ""
+    if C.BOOKING_URL:
+        return (f'<a class="btn-sm" href="{e(C.BOOKING_URL)}" data-track="booking" data-where="header" '
+                f'rel="noopener">Book a scoping call</a>')
+    return '<a class="btn-sm" href="/book">Book a scoping call</a>'
+
+
+def cta_bar(path):
+    """Phone-only bar that shows once the hero button has scrolled away."""
+    cta = primary_cta("bar")
+    if not cta or path == "/book":
+        return ""
+    return (f'<div class="cta-bar" data-cta-bar><span>{e(C.PROMISES["call_length"]).capitalize()} call, no charge</span>'
+            f'{cta}</div>')
 
 
 # ---------------------------------------------------------------------------
@@ -238,8 +276,7 @@ def faq_schema(faqs):
 # Layout
 # ---------------------------------------------------------------------------
 
-NAV = [("/services", "Services"), ("/how-it-works", "How a project works"),
-       ("/about", "About"), ("/book", "Book a call")]
+NAV = [("/services", "Services"), ("/how-it-works", "How it works"), ("/about", "About")]
 
 
 def wordmark():
@@ -257,9 +294,13 @@ def layout(page, assets):
     schemas = [org_schema()] + page.get("schema", [])
     ld = "\n".join(f'<script type="application/ld+json">{json.dumps(s, ensure_ascii=False)}</script>'
                    for s in schemas)
+    hcta = head_cta(path)
+    nav_items = NAV if hcta else NAV + [("/book", "Book a call")]
     nav = "".join(
         f'<a href="{href}"{" aria-current=\"page\"" if href == path else ""}>{label_}</a>'
-        for href, label_ in NAV)
+        for href, label_ in nav_items)
+    preload = "\n".join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>'
+                        for f in PRELOAD if (SRC / "fonts" / f).exists())
     robots = '<meta name="robots" content="noindex">' if not page.get("index", True) else ""
     preview = ""
     if not RELEASE:
@@ -288,6 +329,7 @@ def layout(page, assets):
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/site.webmanifest">
+{preload}
 <link rel="stylesheet" href="{assets['css']}">
 <script defer src="{assets['js']}"></script>
 {cf}
@@ -295,18 +337,21 @@ def layout(page, assets):
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"><i></i></div>
 {preview}
 {offer_bar()}
 <header class="site-head{' on-dark' if page.get('dark_head') else ''}">
   <div class="wrap head-grid">
     {wordmark()}
     <nav aria-label="Main">{nav}</nav>
+    {hcta}
   </div>
 </header>
 <main id="main">
 {page['body']}
 </main>
 {band}
+{cta_bar(path)}
 <footer class="site-foot">
   <div class="wrap foot-grid">
     <div>
@@ -315,7 +360,7 @@ def layout(page, assets):
       {f'<p class="small">{profiles}</p>' if profiles else ''}
     </div>
     <nav aria-label="Footer" class="foot-links">
-      <a href="/services">Services</a><a href="/how-it-works">How a project works</a>
+      <a href="/services">Services</a><a href="/how-it-works">How it works</a>
       <a href="/about">About</a><a href="/book">Book a call</a>
       <a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/site-map">Site map</a>
     </nav>
@@ -335,54 +380,248 @@ def layout(page, assets):
 # Pages
 # ---------------------------------------------------------------------------
 
+HOME_FAQS = [
+    ("How much does a Shopify and Odoo project cost?",
+     lambda: (f"A Systems Roadmap is {price('roadmap_min', 'roadmap_max')}. A Store Move is "
+              f"{price('store_move_min', 'store_move_max')}, a Back Office Launch is "
+              f"{price('odoo_launch_min', 'odoo_launch_max')} and a Store to Back Office Sync is "
+              f"{price('connection_min', 'connection_max')}. Your exact fee is fixed in writing before work "
+              f"starts. Shopify, Odoo and app vendors bill you separately for plans and licenses.")),
+    ("How long does a project take?",
+     lambda: ("A Systems Roadmap takes 2 to 3 weeks. A Store Move takes 3 to 8 weeks, a Store to Back Office "
+              "Sync 3 to 6 weeks and a Back Office Launch 6 to 12 weeks. Go-live dates are planned around "
+              "your peak season.")),
+    ("Does connecting Shopify to Odoo need a particular Odoo plan?",
+     lambda: ("It depends on the connector. Third-party connector modules can't be installed on Odoo Online, "
+              "and connectors that use Odoo's API need its Custom plan. We check the fit in a trial database "
+              "before you buy anything.")),
+    ("Who owns the accounts and the data?",
+     lambda: ("You do. Your Shopify store, Odoo database and app accounts stay in your name and on your "
+              "billing. We work through named staff or collaborator accounts, and we remove our access at "
+              "project close and confirm it in writing.")),
+    ("What happens on the scoping call?",
+     lambda: (f"It is a {C.PROMISES['call_length']} video call at no charge. We go through what you sell, "
+              f"your channels, your current systems and your timeline. You get a proposal or a Roadmap quote "
+              f"{C.PROMISES['proposal_after_call']}. If we are not the right fit, we say so on the call.")),
+    ("What if the scope changes during the project?",
+     lambda: ("We stop that part and send a written change order with the price and the effect on dates. "
+              "It starts once you sign.")),
+    ("Do you work with businesses outside New York?",
+     lambda: (f"Yes. All work is remote, for businesses anywhere in the US, during {C.TIMEZONE_LABEL} "
+              f"business hours.")),
+]
+
+
+def first_sentence(text):
+    return text.split(". ")[0].rstrip(".") + "."
+
+
+def svc_card(slug, kind, name, summary, price_html, meta, wide=False):
+    return f"""
+<a class="svc reveal{' svc-wide' if wide else ''}" href="/services#{slug}">
+  {M.MINIS[slug]()}
+  <span class="svc-kind">{e(kind)}</span>
+  <span class="svc-name">{e(name)}{M.icon('arrow-right')}</span>
+  <span class="svc-sum">{e(summary)}</span>
+  <span class="svc-foot"><span class="price">{price_html}</span><span>{e(meta)}</span></span>
+</a>"""
+
+
+def finder():
+    """Three questions, answers picked in the browser, every result written here from config."""
+    def q(n, legend, opts):
+        btns = "".join(f'<button type="button" class="opt" data-v="{v}" aria-pressed="false">{e(t)}</button>'
+                       for v, t in opts)
+        return (f'<fieldset class="fq" data-q="{n}"{"" if n == 1 else " hidden"}><legend><span class="fq-n">{n} of 3</span>'
+                f'{e(legend)}</legend><div class="opts">{btns}</div></fieldset>')
+
+    qs = (q(1, "What do you need first?",
+            [("move", "Move my store to Shopify"), ("odoo", "Set up Odoo for the back office"),
+             ("connect", "Connect Shopify and Odoo"), ("support", "Help with a setup that is already live"),
+             ("unsure", "Not sure yet")]) +
+          q(2, "How many people will use the system?",
+            [("s", "Up to 15"), ("m", "16 to 50"), ("l", "More than 50")]) +
+          q(3, "When does it need to be live?",
+            [("soon", "Within 2 months"), ("mid", "In 3 to 6 months"), ("open", "No fixed date")]))
+
+    cta = primary_cta("finder")
+    results = []
+    by_slug = {p["slug"]: p for p in C.PACKAGES}
+    why = {
+        "systems-roadmap": "A Roadmap comes first when the scope is still open or the project is larger. It ends "
+                           "in a written plan and a fixed quote for the build.",
+        "store-move": "Your first step is the store itself. A scoping call is usually enough to fix the fee.",
+        "odoo-launch": "This is the standard Odoo setup for a team of up to 15 users.",
+        "connection": "Both systems are in place, so the work is the connector, the sync rules and the tests.",
+    }
+    for slug, p in by_slug.items():
+        soon = ""
+        if slug == "odoo-launch":
+            soon = (f'<p class="fr-note" data-when="soon" hidden>A {e(p["name"])} typically takes {e(p["timeline"])}, '
+                    f'so a go-live inside two months needs a narrow first phase. Raise it on the call.</p>')
+        results.append(f"""
+<div class="fr" data-result="{slug}" hidden>
+  <p class="eyebrow">Where we would start</p>
+  <h3>{e(p['name'])}</h3>
+  <dl class="facts"><div><dt>Price</dt><dd class="price">{price(*p['price'])}</dd></div>
+  <div><dt>Typical timeline</dt><dd>{e(p['timeline'])}</dd></div></dl>
+  <p>{e(why[slug])}</p>{soon}
+  <div class="fr-cta">{cta}<a class="more" href="/services#{slug}">See what is included{M.icon('arrow-right')}</a></div>
+</div>""")
+    s = C.SUPPORT
+    results.append(f"""
+<div class="fr" data-result="support" hidden>
+  <p class="eyebrow">Where we would start</p>
+  <h3>{e(s['name'])}</h3>
+  <dl class="facts"><div><dt>10 hours</dt><dd class="price">{price('support_10h')}</dd></div>
+  <div><dt>20 hours</dt><dd class="price">{price('support_20h')}</dd></div></dl>
+  <p>Prepaid hours for questions, small changes, reports and training on a setup that is already running.
+  We reply {e(C.PROMISES['support_reply'])}.</p>
+  <div class="fr-cta">{cta}<a class="more" href="/services#support">See the terms{M.icon('arrow-right')}</a></div>
+</div>""")
+    results.append(f"""
+<div class="fr" data-result="nofit" hidden>
+  <p class="eyebrow">Probably not us</p>
+  <h3>A larger agency is the better fit</h3>
+  <p>Setups for more than 50 users are outside the work we take on. An Odoo partner with a bigger team,
+  or Odoo itself, will serve you better. If part of the work is a Shopify store move, that part we can do.</p>
+  <div class="fr-cta"><a class="more" href="/services#store-move">See the Store Move{M.icon('arrow-right')}</a></div>
+</div>""")
+    return f"""
+<div class="finder" data-finder hidden>
+  <div class="finder-q">{qs}</div>
+  <div class="finder-r" aria-live="polite">
+    <div class="fr-empty" data-empty>{M.blob(1)}<p>Answer three questions and the service that fits shows here, with its
+    price range and timeline.</p></div>
+    {''.join(results)}
+    <button type="button" class="link-btn" data-reset hidden>{M.icon('rotate-ccw')}Start again</button>
+  </div>
+</div>"""
+
+
 def page_home():
-    cards = []
-    for i, p in enumerate(C.PACKAGES):
-        cards.append(f"""
-<a class="svc reveal" style="--d:{i}" href="/services#{p['slug']}">
-  {M.MINIS[p['slug']]()}
-  <span class="svc-kind">{e(p['kind'])}</span>
-  <span class="svc-name">{e(p['name'])}</span>
-  <span class="svc-sum">{e(p['summary'].split('. ')[0].rstrip('.'))}.</span>
-  <span class="svc-foot"><span class="price">{price(*p['price'])}</span><span>{e(p['timeline'])}</span></span>
-</a>""")
-    cards.append(f"""
-<a class="svc reveal" style="--d:4" href="/services#support">
-  {M.MINIS['support']()}
-  <span class="svc-kind">After go-live</span>
-  <span class="svc-name">{e(C.SUPPORT['name'])}</span>
-  <span class="svc-sum">Prepaid hours for questions, small changes, reports and training. We reply
-  {e(C.PROMISES['support_reply'])}.</span>
-  <span class="svc-foot"><span class="price">{price('support_10h')}</span><span>10 hours</span></span>
-</a>""")
+    by_slug = {p["slug"]: p for p in C.PACKAGES}
+
+    def card(slug, wide=False):
+        p = by_slug[slug]
+        return svc_card(slug, p["kind"], p["name"], first_sentence(p["summary"]), price(*p["price"]),
+                        p["timeline"], wide)
+
+    cards = [card("systems-roadmap", True), card("connection", True), card("store-move"), card("odoo-launch"),
+             svc_card("support", "After go-live", C.SUPPORT["name"],
+                      f"Prepaid hours for questions, small changes, reports and training. We reply "
+                      f"{C.PROMISES['support_reply']}.", "From " + price("support_10h"), "10 or 20 hours")]
+
     cta = primary_cta("hero")
+    if cta:
+        hero_cta = (f'<div class="hero-cta">{cta}<a class="more" href="/services">See services and prices'
+                    f'{M.icon("arrow-right")}</a></div>'
+                    f'<p class="assure">{M.icon("clock")}A {e(C.PROMISES["call_length"])} call at no charge. '
+                    f'A proposal or Roadmap quote follows {e(C.PROMISES["proposal_after_call"])}.</p>')
+    else:
+        hero_cta = '<div class="hero-cta"><a class="btn" href="/services">See services and prices</a></div>'
+
+    proof = [
+        ("file-check-2", "Fixed fee in writing", "Scope, exclusions and price are signed before work starts."),
+        ("clock", "A reply " + C.PROMISES["first_reply"], f"{C.PROMISES['business_days']}, {C.TIMEZONE_LABEL} time."),
+        ("server", "Built in staging first", "Two trial data loads, checked against counts you sign off."),
+        ("key-round", "Your accounts stay yours", "Store, database and apps stay in your name and on your billing."),
+    ]
+    proof_html = "".join(f"<li>{M.icon(ic)}<div><b>{e(h)}</b><span>{e(t)}</span></div></li>" for ic, h, t in proof)
     works = ["Shopify", "Shopify POS", "Odoo 19", "Odoo.sh", "Odoo Online", "QuickBooks Online", "WooCommerce", "Square"]
     works_html = "".join(f"<li>{w}</li>" for w in works)
+
+    problems = [
+        ("boxes", "Stock counts that disagree",
+         "The website says four, the shelf has one and a spreadsheet says six. Oversold orders and recounts follow.",
+         "connection"),
+        ("copy", "Orders and refunds typed twice",
+         "Someone copies Shopify orders into the accounting system by hand, and refunds are easy to miss at month end.",
+         "odoo-launch"),
+        ("warehouse", "A second location or a wholesale channel",
+         "A setup that worked for one store strains with two stock rooms, transfers between them or wholesale price lists.",
+         "systems-roadmap"),
+        ("git-branch", "A store platform you have outgrown",
+         "WooCommerce, Wix, Square Online or BigCommerce, held together by plugins that nobody wants to update.",
+         "store-move"),
+    ]
+    prob_html = "".join(f"""
+<li class="prob reveal" data-i="{i}">
+  <span class="prob-art">{M.blob(i)}{M.icon(ic)}</span>
+  <h3>{e(h)}</h3><p>{e(t)}</p>
+  <a class="more" href="/services#{slug}">{e(by_slug[slug]['name'])}{M.icon('arrow-right')}</a>
+</li>""" for i, (ic, h, t, slug) in enumerate(problems))
+
+    steps = [
+        ("calendar-check", f"A {C.PROMISES['call_length']} call", "No charge",
+         "You describe your setup and what isn't working. If we are not the right fit, we say so on the call."),
+        ("map", "A Systems Roadmap", "2–3 weeks",
+         "A paid review that ends in a written plan and a fixed quote. You keep the plan whether or not you continue with us."),
+        ("list-checks", "A signed scope, then the build", "In staging first",
+         "Work starts after the agreement, the statement of work and the deposit are in. Scope changes are priced in writing first."),
+        ("package-check", "Go-live and support after it", "A planned date",
+         "A backup, the cutover and checks on live orders, then fixes for the support period in your package."),
+    ]
+    steps_html = "".join(f"""
+<li class="reveal" data-i="{i}"><span class="st-ic">{M.icon(ic)}</span><span class="st-meta">{e(meta)}</span>
+<h3>{e(h)}</h3><p>{e(t)}</p></li>""" for i, (ic, h, meta, t) in enumerate(steps))
+
+    fit_yes = ["Roughly 5 to 50 people", "Selling on Shopify online, in stores or both",
+               "Running Odoo, or moving to it from spreadsheets or QuickBooks",
+               "Multi-location retailers, and wholesalers who also sell direct"]
+    fit_no = ["Custom theme design", "Shopify Plus or headless storefronts",
+              "Odoo for more than 50 users or several companies",
+              "Regulated products such as cannabis, alcohol and pharmacy"]
+    yes_html = "".join(f"<li>{M.icon('check')}<span>{e(x)}</span></li>" for x in fit_yes)
+    no_html = "".join(f"<li>{M.icon('x')}<span>{e(x)}</span></li>" for x in fit_no)
+
+    faqs = [(qn, fn()) for qn, fn in HOME_FAQS]
+    faq_html = "".join(f'<details class="qa"><summary><span>{e(qn)}</span>{M.icon("chevron-down")}</summary>'
+                       f'<p>{e(a)}</p></details>' for qn, a in faqs)
+    mid_cta = primary_cta("mid")
+    mid = ""
+    if mid_cta:
+        mid = (f'<div class="cta-row reveal"><p><b>The first step is a short call.</b> A {e(C.PROMISES["call_length"])} call at no charge, '
+               f'in {e(C.TIMEZONE_LABEL)} hours.</p>{mid_cta}</div>')
+
     body = f"""
-<section class="hero hero-dark">
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow">Shopify and Odoo consulting</p>
-      <h1 class="display">Shopify, Shopify POS and Odoo setup for US small and mid-size businesses</h1>
-      <p class="lead">{e(NAME)} connects your Shopify store and POS to an Odoo back office for inventory,
-      purchasing and accounting. Every project has a written scope and a fixed fee before work starts,
-      and we stay through go-live.</p>
-      {f'<div class="hero-cta">{cta}</div>' if cta else ''}
-      <dl class="hero-facts">
-        <div><dt>Fixed fees from</dt><dd>{price('roadmap_min')}</dd></div>
-        <div><dt>Replies</dt><dd>{e(C.PROMISES['reply_short'])}</dd></div>
-        <div><dt>Hours</dt><dd>{e(C.TIMEZONE_LABEL)}</dd></div>
-      </dl>
-    </div>
-    {M.hero_stage()}
+<section class="hero hero-dark" data-sec="hero">
+  {M.deco('hero-l')}{M.deco('hero-r')}
+  <div class="wrap hero-center">
+    <p class="eyebrow">Shopify and Odoo consulting</p>
+    <h1 class="display">One stock count across your Shopify store, your registers and Odoo</h1>
+    <p class="lead">{e(NAME)} sets up Shopify, Shopify POS and Odoo for US retailers and wholesalers, then
+    connects them so orders, stock and accounting agree. You get a written scope and a fixed fee before
+    any work starts.</p>
+    {hero_cta}
+  </div>
+  <div class="wrap hero-demo" data-sec="demo">
+    <p class="demo-intro">Four everyday jobs, shown in a typical setup</p>
+    {M.demo_tabs(C.DEMO_VIDEOS)}
+    <p class="demo-foot">These screens are drawings of a typical setup with sample data. What syncs, and how
+    often, depends on your connector and your Odoo plan.</p>
   </div>
 </section>
 
-<section class="works" aria-label="Platforms we work with">
-  <div class="wrap"><p class="small">Platforms we set up, connect and move data between</p><ul>{works_html}</ul></div>
+<section class="proof" aria-label="How we work" data-sec="proof">
+  <div class="wrap">
+    <ul class="proof-list">{proof_html}</ul>
+    <div class="works"><p class="small">Platforms we set up, connect and move data between</p><ul>{works_html}</ul></div>
+  </div>
 </section>
 
-<section class="section">
+<section class="section" data-sec="problems">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Why people call</p>
+      <h2>Problems this work fixes</h2>
+      <p class="lead">Most projects start with one of these four.</p>
+    </div>
+    <ul class="prob-grid">{prob_html}</ul>
+  </div>
+</section>
+
+<section class="section alt" id="services" data-sec="services">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow">Services</p>
@@ -396,56 +635,62 @@ def page_home():
   </div>
 </section>
 
-<section class="section alt">
-  <div class="wrap split">
-    <div class="reveal">
-      <p class="eyebrow">How the sync works</p>
-      <h2>How Shopify and Odoo keep stock counts in step</h2>
-      <p>Shopify stays where customers buy, online and at the counter. Odoo holds the stock count,
-      purchase orders, vendor bills and the accounting. A connector moves orders into Odoo and sends
-      stock and fulfillment updates back, so a sale in one store is reflected everywhere you sell.</p>
-      <p>Which records sync, in which direction and how often depends on the connector and your Odoo
-      plan. Third-party connector modules can't be installed on Odoo Online, and connectors that use
-      Odoo's API need its Custom plan, so we check the fit in a trial database before you buy anything.</p>
-      <ul class="flow-list">
-        <li><b>Shopify to Odoo</b><span>orders, refunds, new customers, POS sales</span></li>
-        <li><b>Odoo to Shopify</b><span>stock by location, fulfillments, tracking numbers</span></li>
-        <li><b>Set in the Roadmap</b><span>connector, sync interval, which system owns products and prices</span></li>
-      </ul>
-    </div>
-    {M.stock_showcase()}
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap two">
-    <div class="reveal">
-      <h2>Who we work with</h2>
-      <p>Businesses with roughly 5 to 50 people that sell on Shopify, online, in stores or both, and
-      run Odoo or are moving to it from spreadsheets or QuickBooks. Typical clients are multi-location
-      retailers, and wholesalers who also sell direct to consumers.</p>
-    </div>
-    <div class="reveal" style="--d:1">
-      <h2>Work we don't take on</h2>
-      <p>Custom theme design, Shopify Plus or headless storefronts, Odoo setups for more than 50 users
-      or several companies, and regulated products such as cannabis, alcohol and pharmacy. For those,
-      a larger agency or Odoo itself is the better fit.</p>
-    </div>
-  </div>
-</section>
-
-<section class="section alt">
+<section class="section" id="finder" data-sec="finder">
   <div class="wrap">
-    <div class="sec-head reveal"><p class="eyebrow">Process</p><h2>How a project starts</h2></div>
-    <ol class="steps draw">
-      <li class="reveal"><h3>A {e(C.PROMISES['call_length'])} call</h3><p>You describe your setup and what isn't
-      working. If we are not the right fit, we say so on the call.</p></li>
-      <li class="reveal" style="--d:1"><h3>A Systems Roadmap</h3><p>A paid review that ends in a written plan and a fixed quote.
-      You own the plan whether or not you continue with us.</p></li>
-      <li class="reveal" style="--d:2"><h3>A signed scope, then the build</h3><p>Work starts after the agreement, the statement of
-      work and the deposit are in. Changes to scope are priced in writing first.</p></li>
-    </ol>
-    <p><a href="/how-it-works">See every step of a project</a></p>
+    <div class="sec-head reveal">
+      <p class="eyebrow">Where to start</p>
+      <h2>Three questions to find the service that fits</h2>
+      <p class="lead">Nothing you pick here is sent to us. It only chooses which service to show.</p>
+    </div>
+    {finder()}
+    <noscript><p>See the <a href="/services">services page</a> for what each service includes.</p></noscript>
+  </div>
+</section>
+
+<section class="section alt" data-sec="deliverables">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">In writing</p>
+      <h2>Documents you get on every project</h2>
+      <p class="lead">Each stage ends with something written that you can check. These are shortened samples.</p>
+    </div>
+    <div class="paper-grid">
+      <div class="reveal">{M.sample_roadmap()}</div>
+      <div class="reveal" data-i="1">{M.sample_fieldmap()}</div>
+      <div class="reveal" data-i="2">{M.sample_testlog()}</div>
+      <div class="reveal" data-i="3">{M.sample_handover()}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" data-sec="process">
+  <div class="wrap">
+    <div class="sec-head reveal"><p class="eyebrow">Process</p><h2>How a project starts and runs</h2></div>
+    <ol class="flow">{steps_html}</ol>
+    <p><a class="more" href="/how-it-works">See every step of a project{M.icon('arrow-right')}</a></p>
+    {mid}
+  </div>
+</section>
+
+<section class="section alt" data-sec="fit">
+  <div class="wrap fit">
+    <div class="fit-col reveal">
+      <h2>Who we work with</h2>
+      <ul class="fit-list yes">{yes_html}</ul>
+    </div>
+    <div class="fit-col reveal" data-i="1">
+      <h2>Work we don't take on</h2>
+      <ul class="fit-list no">{no_html}</ul>
+      <p class="small">For those, a larger agency or Odoo itself is the better fit.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" data-sec="faq">
+  <div class="wrap faq-wrap">
+    <div class="sec-head reveal"><p class="eyebrow">Questions</p><h2>Questions people ask before a call</h2>
+    <p class="lead">Pricing and scope questions are answered on the <a href="/services">services page</a>.</p></div>
+    <div class="qa-list">{faq_html}</div>
   </div>
 </section>
 """
@@ -454,7 +699,7 @@ def page_home():
         "title": f"Shopify, Shopify POS and Odoo setup | {NAME}",
         "desc": (f"{NAME} sets up Shopify, Shopify POS and Odoo as one system for US retailers and "
                  f"wholesalers. Fixed fees, written scope, remote from {C.STATE}."),
-        "body": body, "dark_head": True,
+        "body": body, "dark_head": True, "schema": [faq_schema(faqs)],
     }
 
 
@@ -512,7 +757,8 @@ def page_services():
     <p>{e(s['terms'])}</p>
   </div>
 </section>""")
-    faqs = "".join(f"<h3>{e(q)}</h3><p>{e(a)}</p>" for q, a in SERVICE_FAQS)
+    faqs = "".join(f'<details class="qa"><summary><span>{e(q)}</span>{M.icon("chevron-down")}</summary>'
+                   f'<p>{e(a)}</p></details>' for q, a in SERVICE_FAQS)
     body = f"""
 <section class="hero slim"><div class="wrap">
   <p class="eyebrow">Services</p>
@@ -536,7 +782,7 @@ def page_services():
 </section>
 <section class="section-tight faq">
   <h2>Questions about pricing and scope</h2>
-  {faqs}
+  <div class="qa-list">{faqs}</div>
 </section>
 </div>"""
     return {
@@ -707,8 +953,10 @@ def page_privacy():
 <h3>Our visit counter</h3>
 <p>This site has its own visit counter, run on Cloudflare, our web host. It records the page viewed,
 the page you landed on, the website that sent you (its domain only), any campaign tags in the link,
-whether you have visited before, your country and region as Cloudflare estimates them, your device type
-and browser, and taps on our booking, email or phone links.</p>
+whether you have visited before, your country and region as Cloudflare estimates them, the name of the
+network you connect through (for example your internet provider), your device type and browser, how far
+down a page you scrolled and which sections came into view, clicks on the workflow demo and the service
+finder, and taps on our booking, email or phone links.</p>
 <p>To tell new visits from returning ones it sets one first-party cookie holding a random ID. The cookie
 cannot be read by scripts on the page, is not shared with anyone, and expires after one year. The counter
 does not store your IP address, name, email address or anything you type.</p>
@@ -719,8 +967,8 @@ does not store your IP address, name, email address or anything you type.</p>
 records so we can reply and keep a record of the work. We do not sell or rent them, and we do not use
 them for advertising.</p>
 <h3>What this site does not use</h3>
-<p>No advertising pixels, no session recording, no tools that identify visitors or their companies, and
-no third-party fonts or embeds.</p>
+<p>No advertising pixels, no session recording, no visitor-identification services, and no third-party
+fonts or embeds.</p>
 
 <h2 id="opt-out">Turning off the visit counter</h2>
 <p>Use the button below to stop this browser from being counted. It replaces the counter cookie with an

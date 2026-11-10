@@ -6,7 +6,9 @@
 const COOKIE = "v";
 const OPTOUT = "vo";
 const YEAR = 60 * 60 * 24 * 365;
-const TYPES = new Set(["view", "booking", "email", "phone"]);
+// view: page view. booking/email/phone: taps on contact links. depth: 25/50/75/100 percent scrolled.
+// section: a page section came into view. demo: a workflow tab was picked. finder: service finder start/result.
+const TYPES = new Set(["view", "booking", "email", "phone", "depth", "section", "demo", "finder"]);
 
 function cookies(req) {
   const out = {};
@@ -74,7 +76,7 @@ export default {
         blobs: [
           clip(d.p), clip(d.l), clip(d.r), clip(u.utm_source), clip(u.utm_medium), clip(u.utm_campaign),
           returning ? "returning" : "new", clip(cf.country, 8), clip(cf.region, 64),
-          device(ua, d.w), browser(ua), clip(id, 40), clip(cf.asOrganization, 100), clip(d.where, 20),
+          device(ua, d.w), browser(ua), clip(id, 40), clip(cf.asOrganization, 100), clip(d.where, 40),
         ],
         doubles: [1],
       });
