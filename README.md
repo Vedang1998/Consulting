@@ -12,14 +12,14 @@ Workers Builds from this repository.
 | `src/build.py` | Page templates and copy, site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
 | `src/mockups.py` | The drawn workflow demos, sample documents, small illustrations and the icon helper. |
 | `src/art/`, `src/art.py` | People illustrations from unDraw (undraw.co, free for commercial use, no attribution needed under the unDraw license), recoloured to the brand palette at build and set on CSS Memphis backdrops. Don't repackage them as an illustration set. |
-| `src/media/odoo/` | Real Odoo 20 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. |
-| `src/site.css` | Design system, light and dark. No inline styles anywhere (the CSP is `style-src 'self'`). |
-| `src/site.js` | Demo tabs, service finder, scroll reveals, the first-party visit counter and the privacy opt-out. |
+| `src/media/odoo/` | Real Odoo 20 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. `tour/` holds the guided tour steps listed in `ODOO_TOURS`. |
+| `src/site.css` | Design system, light only. No inline style attributes anywhere (the CSP is `style-src 'self'`); scripts set positions through `el.style`, which the CSP allows. |
+| `src/site.js` | Demo tabs, service finder, guided Odoo tours, the stock sync model on /shopify, scroll reveals, the first-party visit counter and the privacy opt-out. |
 | `src/fonts/` | Self-hosted Archivo, IBM Plex Sans and IBM Plex Mono (OFL). |
 | `src/icons/` | Lucide icons (ISC), inlined at build. |
 | `src/og.png`, `src/apple-touch-icon.png` | Share image (1200x630) and phone home-screen icon. |
-| `worker/index.js` | The Worker on `/api/*`: writes visit events to Workers Analytics Engine, sets one HttpOnly cookie, stores no IP or contact details, honors the opt-out cookie and Global Privacy Control. |
-| `wrangler.jsonc` | Workers config: assets from `dist/`, Worker only for `/api/*`, 404 page, Analytics Engine binding. |
+| `worker/index.js` | The Worker on `/api/*` and `/media/*`. Media requests get byte ranges (206), which Safari needs to play video; Cloudflare's static assets ignore Range on their own. On `/api/*` it writes visit events to Workers Analytics Engine, sets one HttpOnly cookie, stores no IP or contact details, honors the opt-out cookie and Global Privacy Control. |
+| `wrangler.jsonc` | Workers config: assets from `dist/`, Worker first for `/api/*` and `/media/*`, 404 page, Analytics Engine binding. |
 | `dist/` | Build output, git-ignored. |
 
 ## Commands
@@ -66,6 +66,13 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
   Capture screens at 900 CSS px wide (2x pixels) and record videos at 960 by 600, so Odoo's text stays readable
   on the page. The home hero's highlight boxes are measured on `hero-products.webp`; re-measure them in
   `site.css` (`.hero-stage` variables) if that screenshot changes, and keep the card numbers equal to the screen.
+- Guided tours (`ODOO_TOURS` on /odoo): each step is a 960 by 600 screenshot at 2x plus the clickable box in
+  percent of the image (left, top, width, height) and a caption. The captions double as the text version for
+  readers without JavaScript. Re-measure a box whenever its screenshot changes.
+- The sync model on /shopify is a teaching model with one product and sample numbers, not a live connector.
+  Its wording lives in `site.js`; keep it in step with how real connectors behave.
+- Odoo 20 facts on /odoo come from Odoo's release notes, checked Nov 11, 2026
+  (`research/R-Odoo-20-checked.md` in project files). Re-check before changing that section.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
 

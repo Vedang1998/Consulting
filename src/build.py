@@ -306,7 +306,8 @@ def faq_schema(faqs):
 # Layout
 # ---------------------------------------------------------------------------
 
-NAV = [("/services", "Services"), ("/how-it-works", "How it works"), ("/about", "About")]
+NAV = [("/shopify", "Shopify"), ("/odoo", "Odoo"), ("/services", "Services"), ("/pricing", "Pricing"),
+       ("/how-it-works", "How it works"), ("/about", "About")]
 
 
 def wordmark():
@@ -402,7 +403,8 @@ def layout(page, assets):
       <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a>
     </nav>
     <nav aria-label="Footer" class="foot-links"><b>Company</b>
-      <a href="/services">All services and prices</a><a href="/how-it-works">How it works</a>
+      <a href="/shopify">Shopify</a><a href="/odoo">Odoo</a><a href="/pricing">Pricing</a>
+      <a href="/services">All services</a><a href="/how-it-works">How it works</a>
       <a href="/about">About</a><a href="/book">Book a call</a>
       <a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/site-map">Site map</a>
     </nav>
@@ -587,7 +589,8 @@ def finder():
     qs = (q(1, "What do you need first?",
             [("move", "Move my store to Shopify", "truck"), ("odoo", "Set up Odoo for the back office", "boxes"),
              ("connect", "Connect Shopify and Odoo", "refresh-cw"),
-             ("support", "Help with a setup that is already live", "life-buoy"), ("unsure", "Not sure yet", "map")]) +
+             ("support", "Help with a setup that is already live", "life-buoy"),
+             ("explore", "Check whether I need more than Shopify", "search"), ("unsure", "Not sure yet", "map")]) +
           q(2, "How many people will use the system?",
             [("s", "Up to 15", "users"), ("m", "16 to 50", "users"), ("l", "More than 50", "users")]) +
           q(3, "When does it need to be live?",
@@ -630,6 +633,16 @@ def finder():
   <p>Prepaid hours for questions, small changes, reports and training on a setup that is already running.
   We reply {e(C.PROMISES['support_reply'])}.</p>
   <div class="fr-cta">{cta}<a class="more" href="{svc_href('support')}">See the terms{M.icon('arrow-right')}</a></div>
+</div>""")
+    results.append(f"""
+<div class="fr c-mint" data-result="notyet" hidden>
+  <span class="fr-ic">{M.icon('circle-check')}</span>
+  <p class="eyebrow">Where you stand</p>
+  <h3>You may not need us yet</h3>
+  <p>For a team of up to 15, Shopify and a bookkeeping app often cover it. Look at Odoo once two or more of these
+  are true: stock in more than one place, purchase orders every week, wholesale orders taken outside Shopify, or an
+  accountant asking for inventory value at month end.</p>
+  <div class="fr-cta"><a class="more" href="/shopify#enough">When Shopify alone is enough{M.icon('arrow-right')}</a></div>
 </div>""")
     results.append(f"""
 <div class="fr c-coral" data-result="nofit" hidden>
@@ -868,6 +881,20 @@ def page_home():
     {hero_stage()}
   </div>
   <div class="marquee" aria-label="Platforms we work with"><ul>{works_html}</ul></div>
+</section>
+
+<section class="section-s doors-sec" data-sec="doors">
+  <div class="wrap"><div class="doors">
+    <a class="door c-coral reveal" href="/shopify"><span class="pi">{M.icon("shopping-cart")}</span><b>If you sell on Shopify</b>
+    <span>Your store runs well, but stock, purchasing and the books live in spreadsheets. We add the back office
+    without rebuilding the store.</span><em>Shopify setup and moves{M.icon("arrow-right")}</em></a>
+    <a class="door c-mint reveal" data-i="1" href="/odoo"><span class="pi">{M.icon("boxes")}</span><b>If you run on Odoo</b>
+    <span>Odoo is in, or half in. We finish the setup, load your data and connect it to your store and
+    registers.</span><em>Odoo 20 setup{M.icon("arrow-right")}</em></a>
+    <a class="door c-lilac reveal" data-i="2" href="#finder"><span class="pi">{M.icon("search")}</span><b>Not sure yet</b>
+    <span>Answer three questions and we'll point you to one service, or tell you plainly that you don't need
+    one yet.</span><em>Use the finder{M.icon("arrow-right")}</em></a>
+  </div></div>
 </section>
 
 <section class="section reel-sec" id="real" data-sec="reel">
@@ -1220,6 +1247,347 @@ STEPS = [
 ]
 
 
+def odoo_tour():
+    """Click-through tours built from real Odoo 20 screens. The captions are also the no-JS text version."""
+    if not getattr(C, "ODOO_TOURS", None):
+        return ""
+    tabs, panels = [], []
+    for i, (key, lab, app, steps) in enumerate(C.ODOO_TOURS):
+        tabs.append(f'<button type="button" class="tour-tab" role="tab" id="tt-{key}" aria-controls="tp-{key}" '
+                    f'aria-selected="{"true" if i == 0 else "false"}" data-tour-tab="{key}">{e(lab)}</button>')
+        imgs, items = [], []
+        for n, (img, box, tgt, cap) in enumerate(steps, 1):
+            w, h = webp_size(SRC / img)
+            imgs.append(f'<img src="/{e(img)}" width="{w}" height="{h}" loading="{"eager" if n == 1 and i == 0 else "lazy"}" '
+                        f'decoding="async" data-step="{n}" data-box="{",".join(str(v) for v in box)}" data-target="{e(tgt)}" '
+                        f'alt="Odoo 20 {e(app)}, step {n} of {len(steps)}: {e(cap)}"{"" if n == 1 else " hidden"}>')
+            items.append(f'<li data-step="{n}"{" class=\"on\"" if n == 1 else ""}><button type="button" class="ts-btn" data-go="{n}">'
+                         f'<span class="ts-n">{n}</span><span>{e(cap)}</span></button></li>')
+        panels.append(f"""
+<div class="tour-panel" role="tabpanel" id="tp-{key}" aria-labelledby="tt-{key}" data-tour-panel="{key}"{"" if i == 0 else " hidden"}>
+  <figure class="shot tour-stage">
+    <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 20 · {e(app)} · sample data</span></div>
+    <div class="tour-frame">{''.join(imgs)}<button type="button" class="tour-hot" data-hot hidden><span class="vh">Next step</span></button></div>
+  </figure>
+  <div class="tour-side">
+    <ol class="tour-steps">{''.join(items)}</ol>
+    <div class="tour-nav" hidden data-tour-nav>
+      <button type="button" class="link-btn" data-prev>Back</button>
+      <span class="tour-count" aria-live="polite" data-count>Step 1 of {len(steps)}</span>
+      <button type="button" class="btn-sm" data-next>Next step</button>
+    </div>
+  </div>
+</div>""")
+    return f"""
+<div class="tour" data-tour>
+  <div class="tour-tabs" role="tablist" aria-label="Guided tours">{''.join(tabs)}</div>
+  {''.join(panels)}
+  <p class="tour-foot"><span class="tag">Sample data, not a client</span>Real Odoo 20 Community screens from our demo
+  database. Click the outlined button on the screen, or use Next step.</p>
+</div>"""
+
+
+def sync_sim():
+    """A small model of a connector: Odoo holds the stock count, Shopify sells and receives the count back."""
+    return f"""
+<div class="sim" data-sim hidden>
+  <div class="sim-sides">
+    <div class="sim-side s-shop"><p class="sim-h">{M.icon('shopping-cart')}Shopify shows</p>
+      <p class="sim-n" data-shop>33</p><p class="small">Cabinet with Doors, available to sell</p></div>
+    <div class="sim-mid" aria-hidden="true"><span class="sim-wire" data-wire></span></div>
+    <div class="sim-side s-odoo"><p class="sim-h">{M.icon('warehouse')}Odoo on hand</p>
+      <p class="sim-n" data-odoo>33</p><p class="small">Cabinet with Doors, main warehouse</p></div>
+  </div>
+  <p class="sim-state" data-state aria-live="polite"><span class="tag ok">In step</span>Both systems show the same count.</p>
+  <div class="sim-acts">
+    <button type="button" class="opt" data-act="web">{M.icon('shopping-cart')}<span>Sell 1 online</span></button>
+    <button type="button" class="opt" data-act="pos">{M.icon('store')}<span>Sell 1 at the register</span></button>
+    <button type="button" class="opt" data-act="buy">{M.icon('truck')}<span>Receive 10 in Odoo</span></button>
+    <button type="button" class="opt" data-act="off" aria-pressed="false">{M.icon('plug')}<span>Connector off</span></button>
+    <button type="button" class="link-btn" data-act="reset">{M.icon('rotate-ccw')}Start again</button>
+  </div>
+  <ol class="sim-log" data-log aria-label="Sync log"><li><b>09:00:00</b>Connector running. Odoo holds the stock count.</li></ol>
+</div>
+<p class="small sim-note">A simplified model with one product and sample numbers. Real connectors differ in what
+they sync and how often; we set and test those rules for your plan.</p>"""
+
+
+SHOPIFY_FAQS = [
+    ("Do I need Odoo, or is Shopify enough?",
+     "If you sell from one location, buy from a few vendors and your accountant is happy with what Shopify and a "
+     "bookkeeping app give them, Shopify alone is usually enough. Odoo starts to pay off when stock sits in several "
+     "places, purchase orders go out every week, or wholesale orders run outside Shopify."),
+    ("Will a move to Shopify hurt our Google rankings?",
+     "A move done carelessly can, mostly through broken links. We map every old URL to its new page with a 301 "
+     "redirect before launch, so old links and search results still land on the right page."),
+    ("Do customers keep their accounts after a move?",
+     "Their names, addresses and order history come over. Passwords can't be moved between platforms, so customers "
+     "set a new one. We write the invite email with you, so customers know why they're being asked."),
+    ("Can Shopify run our registers too?",
+     "Yes. Shopify POS uses the same product list and stock as your online store. We set it up for up to two "
+     "locations as part of a Store Move when it's in your scope."),
+    ("Can you design a custom theme?",
+     "No. We set up one theme with your logo, colors and photos. For a custom design, a Shopify theme designer is "
+     "the right hire, and we can work alongside them."),
+    ("Who owns the store after you set it up?",
+     "You do. The store, its apps and its billing stay in your name. We work through a staff or collaborator account "
+     "and remove our access at handover, confirmed in writing."),
+]
+
+ODOO_FAQS = [
+    ("What changed in Odoo 20?",
+     "From Odoo's own release notes: AI features now need paid credits, staff can keep working offline, reordering "
+     "rules can suggest minimum and maximum stock from past demand, and the register can run without the Inventory "
+     "app. There is still no built-in Shopify connector."),
+    ("Odoo Online, Odoo.sh or our own server?",
+     "Odoo Online is simplest, but it can't install third-party modules, which most Shopify connectors are. Odoo.sh "
+     "allows them. We work with both and confirm the fit in a trial database before you buy a plan."),
+    ("Can we keep QuickBooks for a while?",
+     "Yes. Many teams keep QuickBooks open for lookups after go-live. We move products, customers, vendors, opening "
+     "stock, open invoices and opening balances. Full transaction history stays in QuickBooks."),
+    ("Why build in a staging copy first?",
+     "So mistakes happen where they cost nothing. We configure and load your data in a copy, you test it against "
+     "written acceptance criteria, and only then do we switch the live database on."),
+    ("Our Odoo project stalled. Can you take it over?",
+     "Often, yes. We start with a written review of what's configured, what's broken and what's missing, then quote "
+     "the finish as a fixed fee. We don't assign blame for what came before."),
+    ("Can Odoo run our registers?",
+     "Yes. Odoo Point of Sale works from the same products and stock as the rest of Odoo, and we set it up for up to "
+     "two locations when it's in your scope. In Odoo 20 it can also run on a simple on-hand count without the "
+     "Inventory app."),
+]
+
+PRICING_FAQS = [
+    ("Why ranges and not one price?",
+     "Because the work depends on things we can only see in your setup, like product count and how clean your data "
+     "is. Your exact fee is fixed in writing before work starts, and it doesn't change unless the scope does."),
+    ("Can we pay in parts?",
+     "Yes. Each project splits payment at milestones: the Systems Roadmap is paid at signing, a Store Move and a Back "
+     "Office Launch are paid 40%, 40% and 20%, and a Sync is paid half at signing and half at go-live."),
+    ("What if the scope changes mid-project?",
+     "We pause that part and send a written change order with the price and the effect on dates. Nothing extra "
+     "starts until you sign it."),
+    ("Is the first call free?",
+     "Yes. The scoping call is 30 minutes at no charge. You leave with a straight answer on whether we can help."),
+]
+
+
+def tick_cards(items):
+    return "".join(f'<li class="reveal" data-i="{i % 3}"><span class="pi {c}">{M.icon(ic)}</span><div><b>{e(h)}</b>'
+                   f'<span>{e(t)}</span></div></li>' for i, (ic, c, h, t) in enumerate(items))
+
+
+def page_shopify():
+    cta = primary_cta("hero")
+    extra = (f'<div class="hero-cta">{cta}<a class="more" href="#sim">Try the sync model{M.icon("arrow-right")}</a></div>'
+             if cta else f'<div class="hero-cta"><a class="more" href="#sim">Try the sync model{M.icon("arrow-right")}</a></div>')
+    setup = [("package", "c-blue", "Products and collections", "Variants, collections and navigation, imported and checked."),
+             ("monitor-smartphone", "c-lilac", "One theme with your brand", "Your logo, colors and photos on a theme we set up."),
+             ("credit-card", "c-mint", "Checkout, shipping and taxes", "Payments, rates and taxes as your accountant confirms them."),
+             ("store", "c-coral", "Shopify POS", "Registers for up to two locations, on the same stock as the store."),
+             ("git-branch", "c-yellow", "Redirects and launch", "Every old URL mapped, the domain connected, test orders done."),
+             ("book-open", "c-blue", "Training", "A recorded session and a short admin guide your staff keep.")]
+    move = [("What comes over", "Products, customers and order history, imported in that order with notifications "
+                                "switched off so nobody gets a surprise email."),
+            ("What needs care", "Old URLs, which each get a redirect. Customer passwords, which can't move, so customers "
+                                "set new ones. Subscriptions and apps that keep their own data."),
+            ("What we test", "Payment failure, refund, cancellation and every fulfillment email, before launch day.")]
+    move_html = "".join(f'<div class="reveal" data-i="{i}"><h3>{e(h)}</h3><p>{e(t)}</p></div>' for i, (h, t) in enumerate(move))
+    body = page_hero("Shopify setup, store moves and POS",
+                     "Shopify set up properly, and connected when you need more",
+                     "We move stores to Shopify, set up checkout, shipping and POS for up to two locations, and test every "
+                     "order path before launch. When spreadsheets stop keeping up, we connect Shopify to a back office.",
+                     A.art("shopping-app", "c-coral", "Illustration: a person shopping on a phone", shape="card"), extra) + f"""
+<section class="section-s"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">What we set up</p><h2>The parts of a Shopify store we take care of</h2></div>
+  <ul class="proof-list cards6">{tick_cards(setup)}</ul>
+</div></section>
+<section class="section-s tint"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">Moving to Shopify</p>
+  <h2>Moving from WooCommerce, Wix, Square Online or BigCommerce</h2></div>
+  <div class="three-col">{move_html}</div>
+  <p class="reveal"><a class="more" href="{svc_href('store-move')}">See the Store Move, {price('store_move_min', 'store_move_max')}{M.icon('arrow-right')}</a></p>
+</div></section>
+<section class="section-s" id="sim"><div class="wrap">
+  <div class="sec-head center reveal"><p class="eyebrow">Try it</p><h2>What a connector does when something sells</h2>
+  <p class="lead">Sell an item, receive stock, or switch the connector off, and watch what each system shows.</p></div>
+  <div class="reveal">{sync_sim()}</div>
+</div></section>
+<section class="section-s tint"><div class="wrap">
+  <div class="sec-head center reveal"><p class="eyebrow">Both screens at once</p><h2>Follow one order from Shopify into Odoo</h2>
+  <p class="lead">Drawn screens with sample data, with the Shopify side and the Odoo side next to each other.</p></div>
+  <div class="demo-shell reveal">{M.demo_tabs(C.DEMO_VIDEOS)}</div>
+</div></section>
+<section class="section-s"><div class="wrap two-col">
+  <div class="reveal"><h2>Shopify POS or Odoo POS</h2>
+  <p>If most of your sales happen online, Shopify POS keeps the register on the same product list and stock as
+  your store, and staff learn one system.</p>
+  <p>If most sales happen at the counter and your stock, purchasing and books already live in Odoo, Odoo's own
+  register can be the better pick, because the register and the warehouse are then the same system. We'll tell you
+  which fits on the call.</p></div>
+  <div class="reveal" data-i="1" id="enough"><h2>When Shopify alone is enough</h2>
+  <p>One location, a handful of vendors and an accountant who's happy with Shopify's reports: that setup rarely
+  needs Odoo, and we'll tell you so on the call.</p>
+  <p>Signs you've outgrown it: stock in more than one place, purchase orders sent from email, wholesale orders
+  taken outside Shopify, or an accountant asking for inventory value at month end.</p>
+  <p><a class="more" href="/odoo">What Odoo adds{M.icon('arrow-right')}</a></p></div>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>Shopify questions</h2>{qa_list(SHOPIFY_FAQS)}</div>
+  <div class="reveal" data-i="1"><h2>Shopify services</h2><div class="others">
+  <a class="other c-coral" href="{svc_href('store-move')}">{M.icon('truck')}<span><b>Store Move</b><em>{price('store_move_min', 'store_move_max')}</em></span></a>
+  <a class="other c-blue" href="{svc_href('connection')}">{M.icon('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
+  <a class="other c-lilac" href="{svc_href('systems-roadmap')}">{M.icon('map')}<span><b>Systems Roadmap</b><em>{price('roadmap_min', 'roadmap_max')}</em></span></a>
+  </div></div>
+</div></section>"""
+    return {
+        "path": "/shopify", "file": "shopify.html",
+        "title": f"Shopify setup, store moves and POS | {NAME}",
+        "desc": ("Shopify store moves from WooCommerce, Wix, Square Online or BigCommerce. Shopify POS for up to two "
+                 "locations, linked to Odoo when you outgrow spreadsheets."),
+        "body": body, "schema": [faq_schema(SHOPIFY_FAQS)],
+    }
+
+
+def page_odoo():
+    cta = primary_cta("hero")
+    extra = (f'<div class="hero-cta">{cta}<a class="more" href="#tour">Click through Odoo 20{M.icon("arrow-right")}</a></div>'
+             if cta else f'<div class="hero-cta"><a class="more" href="#tour">Click through Odoo 20{M.icon("arrow-right")}</a></div>')
+    apps = [("receipt", "c-blue", "Sales", "Quotes, orders and the customer portal."),
+            ("warehouse", "c-mint", "Inventory", "Locations, reordering rules, receipts and deliveries."),
+            ("truck", "c-coral", "Purchase", "Vendor prices, purchase orders and bill matching."),
+            ("landmark", "c-lilac", "Invoicing and Accounting", "Invoices, payments, bank feeds and reports."),
+            ("store", "c-yellow", "Point of Sale", "Registers for up to two locations, if they're in scope."),
+            ("users", "c-blue", "Users and reports", "Roles and access, plus up to five standard reports.")]
+    host_rows = [("Who runs the server", "Odoo", "Odoo, on its cloud platform", "You"),
+                 ("Third-party modules, which most Shopify connectors are", "Not allowed", "Allowed", "Allowed"),
+                 ("Do we work with it", "Yes", "Yes", "No")]
+    host = "".join(f'<tr><th scope="row">{e(r[0])}</th>' + "".join(f"<td>{e(c)}</td>" for c in r[1:]) + "</tr>" for r in host_rows)
+    new20 = [("AI features need paid credits", "Every AI feature now uses credits bought through Odoo's in-app purchase service."),
+             ("Offline mode", "Staff can create and edit records while offline, which helps in a warehouse or at a register."),
+             ("Suggested reorder levels", "Reordering rules can suggest minimum and maximum stock from past demand."),
+             ("Registers without Inventory", "Point of Sale can run with a simple on-hand count, without the Inventory app."),
+             ("US sales tax", "A lower-cost Avalara option and a redesigned US Sales Tax Report. Your CPA still confirms the settings."),
+             ("Still no Shopify connector", "The release notes add marketplace links for Lazada and TikTok, not Shopify. "
+                                            "A Shopify store still needs a connector.")]
+    new_html = "".join(f'<li class="reveal" data-i="{i % 3}"><b>{e(h)}</b><span>{e(t)}</span></li>' for i, (h, t) in enumerate(new20))
+    body = page_hero("Odoo 20 for teams of 5 to 15",
+                     "Odoo set up in a staging copy, tested, then switched on",
+                     "We set up Sales, Inventory, Purchase, Invoicing and Accounting around how you already work. Your data "
+                     "loads twice and gets checked against your old system before go-live. For four weeks after, we fix what comes up.",
+                     A.art("heavy-box", "c-mint", "Illustration: a person carrying a box of stock", shape="blob"), extra) + f"""
+<section class="section-s" id="tour"><div class="wrap">
+  <div class="sec-head center reveal"><p class="eyebrow">Click through it</p><h2>Two everyday jobs in real Odoo 20</h2>
+  <p class="lead">Step through a web order and a purchase order on real screens from our demo database.</p></div>
+  <div class="reveal">{odoo_tour()}</div>
+  <p class="center small">Want to click around freely? <a href="https://demo.odoo.com/" rel="noopener" target="_blank">Open
+  Odoo's own live demo</a>. Odoo runs it, not us, and it may show a newer build than Odoo 20.</p>
+</div></section>
+<section class="section-s tint"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">What we set up</p><h2>The Odoo apps a store or wholesaler runs on</h2></div>
+  <ul class="proof-list cards6">{tick_cards(apps)}</ul>
+  <p class="small after-list">Not included: manufacturing, multi-company setups, payroll and custom modules.</p>
+</div></section>
+<section class="section-s"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">Recorded in Odoo 20</p><h2>Watch the everyday work</h2></div>
+  <div class="reveal">{odoo_reel()}</div>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>Odoo Online, Odoo.sh or your own server</h2>
+  <p>Hosting decides whether a Shopify connector can be installed at all, so we settle it before you buy a plan.
+  Connectors that use Odoo's API also need its Custom plan.</p>
+  <div class="tbl-wrap"><table class="compare host"><thead><tr><td></td><th scope="col">Odoo Online</th>
+  <th scope="col">Odoo.sh</th><th scope="col">Your own server</th></tr></thead><tbody>{host}</tbody></table></div></div>
+  <div class="reveal" data-i="1"><h2>Coming from QuickBooks</h2>
+  <p>We bring over products, customers, vendors, opening stock, open invoices and opening balances, and check each
+  against your QuickBooks totals.</p>
+  <p>Full transaction history stays in QuickBooks, which you keep for lookups. That keeps the move short and the
+  new books clean.</p>
+  <h3>Taking over a stalled Odoo project</h3>
+  <p>We start with a written review of what's set up, what's broken and what's missing, then quote the finish as a
+  fixed fee.</p></div>
+</div></section>
+<section class="section-s"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">Odoo 20</p><h2>What changed in Odoo 20 for a store or wholesaler</h2>
+  <p class="lead">Checked on Nov 11, 2026 against <a href="https://www.odoo.com/odoo-20-release-notes" rel="noopener">Odoo's
+  release notes</a>.</p></div>
+  <ul class="new20">{new_html}</ul>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>Odoo questions</h2>{qa_list(ODOO_FAQS)}</div>
+  <div class="reveal" data-i="1"><h2>When Odoo is the wrong choice</h2>
+  <p>A single-location store with simple stock often does better with Shopify and a bookkeeping app. Odoo is a big
+  system, and it earns its keep when several people, places or vendors need the same numbers.</p>
+  <h2>Odoo services</h2><div class="others">
+  <a class="other c-mint" href="{svc_href('odoo-launch')}">{M.icon('boxes')}<span><b>Back Office Launch</b><em>{price('odoo_launch_min', 'odoo_launch_max')}</em></span></a>
+  <a class="other c-blue" href="{svc_href('connection')}">{M.icon('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
+  <a class="other c-yellow" href="{svc_href('support')}">{M.icon('life-buoy')}<span><b>{e(C.SUPPORT['name'])}</b><em>From {price('support_10h')}</em></span></a>
+  </div></div>
+</div></section>"""
+    return {
+        "path": "/odoo", "file": "odoo.html",
+        "title": f"Odoo 20 setup for small teams | {NAME}",
+        "desc": ("Odoo 20 set up for 5 to 15 users: sales, inventory, purchasing, invoicing and POS, built in a staging "
+                 "copy, tested against your old system, then switched on."),
+        "body": body, "schema": [faq_schema(ODOO_FAQS)],
+    }
+
+
+def page_pricing():
+    by = {p["slug"]: p for p in C.PACKAGES}
+    drivers = {
+        "systems-roadmap": "How many systems you run today and how many working sessions the plan needs, up to three.",
+        "store-move": "How many products you have, how much order history comes over, and how many apps the move replaces.",
+        "odoo-launch": "How many users and locations, whether POS is in scope, and how clean your current data is.",
+        "connection": "Which connector fits your plan, and how many stores and warehouses it links.",
+    }
+    cards = "".join(f"""
+<div class="pr-card {SVC_COLOR[s]} reveal" data-i="{i}">
+  <span class="pc-ic">{M.icon(SVC_ICON[s])}</span>
+  <h3><a href="{svc_href(s)}">{e(by[s]['name'])}</a></h3>
+  <p class="price big">{price(*by[s]['price'])}</p>
+  <dl><div><dt>Typical timeline</dt><dd>{e(by[s]['timeline'])}</dd></div>
+  <div><dt>Payment</dt><dd>{e(by[s]['payment'].split('. ')[0].rstrip('.'))}</dd></div>
+  <div><dt>What moves the price</dt><dd>{e(drivers[s])}</dd></div></dl>
+</div>""" for i, s in enumerate(["systems-roadmap", "store-move", "odoo-launch", "connection"]))
+    sup = C.SUPPORT
+    sup_opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><span class="price big">{price(k)}</span><em>{e(v)}</em></div>'
+                       for h, k, v in sup["options"])
+    body = page_hero("Pricing", "What a project costs, before you call us",
+                     "Every project is a fixed fee written into a statement of work. Under each range you'll see what "
+                     "moves a project toward the low or the high end.",
+                     A.art("printing-invoices", "c-yellow", "Illustration: a person printing invoices", shape="circle")) + f"""
+<section class="section-s"><div class="wrap">
+  <h2 class="vh">Fixed fees by service</h2>
+  <div class="pr-grid">{cards}</div>
+  <p class="small">{e(C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from")))}</p>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>{e(sup['name'])}</h2><p>{e(sup['summary'])}</p><div class="opt-row">{sup_opts}</div>
+  <p class="small">{e(sup['terms'])}</p></div>
+  <div class="reveal" data-i="1"><h2>Software you pay for separately</h2>
+  <p>Your Shopify plan and apps, your Odoo subscription and any Odoo.sh hosting, connector licenses, card processing
+  and hardware are billed to you by each vendor. None of it is part of our fee, and every item is listed in your
+  proposal.</p>
+  <p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p>
+  <p class="small">{e(C.SALES_TAX_LINE)}</p></div>
+</div></section>
+<section class="section-s"><div class="wrap two-col">
+  <div class="reveal"><h2>Pricing questions</h2>{qa_list(PRICING_FAQS)}</div>
+  <div class="reveal" data-i="1"><h2>Choosing between services</h2>
+  <p>Start with the free 30-minute scoping call. If the answer isn't clear by the end of it, a Systems Roadmap
+  gives you a written plan and a fixed quote, and you keep the plan either way.</p>
+  <p><a class="more" href="/services">Compare what each service includes{M.icon('arrow-right')}</a></p></div>
+</div></section>"""
+    return {
+        "path": "/pricing", "file": "pricing.html",
+        "title": f"Pricing for Shopify and Odoo projects | {NAME}",
+        "desc": ("Fixed-fee ranges for a Systems Roadmap, a Shopify store move, an Odoo setup and a Shopify to Odoo "
+                 "sync. Plus prepaid support hours and what decides your fee."),
+        "body": body, "schema": [faq_schema(PRICING_FAQS)],
+    }
+
+
 def page_how():
     phases = [("plan", "c-blue", "Plan", "Agree what gets built and what it costs.", 0, 3),
               ("build", "c-mint", "Build", "Set up and test in a copy of your systems.", 3, 6),
@@ -1327,15 +1695,20 @@ def page_book():
     contact = ""
     if cta:
         contact = f'<div class="book-cta">{cta}<p class="small">{secondary_contacts()}</p></div>'
-    cover = ["What you sell and where: online, in stores, wholesale", "What runs your stock, orders and books today",
-             "What isn't working, and what has to be live by when",
-             "Which service fits, or whether a Systems Roadmap should come first"]
-    cov = "".join(f"<li>{M.icon('check')}<span>{e(x)}</span></li>" for x in cover)
+    agenda = [("First 5 minutes", "What you sell, where you sell it, and what runs your stock, orders and books today."),
+              ("Next 15 minutes", "What isn't working, what it costs you each week, and what has to be live by when."),
+              ("Last 10 minutes", "Which service fits, a rough price range, or whether a Systems Roadmap should come first.")]
+    cov = "".join(f'<li><span class="st-n">{n}</span><span><b>{e(h)}</b> {e(t)}</span></li>'
+                  for n, (h, t) in enumerate(agenda, 1))
+    ready = ["Your Shopify plan and the apps you rely on", "Your Odoo plan and hosting, if you have Odoo",
+             "Rough counts: products, orders a month, locations", "Who keeps the books, and in what software"]
+    rdy = "".join(f"<li>{M.icon('check')}<span>{e(x)}</span></li>" for x in ready)
     body = page_hero("Book a call", "Book a scoping call about your Shopify or Odoo setup",
                      f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
                      f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", A.art("online-meeting", "c-blue", "Illustration: a person on a video call", shape="arch"), contact) + f"""
 <section class="section-s"><div class="wrap two-col">
-  <div class="reveal"><h2>What we cover on the call</h2><ul class="ticks2 big">{cov}</ul></div>
+  <div class="reveal"><h2>How the 30 minutes go</h2><ol class="after">{cov}</ol>
+  <h2>What to have ready</h2><ul class="ticks2 big">{rdy}</ul></div>
   <div class="reveal" data-i="1"><h2>What happens after</h2>
   <ol class="after">
     <li><span class="st-n">1</span><span>You get a proposal or a Roadmap quote {e(C.PROMISES['proposal_after_call'])}.</span></li>
@@ -1655,9 +2028,10 @@ def main():
     svc_pages = [page_service(x) for x in C.PACKAGES] + [page_support()]
     for sp, x in zip(svc_pages, C.PACKAGES + [C.SUPPORT]):
         sp["h"] = x["name"]
-    pages = [page_home(), page_services()] + svc_pages + [page_how(), page_about(), page_book(),
-                                                          page_privacy(), page_terms()]
-    heads = {"/": "Home", "/services": "Services and prices", "/how-it-works": "How a project works",
+    pages = [page_home(), page_shopify(), page_odoo(), page_services()] + svc_pages + [
+        page_pricing(), page_how(), page_about(), page_book(), page_privacy(), page_terms()]
+    heads = {"/": "Home", "/shopify": "Shopify", "/odoo": "Odoo", "/pricing": "Pricing",
+             "/services": "Services and prices", "/how-it-works": "How a project works",
              "/about": "About", "/book": "Book a call", "/privacy": "Privacy policy",
              "/terms": "Website terms of use", "/site-map": "Site map"}
     for p in pages:

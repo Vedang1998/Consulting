@@ -275,3 +275,29 @@ ODOO_REEL = [
      "The delivered order is invoiced, posted and registered as paid.",
      "media/odoo/invoice.mp4", "media/odoo/invoice-poster.jpg"),
 ]
+
+# Guided tours on /odoo: real Odoo 20 screens from our demo database (Odoo's sample data), captured at
+# 960x600 CSS px at 2x. box = the next click target as left, top, width, height in percent of the screen.
+# (key, tab label, app shown in the window bar, [(image, box, target label, caption), ...])
+ODOO_TOURS = [
+    ("sale", "A web order to a delivery", "Sales", [
+        ("media/odoo/tour/sale-1.webp", (17.65, 19.54, 7.92, 5.5), "Confirm",
+         "This is a quotation for 3 Large Cabinets. Orders from your Shopify store land on this same screen. Confirm turns the quote into a sales order."),
+        ("media/odoo/tour/sale-2.webp", (1.67, 16.71, 10.94, 5.5), "Delivery",
+         "The order is confirmed and Odoo sets aside 3 cabinets in the warehouse. The Delivery button opens the warehouse's list of what to ship."),
+        ("media/odoo/tour/sale-3.webp", (1.67, 25.04, 7.88, 5.5), "Validate",
+         "The warehouse sees what to ship and that all 3 are in stock. Validate once the boxes leave the building."),
+        ("media/odoo/tour/sale-4.webp", (88.81, 25.54, 9.21, 4.5), "Done",
+         "Done. On hand for the Large Cabinet drops by 3. With a connector in place, this is the count your Shopify store shows next."),
+    ]),
+    ("buy", "A purchase order to stock", "Purchase", [
+        ("media/odoo/tour/buy-1.webp", (11.27, 25.04, 12.29, 5.5), "Confirm Order",
+         "A request for quotation to Wood Corner for 20 Office Chairs. Confirm Order turns it into a purchase order."),
+        ("media/odoo/tour/buy-2.webp", (17.13, 16.71, 10.94, 5.5), "Receipt",
+         "The order is confirmed and Odoo expects the chairs on the arrival date. The Receipt button opens what the warehouse should receive."),
+        ("media/odoo/tour/buy-3.webp", (1.67, 25.04, 7.88, 5.5), "Validate",
+         "The chairs arrive. The receipt shows 20 ordered and 20 counted. Validate puts them on the shelf in Odoo."),
+        ("media/odoo/tour/buy-4.webp", (88.81, 25.54, 9.21, 4.5), "Done",
+         "Done. On hand for Office Chair Black goes up by 20, and the vendor's bill can be matched against this receipt."),
+    ]),
+]
