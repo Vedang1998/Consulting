@@ -97,6 +97,7 @@ FONT_FILES = [
     ("IBM Plex Mono", 400, "ibm-plex-mono-latin-400-normal.woff2"),
     ("IBM Plex Mono", 500, "ibm-plex-mono-latin-500-normal.woff2"),
 ]
+STATIC_FILES = ["og.png", "apple-touch-icon.png"]  # share image (1200x630) and phone home-screen icon
 PRELOAD = ["archivo-latin-wght-normal.woff2", "ibm-plex-sans-latin-400-normal.woff2"]
 
 
@@ -123,6 +124,8 @@ def build_assets():
             continue
         (DIST / fname).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(f, DIST / fname)
+    for fname in STATIC_FILES:
+        shutil.copy(SRC / fname, DIST / fname)
     css = "\n".join(faces) + "\n" + (SRC / "site.css").read_text()
     js = (SRC / "site.js").read_text()
     names = {}
@@ -304,7 +307,7 @@ def layout(page, assets):
     robots = '<meta name="robots" content="noindex">' if not page.get("index", True) else ""
     preview = ""
     if not RELEASE:
-        preview = ('<div class="preview-flag" role="note">Preview build. Contact details, name and '
+        preview = ('<div class="preview-flag" role="note">Staging build. Contact details, name and '
                    'domain are not final.</div>')
     cf = ""
     if C.CF_WEB_ANALYTICS_TOKEN:
@@ -326,8 +329,16 @@ def layout(page, assets):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 {f'<meta property="og:url" content="{canonical}">' if canonical else ''}
+<meta property="og:site_name" content="{e(NAME)}">
+<meta property="og:image" content="{SITE}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A storefront, warehouse shelves and a ledger joined by one path">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#141c2b">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 {preload}
 <link rel="stylesheet" href="{assets['css']}">
@@ -1073,13 +1084,26 @@ HEADERS = """/*
   Cache-Control: public, max-age=0, must-revalidate
 
 /assets/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /fonts/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /favicon.svg
+  ! Cache-Control
   Cache-Control: public, max-age=86400
+
+/og.png
+  ! Cache-Control
+  Cache-Control: public, max-age=86400
+"""
+
+# Staging (any build without --release) must never be indexed, wherever it is hosted.
+STAGING_HEADERS = """
+/*
+  X-Robots-Tag: noindex, nofollow
 """
 
 # 301s for any URL that changes. Format: "/old /new 301"
@@ -1094,11 +1118,14 @@ FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect w
 
 
 def write_site_files(indexable):
-    (DIST / "_headers").write_text(HEADERS)
+    (DIST / "_headers").write_text(HEADERS + ("" if RELEASE else STAGING_HEADERS))
     (DIST / "_redirects").write_text("\n".join(REDIRECTS) + "\n")
-    (DIST / "robots.txt").write_text(
-        "# All crawlers are welcome, including AI crawlers.\nUser-agent: *\nAllow: /\n\n"
-        f"Sitemap: {SITE}/sitemap.xml\n")
+    if RELEASE:
+        (DIST / "robots.txt").write_text(
+            "# All crawlers are welcome, including AI crawlers.\nUser-agent: *\nAllow: /\n\n"
+            f"Sitemap: {SITE}/sitemap.xml\n")
+    else:
+        (DIST / "robots.txt").write_text("# Staging build. Not for indexing.\nUser-agent: *\nDisallow: /\n")
     urls = []
     for p in indexable:
         lm = C.LAST_CHANGED.get(p["path"])
@@ -1233,7 +1260,7 @@ def main():
             print("ERROR:", x, file=sys.stderr)
         print(f"Build failed with {len(ERRORS)} error(s).", file=sys.stderr)
         sys.exit(1)
-    print(f"Built {len(indexable)} indexable pages{' (release)' if RELEASE else ' (preview)'}")
+    print(f"Built {len(indexable)} indexable pages{' (release)' if RELEASE else ' (staging: noindex, not for launch)'}")
 
 
 if __name__ == "__main__":

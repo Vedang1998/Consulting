@@ -1,5 +1,6 @@
-// Cloudflare Workers with Static Assets. Nothing deploys until Vee connects
-// Workers Builds to this repo and says "merge" on the launch PR.
+// Cloudflare Workers with Static Assets, deployed by Workers Builds from this repo.
+// Build command: "npm run staging" (first look, noindex) or "npm run build" (launch).
+// Deploy command: "npx wrangler deploy". See README, "Publish on Cloudflare".
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "dba-site", // CONFIRM: rename once the DBA is chosen (thread 03)
