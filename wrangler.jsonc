@@ -1,0 +1,22 @@
+// Cloudflare Workers with Static Assets, deployed by Workers Builds from this repo.
+// Build command: "npm run staging" (first look, noindex) or "npm run build" (launch).
+// Deploy command: "npx wrangler deploy". See README, "Publish on Cloudflare".
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dba-site", // CONFIRM: rename once the DBA is chosen (thread 03)
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "analytics_engine_datasets": [
+    { "binding": "EVENTS", "dataset": "site_events" }
+  ],
+  "observability": { "enabled": false }
+  // Custom domains (apex and www) are added in the dashboard once DOMAIN is set.
+  // www to apex 301 is a dashboard Redirect Rule, not code.
+}
