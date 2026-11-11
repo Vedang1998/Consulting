@@ -287,7 +287,8 @@ def sample_fieldmap():
             ("inventory_level.available", "stock.quant (available)", "Odoo → Shopify"),
             ("fulfillment.tracking_number", "stock.picking.carrier_tracking_ref", "Odoo → Shopify"),
             ("refund.refund_line_items", "account.move (credit note)", "Shopify → Odoo")]
-    body = "".join(f"<tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>" for a, b, c in rows)
+    body = "".join(f'<tr><td data-l="Shopify">{a}</td><td data-l="Odoo">{b}</td><td data-l="Direction">{c}</td></tr>'
+                   for a, b, c in rows)
     return _paper("Field map", "Signed before any data moves",
                   f'<table class="fmap"><thead><tr><th>Shopify</th><th>Odoo</th><th>Direction</th></tr></thead><tbody>{body}</tbody></table>',
                   "wide")

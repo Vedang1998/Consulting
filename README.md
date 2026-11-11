@@ -63,6 +63,9 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
 - A real screen recording replaces a drawn demo when its file is set in `DEMO_VIDEOS`.
 - Real Odoo recordings live in `ODOO_REEL`, real screenshots in `SCREENS`. Record only in a demo database with
   sample data, never in a client system. Real Shopify footage needs a Shopify development store, recorded by Vee.
+  Capture screens at 900 CSS px wide (2x pixels) and record videos at 960 by 600, so Odoo's text stays readable
+  on the page. The home hero's highlight boxes are measured on `hero-products.webp`; re-measure them in
+  `site.css` (`.hero-stage` variables) if that screenshot changes, and keep the card numbers equal to the screen.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
 

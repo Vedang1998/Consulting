@@ -252,9 +252,11 @@ LAST_CHANGED = {}
 # Real product screenshots, key -> (file under src/, alt text). Filled only with genuine
 # captures of sample data; empty keys fall back to the drawn screens.
 SCREENS = {
-    "inventory": ("media/odoo/inventory.webp", "Odoo 19 product catalog with prices and stock on hand. Sample data."),
-    "sales": ("media/odoo/invoice.webp", "Odoo 19 customer invoice for a sales order, posted and marked paid. Sample data."),
-    "delivery": ("media/odoo/delivery.webp", "Odoo 19 delivery order WH/OUT/00046 validated and done. Sample data."),
+    "hero": ("media/odoo/hero-products.webp", "Odoo 19 Inventory products with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
+    "hero-m": ("media/odoo/hero-products-m.webp", ""),
+    "inventory": ("media/odoo/stock-list.webp", "Odoo 19 product list with sales price, cost, on hand and forecasted quantities. Sample data."),
+    "sales": ("media/odoo/invoice.webp", "Odoo 19 customer invoice INV/2026/00010 for sales order S00027, posted and marked paid. Sample data."),
+    "delivery": ("media/odoo/delivery.webp", "Odoo 19 delivery order WH/OUT/00046 for sales order S00027, done, with 3 Large Cabinets shipped. Sample data."),
 }
 
 # Screen recordings made in our own Odoo 19 Community demo database (Odoo's sample data).

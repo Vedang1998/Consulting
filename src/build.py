@@ -209,7 +209,7 @@ def booking_band():
 
 def head_cta(path):
     """Small header button. Outlined, so the page keeps one primary button per screen."""
-    if path == "/book" or not (C.BOOKING_URL or C.EMAIL):
+    if not (C.BOOKING_URL or C.EMAIL):
         return ""
     if C.BOOKING_URL:
         return (f'<a class="btn-sm" href="{e(C.BOOKING_URL)}" data-track="booking" data-where="header" '
@@ -391,7 +391,7 @@ def layout(page, assets):
 {band}
 {cta_bar(path)}
 <footer class="site-foot">
-  <div class="wrap foot-grid">
+  <div class="wrap"><div class="foot-grid">
     <div>
       {wordmark()}
       <p class="small">{e(C.TAGLINE)}</p>
@@ -411,7 +411,7 @@ def layout(page, assets):
       <p>Shopify is a trademark of Shopify Inc. Odoo is a trademark of Odoo S.A.</p>
       <p>&copy; {year} {e(NAME)}</p>
     </div>
-  </div>
+  </div></div>
 </footer>
 </body>
 </html>
@@ -642,14 +642,27 @@ def finder():
 </div>""")
     return f"""
 <div class="finder" data-finder hidden>
-  <div class="finder-q">{qs}<div class="fq-bar" aria-hidden="true"><i></i></div></div>
+  <div class="finder-q">{qs}<div class="fq-bar" aria-hidden="true"><i></i></div>
+    <p class="fq-skip">Prefer to compare them yourself? <a href="/services">See all five services and prices</a></p></div>
   <div class="finder-r" aria-live="polite">
-    <div class="fr-empty" data-empty>{A.art("five-year-plan", "c-lilac")}<p>Answer three questions and the service that fits shows here,
+    <div class="fr-empty" data-empty>{A.art("five-year-plan", "c-lilac", shape="circle")}<p>Answer three questions and the service that fits shows here,
     with its price range and timeline.</p></div>
     {''.join(results)}
     <button type="button" class="link-btn" data-reset hidden>{M.icon('rotate-ccw')}Start again</button>
   </div>
 </div>"""
+
+
+def webp_size(path):
+    """Width and height of a WebP file, read from its header (stdlib only)."""
+    b = (SRC / path).read_bytes()[:40]
+    kind = b[12:16]
+    if kind == b"VP8X":
+        return int.from_bytes(b[24:27], "little") + 1, int.from_bytes(b[27:30], "little") + 1
+    if kind == b"VP8L":
+        v = int.from_bytes(b[21:25], "little")
+        return (v & 0x3FFF) + 1, ((v >> 14) & 0x3FFF) + 1
+    return int.from_bytes(b[26:28], "little") & 0x3FFF, int.from_bytes(b[28:30], "little") & 0x3FFF
 
 
 def real_or_drawn(key, drawn_html):
@@ -658,30 +671,44 @@ def real_or_drawn(key, drawn_html):
     if not shot:
         return drawn_html
     f, alt = shot
+    w, h = webp_size(f)
     return (f'<figure class="shot"><div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19</span></div>'
-            f'<img src="/{e(f)}" alt="{e(alt)}" loading="lazy" decoding="async" width="1600" height="950">'
+            f'<div class="shot-img"><img src="/{e(f)}" alt="{e(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"></div>'
             f'<figcaption><span class="tag">Sample data, not a client</span>A real screen, captured in our own '
             f'Odoo 19 demo database.</figcaption></figure>')
 
 
 def hero_stage():
-    """Hero: a real Odoo 19 screen, three sample live-data cards and an illustrated person."""
-    shot = C.SCREENS.get("inventory")
-    screen = (f'<figure class="hs-shot"><div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19 · Inventory</span></div>'
-              f'<img src="/{e(shot[0])}" alt="{e(shot[1])}" width="1600" height="950" fetchpriority="high"></figure>'
-              if shot else M.demo_receipt())
+    """Hero: a real Odoo 19 screen at readable size, tied to the Shopify and register counts beside it.
+
+    The cards repeat the on-hand numbers that are visible in the screenshot (Cabinet with Doors 33,
+    Conference Chair 56), so the picture says what the headline says: one count everywhere.
+    """
+    shot, shot_m = C.SCREENS.get("hero"), C.SCREENS.get("hero-m")
+    if not shot:
+        return f'<div class="hero-fallback">{M.demo_receipt()}</div>'
+    (w, h), (mw, mh) = webp_size(shot[0]), (webp_size(shot_m[0]) if shot_m else (0, 0))
+    pic = (f'<picture>' + (f'<source media="(max-width: 700px)" srcset="/{e(shot_m[0])}" width="{mw}" height="{mh}">'
+                           if shot_m else '') +
+           f'<img src="/{e(shot[0])}" alt="{e(shot[1])}" width="{w}" height="{h}" fetchpriority="high"></picture>')
     return f"""
 <div class="hero-stage">
-  <span class="hs-blob"></span><span class="hs-sun"></span><span class="hs-sq"></span><span class="hs-squig"></span>
-  {screen}
-  <div class="hs-card hs-a" aria-hidden="true"><small>Shopify · online store</small><b>Cabinet with Doors</b>
-    <div class="row"><span>Available</span><span class="n">33</span></div><span class="ok">Matches Odoo</span></div>
-  <div class="hs-card hs-b" aria-hidden="true"><small>Sync log · 09:12</small><b>Stock pushed to 3 locations</b>
-    <span>Online, Store 1, Store 2</span></div>
-  <div class="hs-card hs-c" aria-hidden="true"><small>Register 2 · sale</small><div class="row"><b>$48.29 paid</b>
-    <span class="ok">In Odoo</span></div></div>
-  <span class="hs-person" aria-hidden="true">{A._svg("order-delivered")}</span>
-  <span class="hs-note">Sample data, not a client</span>
+  <span class="hs-blob" aria-hidden="true"></span><span class="hs-sun" aria-hidden="true"></span>
+  <div class="hs-screen">
+    <figure class="hs-shot">
+      <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19 · Inventory · Products</span></div>
+      <div class="hs-img">{pic}<span class="hs-hit h1" aria-hidden="true"></span><span class="hs-hit h2" aria-hidden="true"></span></div>
+    </figure>
+    <span class="hs-wire w1" aria-hidden="true"><i></i></span><span class="hs-wire w2" aria-hidden="true"><i></i></span>
+    <div class="hs-card hs-a" aria-hidden="true"><small>{M.icon("shopping-cart")}Shopify · online store</small>
+      <div class="row"><b>Cabinet with Doors</b><span class="n">33</span></div></div>
+    <div class="hs-card hs-b" aria-hidden="true"><small>{M.icon("store")}Shopify POS · register 2</small>
+      <div class="row"><b>Conference Chair</b><span class="n">56</span></div></div>
+    <div class="hs-card hs-c" aria-hidden="true"><small>{M.icon("refresh-cw")}Sync log · 09:12</small>
+      <b>Stock pushed to 3 locations</b><span class="sub">Online store, Store 1, Store 2</span></div>
+  </div>
+  <p class="hs-note"><span class="tag">Sample data, not a client</span>A real Odoo 19 screen from our demo database.
+  The cards show the same counts in Shopify.</p>
 </div>"""
 
 
@@ -698,7 +725,7 @@ def odoo_reel():
                     f'<i class="tab-prog"></i></button>')
         panels.append(f'<div role="tabpanel" id="rp-{key}" aria-labelledby="rt-{key}"{"" if i == 0 else " hidden"}>'
                       f'<video class="reel-video" poster="/{e(poster)}" muted playsinline '
-                      f'preload="{"metadata" if i == 0 else "none"}" width="1280" height="800" controls '
+                      f'preload="{"metadata" if i == 0 else "none"}" width="960" height="600" controls '
                       f'aria-label="Screen recording: {e(desc)}"><source src="/{e(vid[:-4])}.webm" type="video/webm">'
                       f'<source src="/{e(vid)}" type="video/mp4"></video></div>')
     return f"""
@@ -748,11 +775,11 @@ def feature_rows():
 def page_home():
     cta = primary_cta("hero")
     if cta:
-        hero_cta = (f'<div class="hero-cta">{cta}<a class="more" href="#demo">Watch it work'
+        hero_cta = (f'<div class="hero-cta">{cta}<a class="more" href="#real">Watch it work'
                     f'{M.icon("arrow-right")}</a></div>')
     else:
         hero_cta = (f'<div class="hero-cta"><a class="btn" href="/services">See services and prices</a>'
-                    f'<a class="more" href="#demo">Watch it work{M.icon("arrow-right")}</a></div>')
+                    f'<a class="more" href="#real">Watch it work{M.icon("arrow-right")}</a></div>')
     assure = (f'<ul class="assure">'
               f'<li>{M.icon("circle-check")}{e(C.PROMISES["call_length"]).capitalize()} call, no charge</li>'
               f'<li>{M.icon("circle-check")}Fixed fee in writing</li>'
@@ -762,7 +789,7 @@ def page_home():
         ("file-check-2", "c-blue", "Fixed fee in writing", "Scope, exclusions and price signed before work starts."),
         ("server", "c-mint", "Built in staging first", "Two trial data loads, checked against counts you sign off."),
         ("key-round", "c-yellow", "Your accounts stay yours", "Store, database and apps stay in your name."),
-        ("shield-check", "c-coral", "Access removed at the end", "Confirmed in writing at handover."),
+        ("shield-check", "c-coral", "Our access removed", "Confirmed in writing at handover."),
     ]
     proof_html = "".join(f'<li class="reveal" data-i="{i}"><span class="pi {c}">{M.icon(ic)}</span><div><b>{e(h)}</b>'
                          f'<span>{e(t)}</span></div></li>' for i, (ic, c, h, t) in enumerate(proof))
@@ -825,16 +852,20 @@ def page_home():
 
     body = f"""
 <section class="hero" data-sec="hero">
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      <p class="kicker"><span class="dot"></span>Shopify and Odoo consulting for US retailers and wholesalers</p>
-      <h1 class="display">One stock count across your <mark>store, registers</mark> and <span class="u">Odoo</span></h1>
-      <p class="lead">{e(NAME)} sets up Shopify, Shopify POS and Odoo, then connects them so orders, stock and
-      accounting agree. You get a written scope and a fixed fee before any work starts.</p>
-      {hero_cta}
-      {assure}
+  <div class="wrap">
+    <div class="hero-top">
+      <div class="hero-copy">
+        <p class="kicker"><span class="dot"></span>Shopify and Odoo consulting for US retailers and wholesalers</p>
+        <h1 class="display"><mark>One stock count</mark> across your store, registers and Odoo</h1>
+      </div>
+      <div class="hero-side">
+        <p class="lead">{e(NAME)} sets up Shopify, Shopify POS and Odoo, then connects them so orders, stock and
+        accounting agree. You get a written scope and a fixed fee before any work starts.</p>
+        {hero_cta}
+        {assure}
+      </div>
     </div>
-    <div class="hero-art">{hero_stage()}</div>
+    {hero_stage()}
   </div>
   <div class="marquee" aria-label="Platforms we work with"><ul>{works_html}</ul></div>
 </section>
@@ -1016,14 +1047,14 @@ def compare_table():
             ("Payment", lambda p: e(p["payment"].split(". ")[0].rstrip(".")))]
     body = "".join(f'<tr><th scope="row">{e(lab)}</th>' + "".join(f"<td>{fn(by[s])}</td>" for s in order) + "</tr>"
                    for lab, fn in rows)
-    return f'<div class="tbl-wrap reveal"><table class="compare"><thead><tr><td></td>{head}</tr></thead><tbody>{body}</tbody></table></div>'
+    return f'<div class="tbl-wrap reveal"><table class="compare"><colgroup><col class="c-lab">{'<col>' * len(order)}</colgroup><thead><tr><td></td>{head}</tr></thead><tbody>{body}</tbody></table></div>'
 
 
 def page_services():
     body = page_hero("Services", "Shopify and Odoo services with fixed fees",
                      "Five things we sell, each with a written scope. The ranges are what most projects of each "
                      "kind cost; your exact fee comes from a scoping call or a Systems Roadmap and is written into "
-                     "your statement of work.", A.art("logistics", "c-mint", "Illustration: a person wheels a cart of stock past warehouse shelves")) + f"""
+                     "your statement of work.", A.art("logistics", "c-mint", "Illustration: a person wheels a cart of stock past warehouse shelves", shape="arch")) + f"""
 <section class="section-s"><div class="wrap">
   <div class="svc-grid">{service_cards()}</div>
 </div></section>
@@ -1190,14 +1221,32 @@ STEPS = [
 
 
 def page_how():
-    cols = ["c-blue", "c-lilac", "c-yellow", "c-coral", "c-mint", "c-blue", "c-coral", "c-lilac", "c-mint"]
-    items = "".join(f'<li class="reveal"><span class="tl-dot pi {cols[i]}">{M.icon(ic)}</span><div class="tl-card">'
-                    f'<span class="st-meta">Step {i + 1} · {e(t)}</span><h2 class="h3">{e(h)}</h2><p>{e(d)}</p></div></li>'
-                    for i, (ic, h, t, d) in enumerate(STEPS))
+    phases = [("plan", "c-blue", "Plan", "Agree what gets built and what it costs.", 0, 3),
+              ("build", "c-mint", "Build", "Set up and test in a copy of your systems.", 3, 6),
+              ("launch", "c-coral", "Launch and hand over", "Go live, fix, then hand everything back.", 6, 9)]
+    index, groups = [], []
+    for n, (pid, col, name, sub, a, b) in enumerate(phases):
+        index.append(f'<li><a href="#phase-{pid}"><span class="pi {col}">{n + 1}</span><span><b>{e(name)}</b>'
+                     f'<em>Steps {a + 1}–{b} · {e(sub)}</em></span></a></li>')
+        items = "".join(
+            f'<li class="reveal"><span class="tl-dot pi {col}">{M.icon(ic)}</span><div class="tl-card">'
+            f'<span class="st-meta">Step {i + 1} · {e(t)}</span><h4 class="h3">{e(h)}</h4><p>{e(d)}</p></div></li>'
+            for i, (ic, h, t, d) in list(enumerate(STEPS))[a:b])
+        groups.append(f'<section class="phase {col}" id="phase-{pid}" aria-labelledby="ph-{pid}">'
+                      f'<h3 class="phase-h" id="ph-{pid}"><span class="pill {col}">Phase {n + 1}</span>{e(name)}</h3>'
+                      f'<ol class="timeline2" start="{a + 1}">{items}</ol></section>')
     body = page_hero("How a project works", "How a Shopify or Odoo project runs, from first call to handover",
                      "The same steps for every project, whatever its size. Each one ends with something you can "
-                     "check before the next begins.", A.art("completed-steps", "c-blue", "Illustration: a person ticks off the last step on a timeline")) + f"""
-<section class="section-s"><div class="wrap"><ol class="timeline2">{items}</ol></div></section>
+                     "check before the next begins.", A.art("completed-steps", "c-lilac", "Illustration: a person ticks off the last step on a timeline", shape="card")) + f"""
+<section class="section-s"><div class="wrap how-grid">
+  <div class="how-side reveal">
+    <p class="eyebrow">Three phases, nine steps</p>
+    <h2>Every project follows the same path</h2>
+    <p>Each step ends in something written: a proposal, a signed scope, a test log or a handover pack.</p>
+    <ol class="phase-index">{''.join(index)}</ol>
+  </div>
+  <div class="how-steps">{''.join(groups)}</div>
+</div></section>
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>Changes to scope</h2>
   <p>If you need something that isn't in your statement of work, we stop that part, send a written
@@ -1248,14 +1297,20 @@ def page_about():
                    for i, (ic, c, h, t) in enumerate(values))
     body = page_hero("About", f"About {NAME} and {C.FOUNDER}",
                      f"{e(NAME)} is a {e(C.STATE)} business. All work is remote, for businesses anywhere in the "
-                     f"US, during {e(C.TIMEZONE_LABEL)} business hours.", photo or A.art("meeting", "c-mint", "Illustration: two people in a working session")) + f"""
-<section class="section-s"><div class="wrap two-col">
-  <div class="reveal">{f'<h2>{e(C.FOUNDER)}</h2>{bio}' if bio else ''}{creds}
+                     f"US, during {e(C.TIMEZONE_LABEL)} business hours.", photo or A.art("meeting", "c-coral", "Illustration: two people in a working session", shape="circle")) + f"""
+<section class="section-s"><div class="wrap two-col about-grid">
+  <div class="about-copy reveal">{f'<h2>{e(C.FOUNDER)}</h2>{bio}' if bio else ''}{creds}
   <h2>How {e(NAME)} works</h2>
   <p>{e(C.FOUNDER)} scopes every project, writes the statement of work and is your contact from the
   first call to handover.</p>
   <p>We sell services only. Software, apps and hosting are billed to you by each vendor, so your
-  accounts stay yours.</p></div>
+  accounts stay yours.</p>
+  <dl class="about-facts">
+    <div><dt>Based in</dt><dd>{e(C.STATE)}, working remotely across the US</dd></div>
+    <div><dt>Hours</dt><dd>{e(C.PROMISES['business_days'])}, {e(C.TIMEZONE_LABEL)} time</dd></div>
+    <div><dt>Replies</dt><dd>{e(C.PROMISES['first_reply']).capitalize()}</dd></div>
+    <div><dt>Services</dt><dd><a href="/services">Five services, each with a written scope</a></dd></div>
+  </dl></div>
   <ul class="values">{vals}</ul>
 </div></section>"""
     return {
@@ -1278,7 +1333,7 @@ def page_book():
     cov = "".join(f"<li>{M.icon('check')}<span>{e(x)}</span></li>" for x in cover)
     body = page_hero("Book a call", "Book a scoping call about your Shopify or Odoo setup",
                      f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
-                     f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", A.art("online-meeting", "c-blue", "Illustration: a person on a video call"), contact) + f"""
+                     f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", A.art("online-meeting", "c-blue", "Illustration: a person on a video call", shape="arch"), contact) + f"""
 <section class="section-s"><div class="wrap two-col">
   <div class="reveal"><h2>What we cover on the call</h2><ul class="ticks2 big">{cov}</ul></div>
   <div class="reveal" data-i="1"><h2>What happens after</h2>
