@@ -672,14 +672,14 @@ def real_or_drawn(key, drawn_html):
         return drawn_html
     f, alt = shot
     w, h = webp_size(f)
-    return (f'<figure class="shot"><div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19</span></div>'
+    return (f'<figure class="shot"><div class="shot-bar"><i></i><i></i><i></i><span>Odoo 20</span></div>'
             f'<div class="shot-img"><img src="/{e(f)}" alt="{e(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"></div>'
             f'<figcaption><span class="tag">Sample data, not a client</span>A real screen, captured in our own '
-            f'Odoo 19 demo database.</figcaption></figure>')
+            f'Odoo 20 demo database.</figcaption></figure>')
 
 
 def hero_stage():
-    """Hero: a real Odoo 19 screen at readable size, tied to the Shopify and register counts beside it.
+    """Hero: a real Odoo 20 screen at readable size, tied to the Shopify and register counts beside it.
 
     The cards repeat the on-hand numbers that are visible in the screenshot (Cabinet with Doors 33,
     Conference Chair 56), so the picture says what the headline says: one count everywhere.
@@ -696,7 +696,7 @@ def hero_stage():
   <span class="hs-blob" aria-hidden="true"></span><span class="hs-sun" aria-hidden="true"></span>
   <div class="hs-screen">
     <figure class="hs-shot">
-      <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19 · Inventory · Products</span></div>
+      <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 20 · Inventory · Products</span></div>
       <div class="hs-img">{pic}<span class="hs-hit h1" aria-hidden="true"></span><span class="hs-hit h2" aria-hidden="true"></span></div>
     </figure>
     <span class="hs-wire w1" aria-hidden="true"><i></i></span><span class="hs-wire w2" aria-hidden="true"><i></i></span>
@@ -707,13 +707,13 @@ def hero_stage():
     <div class="hs-card hs-c" aria-hidden="true"><small>{M.icon("refresh-cw")}Sync log · 09:12</small>
       <b>Stock pushed to 3 locations</b><span class="sub">Online store, Store 1, Store 2</span></div>
   </div>
-  <p class="hs-note"><span class="tag">Sample data, not a client</span>A real Odoo 19 screen from our demo database.
+  <p class="hs-note"><span class="tag">Sample data, not a client</span>A real Odoo 20 screen from our demo database.
   The cards show the same counts in Shopify.</p>
 </div>"""
 
 
 def odoo_reel():
-    """Real screen recordings of Odoo 19, as a tabbed player that plays each one in turn."""
+    """Real screen recordings of Odoo 20, as a tabbed player that plays each one in turn."""
     if not C.ODOO_REEL:
         return ""
     tabs, panels = [], []
@@ -732,7 +732,7 @@ def odoo_reel():
 <div class="reel" data-demo-root>
   <div class="reel-tabs" role="tablist" aria-label="Odoo recordings">{''.join(tabs)}</div>
   <div class="reel-screen">
-    <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19 Community · demo database</span></div>
+    <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 20 Community · demo database</span></div>
     {''.join(panels)}
   </div>
 </div>"""
@@ -793,7 +793,7 @@ def page_home():
     ]
     proof_html = "".join(f'<li class="reveal" data-i="{i}"><span class="pi {c}">{M.icon(ic)}</span><div><b>{e(h)}</b>'
                          f'<span>{e(t)}</span></div></li>' for i, (ic, c, h, t) in enumerate(proof))
-    works = ["Shopify", "Shopify POS", "Odoo 19", "Odoo.sh", "Odoo Online", "QuickBooks Online", "WooCommerce",
+    works = ["Shopify", "Shopify POS", "Odoo 20", "Odoo.sh", "Odoo Online", "QuickBooks Online", "WooCommerce",
              "BigCommerce", "Square", "Wix"]
     works_html = "".join(f"<li>{w}</li>" for w in works * 2)
 
@@ -874,12 +874,12 @@ def page_home():
   <div class="wrap">
     <div class="sec-head center reveal">
       <p class="eyebrow">Real software, real clicks</p>
-      <h2>Watch Odoo 19 do the everyday work</h2>
-      <p class="lead">These are screen recordings, not drawings. We made them in our own Odoo 19 database with
+      <h2>Watch Odoo 20 do the everyday work</h2>
+      <p class="lead">These are screen recordings, not drawings. We made them in our own Odoo 20 database with
       Odoo's sample products and customers.</p>
     </div>
     <div class="reveal">{odoo_reel()}</div>
-    <p class="demo-foot"><span class="tag">Sample data, not a client</span>Recorded in Odoo 19 Community. Odoo Online
+    <p class="demo-foot"><span class="tag">Sample data, not a client</span>Recorded in Odoo 20 Community. Odoo Online
     and Odoo.sh screens look the same; menus can differ by plan and apps installed.</p>
   </div>
 </section>
@@ -1087,7 +1087,7 @@ def service_art(slug):
     if slug == "connection":
         return f'<div class="svc-demo">{M.demo_tabs(C.DEMO_VIDEOS)}</div>'
     if slug == "odoo-launch":
-        return f'<div class="sec-head reveal"><p class="eyebrow">Recorded in Odoo 19</p><h2>What your team will do in Odoo</h2></div>{odoo_reel()}'
+        return f'<div class="sec-head reveal"><p class="eyebrow">Recorded in Odoo 20</p><h2>What your team will do in Odoo</h2></div>{odoo_reel()}'
     if slug == "store-move":
         return f'<div class="paper-solo">{M.MINIS["store-move"]()}</div>'
     if slug == "systems-roadmap":

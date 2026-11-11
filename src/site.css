@@ -743,7 +743,7 @@ html:not(.js) .mv .bar i { transform: none; }
 /* ---- Home hero stage: a real Odoo screen, with the same counts shown in Shopify beside it ----- */
 /* Hit boxes are measured on the capture (900x600 CSS px): On hand 33 at 22,234 to 134,254 and On hand 56 at
    22,345 to 134,365. Change them only together with the screenshot. */
-.hero-stage { --bar: 34px; --hx: 2.44%; --hw: 12.44%; --hy1: 39%; --hy2: 57.5%; --hh: 3.33%;
+.hero-stage { --bar: 34px; --hx: 2.44%; --hw: 10.2%; --hy1: 35.83%; --hy2: 56.83%; --hh: 3.5%;
   --cy1: calc(var(--bar) + (100% - var(--bar)) * .4067); --cy2: calc(var(--bar) + (100% - var(--bar)) * .5917);
   position: relative; isolation: isolate; margin-top: 56px; padding-left: 300px; }
 .hs-screen { position: relative; }
@@ -791,7 +791,7 @@ html:not(.js) .mv .bar i { transform: none; }
   .hs-note { justify-content: flex-start; text-align: left; }
 }
 @media (max-width: 700px) {
-  .hero-stage { --hx: 4.73%; --hw: 24.09%; --hy1: 57.07%; --hy2: 84.15%; --hh: 4.88%; margin-top: 32px; }
+  .hero-stage { --hx: 4.73%; --hw: 19.78%; --hy1: 52.44%; --hy2: 83.17%; --hh: 5.12%; margin-top: 32px; }
   .hs-screen { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .hs-shot { box-shadow: 6px 6px 0 var(--edge); }
   .hs-shot .shot-bar span { display: none; }

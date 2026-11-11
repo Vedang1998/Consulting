@@ -43,7 +43,7 @@ PROFILES = [
 # ---------------------------------------------------------------------------
 
 ABOUT_BIO = []  # CONFIRM: 2 to 4 paragraphs in Vee's words: real roles, real platform versions, real years. No part-time or "new business" framing.
-ABOUT_CREDENTIALS = []  # CONFIRM: only certifications currently held, e.g. ("Odoo 19 Functional Certification", "2026")
+ABOUT_CREDENTIALS = []  # CONFIRM: only certifications currently held, e.g. ("Odoo 20 Functional Certification", "2026")
 PHOTO = ""  # CONFIRM: path under src/ to a real photo of Vee, or blank. No AI people.
 
 # ---------------------------------------------------------------------------
@@ -252,14 +252,14 @@ LAST_CHANGED = {}
 # Real product screenshots, key -> (file under src/, alt text). Filled only with genuine
 # captures of sample data; empty keys fall back to the drawn screens.
 SCREENS = {
-    "hero": ("media/odoo/hero-products.webp", "Odoo 19 Inventory products with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
+    "hero": ("media/odoo/hero-products.webp", "Odoo 20 Inventory products with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
     "hero-m": ("media/odoo/hero-products-m.webp", ""),
-    "inventory": ("media/odoo/stock-list.webp", "Odoo 19 product list with sales price, cost, on hand and forecasted quantities. Sample data."),
-    "sales": ("media/odoo/invoice.webp", "Odoo 19 customer invoice INV/2026/00010 for sales order S00027, posted and marked paid. Sample data."),
-    "delivery": ("media/odoo/delivery.webp", "Odoo 19 delivery order WH/OUT/00046 for sales order S00027, done, with 3 Large Cabinets shipped. Sample data."),
+    "inventory": ("media/odoo/stock-list.webp", "Odoo 20 product list with sales price, on hand and forecasted quantities. Sample data."),
+    "sales": ("media/odoo/invoice.webp", "Odoo 20 customer invoice INV/2026/00011 for sales order S00027, posted and marked paid. Sample data."),
+    "delivery": ("media/odoo/delivery.webp", "Odoo 20 delivery order WH/OUT/00074 for sales order S00027, done, with 3 Large Cabinets shipped. Sample data."),
 }
 
-# Screen recordings made in our own Odoo 19 Community demo database (Odoo's sample data).
+# Screen recordings made in our own Odoo 20 Community demo database (Odoo's sample data).
 # (key, tab label, icon, one-line description, video file under src/, poster file under src/)
 ODOO_REEL = [
     ("sale", "Quote to delivery", "receipt",
@@ -269,7 +269,7 @@ ODOO_REEL = [
      "A purchase order for 20 chairs is confirmed, then received into stock.",
      "media/odoo/purchase.mp4", "media/odoo/purchase-poster.jpg"),
     ("pos", "A sale at the register", "store",
-     "Four items rung up in Odoo Point of Sale and paid in cash, with the receipt.",
+     "Three items rung up in Odoo Point of Sale and paid in cash.",
      "media/odoo/pos.mp4", "media/odoo/pos-poster.jpg"),
     ("invoice", "Invoice to paid", "file-check-2",
      "The delivered order is invoiced, posted and registered as paid.",
