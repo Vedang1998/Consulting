@@ -17,6 +17,7 @@ import html
 import json
 import re
 import shutil
+import struct
 import sys
 from pathlib import Path
 
@@ -28,6 +29,7 @@ sys.path.insert(0, str(SRC))
 import config as C  # noqa: E402
 import mockups as M  # noqa: E402
 import art as A  # noqa: E402
+import content as R  # noqa: E402
 
 RELEASE = "--release" in sys.argv
 TODAY = _dt.date.today()
@@ -307,7 +309,7 @@ def faq_schema(faqs):
 # ---------------------------------------------------------------------------
 
 NAV = [("/shopify", "Shopify"), ("/odoo", "Odoo"), ("/services", "Services"), ("/pricing", "Pricing"),
-       ("/how-it-works", "How it works"), ("/about", "About")]
+       ("/resources", "Resources"), ("/about", "About")]
 
 
 def wordmark():
@@ -327,9 +329,13 @@ def layout(page, assets):
                    for s in schemas)
     hcta = head_cta(path)
     nav_items = NAV if hcta else NAV + [("/book", "Book a call")]
-    nav = "".join(
-        f'<a href="{href}"{" aria-current=\"page\"" if href == path else ""}>{label_}</a>'
-        for href, label_ in nav_items)
+    def here(href):
+        if href == path:
+            return ' aria-current="page"'
+        if href == "/resources" and path.startswith(HUB_PATHS):
+            return ' aria-current="true"'
+        return ""
+    nav = "".join(f'<a href="{href}"{here(href)}>{label_}</a>' for href, label_ in nav_items)
     preload = "\n".join(f'<link rel="preload" href="/fonts/{f}" as="font" type="font/woff2" crossorigin>'
                         for f in PRELOAD if (SRC / "fonts" / f).exists())
     robots = '<meta name="robots" content="noindex">' if not page.get("index", True) else ""
@@ -401,6 +407,10 @@ def layout(page, assets):
     <nav aria-label="Services" class="foot-links"><b>Services</b>
       {''.join(f'<a href="{svc_href(x["slug"])}">{e(x["name"])}</a>' for x in C.PACKAGES)}
       <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a>
+    </nav>
+    <nav aria-label="Resources" class="foot-links"><b>Resources</b>
+      {'<a href="/guides">Guides</a>' if guides_live() else ''}<a href="/videos">Videos</a>
+      <a href="/faq">Questions</a><a href="/tools">Tools</a><a href="/resources">All resources</a>
     </nav>
     <nav aria-label="Footer" class="foot-links"><b>Company</b>
       <a href="/shopify">Shopify</a><a href="/odoo">Odoo</a><a href="/pricing">Pricing</a>
@@ -1825,6 +1835,619 @@ arising from use of the general information here.</p>
     }
 
 
+# ---------------------------------------------------------------------------
+# Resources hub: guides, FAQ pages, videos and tools (phase 2). Text lives in content.py.
+# ---------------------------------------------------------------------------
+
+PLATFORMS = {"shopify": "Shopify", "odoo": "Odoo", "both": "Shopify and Odoo"}
+HUB_PATHS = ("/resources", "/guides", "/videos", "/faq", "/tools")
+GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
+VIDEO_BY = {v["slug"]: v for v in R.VIDEOS}
+
+
+def fill(text):
+    """Fill {NAME} and [[price]] tokens in resource text (see content.py)."""
+    text = text.replace("{NAME}", NAME)
+
+    def rep(m):
+        a, _, b = m.group(1).partition("|")
+        return price(a, b or None)
+    return re.sub(r"\[\[([a-z0-9_|]+)\]\]", rep, text)
+
+
+def inline(text):
+    """Escape text, then turn [label](url) into links."""
+    out = e(fill(text))
+
+    def link(m):
+        ext = m.group(2).startswith("http")
+        return f'<a href="{m.group(2)}"{" rel=\"noopener\"" if ext else ""}>{m.group(1)}</a>'
+    return re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", link, out)
+
+
+def anchor(text):
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:60]
+
+
+def md(text):
+    """The small markdown used in content.py: ## headings, - and 1. lists, | tables, paragraphs."""
+    out = []
+    for b in re.split(r"\n\s*\n", text.strip()):
+        lines = [x.strip() for x in b.strip().split("\n")]
+        if lines[0].startswith("## "):
+            h = lines[0][3:]
+            out.append(f'<h2 id="{anchor(h)}">{e(h)}</h2>')
+        elif all(x.startswith("- ") for x in lines):
+            out.append("<ul>" + "".join(f"<li>{inline(x[2:])}</li>" for x in lines) + "</ul>")
+        elif all(re.match(r"\d+\. ", x) for x in lines):
+            out.append("<ol>" + "".join(f"<li>{inline(re.sub(r'^\d+\. ', '', x))}</li>" for x in lines) + "</ol>")
+        elif all(x.startswith("|") for x in lines):
+            rows = [[c.strip() for c in x.strip("|").split("|")] for x in lines]
+            th = "".join(f'<th scope="col">{inline(c)}</th>' if c else "<td></td>" for c in rows[0])
+            tb = "".join("<tr>" + f'<th scope="row">{inline(r[0])}</th>' +
+                         "".join(f'<td data-label="{e(re.sub(r"[\[\]]|\(.*?\)", "", h))}">{inline(c)}</td>'
+                                 for h, c in zip(rows[0][1:], r[1:])) + "</tr>" for r in rows[1:])
+            out.append(f'<div class="tbl-wrap gt-wrap"><table class="gtable"><thead><tr>{th}</tr></thead>'
+                       f'<tbody>{tb}</tbody></table></div>')
+        else:
+            out.append(f"<p>{inline(' '.join(lines))}</p>")
+    return "\n".join(out)
+
+
+def nice_date(iso):
+    return _dt.date.fromisoformat(iso).strftime("%b %-d, %Y")
+
+
+def ptag(platform):
+    return f'<span class="ptag p-{platform}">{e(PLATFORMS[platform])}</span>'
+
+
+def crumbs(items):
+    """items: [(name, path)], the last one is this page. Returns the trail and its BreadcrumbList schema."""
+    parts = [f'<a href="{p}">{e(n)}</a>{M.icon("arrow-right")}' for n, p in items[:-1]]
+    parts.append(f'<span aria-current="page">{e(items[-1][0])}</span>')
+    schema = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + p} for i, (n, p) in enumerate(items)]}
+    return f'<nav class="crumbs" aria-label="Breadcrumb">{"".join(parts)}</nav>', schema
+
+
+def hub_hero(trail, eyebrow, h1, lead, art=""):
+    return f"""
+<section class="phero hub-hero{' with-art' if art else ''}"><div class="wrap phero-grid">
+  <div>{trail}<p class="eyebrow">{eyebrow}</p><h1>{e(h1)}</h1><p class="lead">{lead}</p></div>
+  {f'<div class="phero-art">{art}</div>' if art else ''}
+</div></section>"""
+
+
+def chips(target):
+    opts = [("all", "Everything"), ("shopify", "Shopify"), ("odoo", "Odoo"), ("both", "Both together")]
+    btns = "".join(f'<button type="button" class="chip-btn" data-filter="{v}" '
+                   f'aria-pressed="{"true" if v == "all" else "false"}">{e(t)}</button>' for v, t in opts)
+    return (f'<div class="chips" role="group" aria-label="Show resources for" data-chips="{target}" hidden>'
+            f'<span class="chips-l">Show</span>{btns}</div>')
+
+
+def rcard(href, kind, platform, title, text, meta="", ic="book-open", color="c-blue", i=0):
+    return (f'<!--reuse--><li data-platform="{platform}"><a class="rcard reveal" data-i="{i % 3}" href="{href}">'
+            f'<span class="rc-top"><span class="pi {color}">{M.icon(ic)}</span><span class="rc-kind">{e(kind)}</span>'
+            f'{ptag(platform)}</span><b>{e(title)}</b><span class="rc-text">{e(text)}</span>'
+            f'{f"<em>{e(meta)}</em>" if meta else ""}</a></li><!--/reuse-->')
+
+
+def guides_live():
+    return [g for g in R.GUIDES if not RELEASE or g["status"] == "approved"]
+
+
+def live_href(href):
+    """None for a link to a guide that this build leaves out (drafts on a release build)."""
+    if href == "/guides" and not guides_live():
+        return None
+    if href.startswith("/guides/") and GUIDE_BY.get(href.split("/")[2]) not in guides_live():
+        return None
+    return href
+
+
+def guide_card(g, i=0):
+    text = first_sentence(fill(g["short"]))
+    if len(text.split()) < 8:  # a two-word opener ("Very few.") needs the next sentence to make sense on a card
+        text = ". ".join(fill(g["short"]).split(". ")[:2]).rstrip(".") + "."
+    return rcard(f"/guides/{g['slug']}", "Guide", g["platform"], g["title"], text,
+                 f"Checked {nice_date(g['checked'])}", "book-open",
+                 {"shopify": "c-coral", "odoo": "c-mint", "both": "c-blue"}[g["platform"]], i)
+
+
+def jpeg_size(path):
+    """Width and height of a JPEG from its SOF marker (stdlib only)."""
+    data = path.read_bytes()
+    i = 2
+    while i < len(data):
+        if data[i] != 0xFF:
+            i += 1
+            continue
+        marker = data[i + 1]
+        if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+            h, w = struct.unpack(">HH", data[i + 5:i + 9])
+            return w, h
+        i += 2 + struct.unpack(">H", data[i + 2:i + 4])[0]
+    return 960, 600
+
+
+def reel(key):
+    for k, lab, ic, desc, vid, poster in C.ODOO_REEL:
+        if k == key:
+            return {"label": lab, "ic": ic, "desc": desc, "vid": vid, "poster": poster}
+    raise KeyError(key)
+
+
+def mmss(sec):
+    sec = int(round(sec))
+    return f"{sec // 60}:{sec % 60:02d}"
+
+
+def video_card(v, i=0):
+    r = reel(v["key"])
+    w, h = jpeg_size(SRC / r["poster"])
+    return (f'<!--reuse--><li data-platform="{v["platform"]}"><a class="vcard reveal" data-i="{i % 3}" href="/videos/{v["slug"]}">'
+            f'<span class="vc-img"><img src="/{e(r["poster"])}" width="{w}" height="{h}" loading="lazy" decoding="async" '
+            f'alt=""><i class="vc-dur">{mmss(v["seconds"])}</i></span>'
+            f'<span class="vc-body">{ptag(v["platform"])}<b>{e(v["title"])}</b><span>{e(r["desc"])}</span></span></a></li><!--/reuse-->')
+
+
+TOOLS = [
+    ("/tools/shopify-plan-picker", "Shopify plan picker", "shopify", "calculator", "c-coral",
+     "Answer five questions about shops, staff and wholesale, and see which Shopify plan fits, with the monthly cost."),
+    ("/tools/sync-simulator", "Sync model", "both", "refresh-cw", "c-blue",
+     "Sell an item online or at the register, receive stock, or switch the connector off, and watch both counts."),
+    ("/tools/odoo-tours", "Odoo 20 guided tours", "odoo", "boxes", "c-mint",
+     "Click through real Odoo 20 screens: a web order to a delivery, and a purchase order to stock."),
+]
+
+
+def faq_items(lst):
+    return [(q, fill(a)) for q, a, _, _ in lst]
+
+
+def qa_links(lst):
+    out = []
+    for q, a, href, txt in lst:
+        href = live_href(href) if href else None
+        more = (f'<p class="qa-more"><!--reuse--><a class="more" href="{href}">{e(fill(txt))}{M.icon("arrow-right")}</a>'
+                f'<!--/reuse--></p>' if href and txt else "")
+        out.append(f'<details class="qa" id="{anchor(q)}"><summary><span>{e(q)}</span><i class="qa-ic">'
+                   f'{M.icon("chevron-down")}</i></summary><p>{e(fill(a))}</p>{more}</details>')
+    return '<div class="qa-list">' + "".join(out) + "</div>"
+
+
+def page_resources():
+    _, crs = crumbs([("Resources", "/resources")])
+    trail = ""  # a one-link trail on the hub itself only repeats the eyebrow
+    n_faq = sum(len(x[5]) for x in R.FAQ_PAGES)
+    doors = [("/guides", "book-open", "c-blue", "Guides", "Long answers to the questions store owners ask before "
+              "they buy a plan, a connector or a setup.", f"{len(guides_live())} guides"),
+             ("/videos", "monitor-smartphone", "c-mint", "Videos", "Short screen recordings of real Odoo 20 screens "
+              "with sample data, each with a text version.", f"{len(R.VIDEOS)} recordings"),
+             ("/faq", "list-checks", "c-yellow", "Questions", "Short answers on Shopify, Odoo and how we work, each "
+              "linked to the page that goes further.", f"{n_faq} answers"),
+             ("/tools", "calculator", "c-coral", "Tools", "A Shopify plan picker, the sync model and the Odoo 20 "
+              "tours, each on its own page.", f"{len(TOOLS)} tools")]
+    doors = [d for d in doors if live_href(d[0])]
+    door_html = "".join(f'<a class="door {c} reveal" data-i="{i % 3}" href="{h}"><span class="pi">{M.icon(ic)}</span>'
+                        f'<b>{e(t)}</b><span>{e(x)}</span><em>{e(m)}{M.icon("arrow-right")}</em></a>'
+                        for i, (h, ic, c, t, x, m) in enumerate(doors))
+    items = [guide_card(g, i) for i, g in enumerate(guides_live())]
+    items += [video_card(v, i) for i, v in enumerate(R.VIDEOS)]
+    items += [rcard(h, "Tool", p, t, x, "", ic, c, i) for i, (h, t, p, ic, c, x) in enumerate(TOOLS)]
+    items += [rcard(f"/faq/{s}", "Questions", p, h1, lead, f"{len(lst)} answers", "list-checks", "c-yellow", i)
+              for i, (s, _, p, h1, lead, lst) in enumerate(R.FAQ_PAGES)]
+    body = hub_hero(trail, "Resources", "Guides, videos and answers on Shopify and Odoo",
+                    "Plain answers to the questions that come up before and during a Shopify or Odoo project. Prices "
+                    "and limits carry the date we checked them on the vendor's own page.",
+                    A.art("idea-to-plan", "c-blue", "Illustration: a person turning an idea into a plan",
+                          shape="card")) + f"""
+<section class="section-s doors-sec"><div class="wrap"><!--reuse--><div class="doors doors4">{door_html}</div><!--/reuse--></div></section>
+<section class="section-s tint"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">Everything here</p><h2>All guides, videos, tools and answers</h2></div>
+  {chips("all")}
+  <ul class="rgrid" data-filter-list="all">{''.join(items)}</ul>
+</div></section>"""
+    return {"path": "/resources", "file": "resources.html", "h": "Resources",
+            "title": f"Shopify and Odoo guides, videos and answers | {NAME}",
+            "desc": (f"Guides, screen recordings, tools and short answers about Shopify, Odoo and connecting them, "
+                     f"from {NAME}. Vendor prices carry the date they were checked."),
+            "body": body, "schema": [crs]}
+
+
+def page_guides():
+    trail, crs = crumbs([("Resources", "/resources"), ("Guides", "/guides")])
+    cards = "".join(guide_card(g, i) for i, g in enumerate(guides_live()))
+    body = hub_hero(trail, "Guides", "Guides to Shopify, Odoo and the link between them",
+                    "Each guide starts with a short answer, then shows the details, the sources and the case where the "
+                    "other choice is better.") + f"""
+<section class="section-s"><div class="wrap">
+  {chips("guides")}
+  <ul class="rgrid" data-filter-list="guides">{cards}</ul>
+</div></section>"""
+    return {"path": "/guides", "file": "guides.html", "h": "Guides",
+            "title": f"Shopify and Odoo guides | {NAME}",
+            "desc": ("Guides on Shopify connectors for Odoo, Odoo Online or Odoo.sh, moving from QuickBooks, and "
+                     "Shopify POS against Odoo POS. Each starts with a short answer."),
+            "body": body, "schema": [crs]}
+
+
+def guide_side(g):
+    svc = []
+    for s in g["services"]:
+        p = next(x for x in C.PACKAGES if x["slug"] == s)
+        svc.append(f'<a class="other {SVC_COLOR[s]}" href="{svc_href(s)}">{M.icon(SVC_ICON[s])}<span><b>{e(p["name"])}</b>'
+                   f'<em>{price(*p["price"])}</em></span></a>')
+    toc = "".join(f'<li><a href="#{anchor(h)}">{e(h)}</a></li>' for h in re.findall(r"^## (.+)$", g["body"], re.M))
+    cta = primary_cta("guide")
+    return f"""<!--reuse-->
+<aside class="g-side">
+  <div class="g-box"><p class="eyebrow">In this guide</p><ol class="g-toc">{toc}<li><a href="#questions">Questions</a></li>
+  <li><a href="#sources">Sources</a></li></ol></div>
+  <div class="g-box"><p class="eyebrow">Where we can help</p><div class="others">{''.join(svc)}</div>
+  {f'<div class="g-cta">{cta}</div>' if cta else ''}</div>
+</aside><!--/reuse-->"""
+
+
+def page_guide(g):
+    path = f"/guides/{g['slug']}"
+    trail, crs = crumbs([("Resources", "/resources"), ("Guides", "/guides"), (g["seo_title"], path)])
+    body_html = md(g["body"])
+    if not re.search(r"^## When the other option wins", g["body"], re.M):
+        ERRORS.append(f"guide {g['slug']} has no 'When the other option wins' section")
+    words = len(fill(g["short"]).split())
+    if not 40 <= words <= 60:
+        ERRORS.append(f"guide {g['slug']}: short answer is {words} words, needs 40 to 60")
+    if re.search(r"\$\d", g["body"] + g["short"]) and not (g.get("checked") and all(len(s) == 3 and s[2] for s in g["sources"])):
+        ERRORS.append(f"guide {g['slug']} shows prices without a checked date on it and every source")
+    draft = ""
+    if g["status"] != "approved":
+        draft = (f'<p class="note-box">{M.icon("triangle-alert")}<span>Draft for review. Draft guides are left out of the '
+                 f'launch build until they are approved.</span></p>')
+    srcs = "".join(f'<li><a href="{e(u)}" rel="noopener">{e(t)}</a><span>checked {nice_date(d)}</span></li>'
+                   for t, u, d in g["sources"])
+    related = "".join(guide_card(GUIDE_BY[s], i) for i, s in enumerate(g["related"])
+                      if GUIDE_BY[s] in guides_live())
+    faqs = [(q, fill(a)) for q, a in g["faqs"]]
+    body = f"""
+<section class="ghero"><div class="wrap"><div class="g-head">
+  {trail}
+  <p class="eyebrow">{ptag(g['platform'])}Guide</p>
+  <h1>{e(g['title'])}</h1>
+  <!--reuse--><p class="byline">Written by {e(C.FOUNDER)}, {e(NAME)}, which sets up Shopify and Odoo for US businesses.
+  <span>Checked <time datetime="{g['checked']}">{nice_date(g['checked'])}</time></span></p>
+  {draft}<!--/reuse-->
+  <div class="answer"><p class="eyebrow">The short answer</p><p>{inline(g['short'])}</p></div>
+</div></div></section>
+<div class="wrap g-grid">
+  <article class="prose g-body">
+    {body_html}
+    <h2 id="questions">Questions</h2>
+    {qa_list(faqs)}
+    <h2 id="sources">Sources</h2>
+    <!--reuse--><ul class="sources">{srcs}</ul>
+    <p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p><!--/reuse-->
+  </article>
+  {guide_side(g)}
+</div>
+{f'''<section class="section-s tint"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">Read next</p><h2>Related guides</h2></div>
+  <ul class="rgrid">{related}</ul>
+</div></section>''' if related else ''}"""
+    art = {"@context": "https://schema.org", "@type": "Article", "@id": SITE + path + "#article",
+           "headline": g["title"], "description": g["desc"], "dateModified": g["checked"],
+           "author": {"@type": "Person", "name": C.FOUNDER}, "publisher": {"@id": SITE + "/#org"},
+           "mainEntityOfPage": SITE + path, "inLanguage": "en-US"}
+    return {"path": path, "file": f"guides/{g['slug']}.html", "h": g["seo_title"], "lastmod": g["checked"],
+            "title": f"{g['seo_title']} | {NAME}", "desc": g["desc"], "body": body,
+            "schema": [art, crs, faq_schema(faqs)], "kind": "guide"}
+
+
+def page_faq_hub():
+    trail, crs = crumbs([("Resources", "/resources"), ("Questions", "/faq")])
+    doors = "".join(
+        f'<a class="door {c} reveal" data-i="{i}" href="/faq/{s}"><span class="pi">{M.icon(ic)}</span><b>{e(h1)}</b>'
+        f'<span>{e(lead)}</span><em>{len(lst)} answers{M.icon("arrow-right")}</em></a>'
+        for i, ((s, _, p, h1, lead, lst), (ic, c)) in enumerate(
+            zip(R.FAQ_PAGES, [("shopping-cart", "c-coral"), ("boxes", "c-mint"), ("users", "c-lilac")])))
+    body = hub_hero(trail, "Questions", "Short answers about Shopify, Odoo and working with us",
+                    "Each answer is a few sentences long and links to the guide or service that goes further.") + f"""
+<section class="section-s"><div class="wrap"><!--reuse--><div class="doors">{doors}</div><!--/reuse--></div></section>"""
+    return {"path": "/faq", "file": "faq.html", "h": "Questions",
+            "title": f"Shopify and Odoo questions answered | {NAME}",
+            "desc": (f"Short answers about Shopify plans and POS, Odoo hosting and plans, and how {NAME} works with "
+                     f"clients."),
+            "body": body, "schema": [crs]}
+
+
+def page_faq(slug, label_, platform, h1, lead, lst):
+    path = f"/faq/{slug}"
+    trail, crs = crumbs([("Resources", "/resources"), ("Questions", "/faq"), (label_, path)])
+    others = "".join(f'<a class="other c-yellow" href="/faq/{s}">{M.icon("list-checks")}<span><b>{e(h)}</b>'
+                     f'<em>{len(x)} answers</em></span></a>' for s, _, _, h, _, x in R.FAQ_PAGES if s != slug)
+    cta = primary_cta("faq")
+    body = hub_hero(trail, f"{ptag(platform)}Questions", h1, e(lead)) + f"""
+<section class="section-s"><div class="wrap faq-page">
+  <div>{qa_links(lst)}</div>
+  <!--reuse--><aside class="g-side"><div class="g-box"><p class="eyebrow">More answers</p><div class="others">{others}
+  {f'<a class="other c-blue" href="/guides">{M.icon("book-open")}<span><b>Guides</b><em>The longer answers</em></span></a>' if live_href("/guides") else ''}</div></div>
+  {f'<div class="g-box"><p class="eyebrow">Not answered here</p><p class="small">Ask on a free 30-minute scoping call.</p><div class="g-cta">{cta}</div></div>' if cta else ''}
+  </aside><!--/reuse-->
+</div></section>"""
+    return {"path": path, "file": f"faq/{slug}.html", "h": h1,
+            "title": f"{h1} | {NAME}",
+            "desc": f"{lead} {len(lst)} short answers from {NAME}.",
+            "body": body, "schema": [crs, faq_schema(faq_items(lst))], "kind": "faq"}
+
+
+def page_videos():
+    trail, crs = crumbs([("Resources", "/resources"), ("Videos", "/videos")])
+    cards = "".join(video_card(v, i) for i, v in enumerate(R.VIDEOS))
+    body = hub_hero(trail, "Videos", "Screen recordings of Odoo 20 at work",
+                    "Short, silent recordings made in our own Odoo 20 Community database with Odoo's sample data. "
+                    "Each one has chapters and a written version of what happens on screen.") + f"""
+<section class="section-s"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">{ptag('odoo')}Walkthroughs</p><h2>Odoo 20, from order to payment</h2></div>
+  <ul class="vgrid">{cards}</ul>
+  <p class="small"><span class="tag">Sample data, not a client</span>Recorded {nice_date(R.VIDEOS[0]['recorded'])}.
+  Want to click instead of watch? <a href="/tools/odoo-tours">Try the guided tours</a>.</p>
+</div></section>"""
+    return {"path": "/videos", "file": "videos.html", "h": "Videos",
+            "title": f"Odoo 20 screen recordings | {NAME}",
+            "desc": ("Short screen recordings of Odoo 20 with sample data: a quote to a delivery, a purchase to stock, "
+                     "a register sale and an invoice marked paid."),
+            "body": body, "schema": [crs]}
+
+
+def page_video(v):
+    r = reel(v["key"])
+    path = f"/videos/{v['slug']}"
+    trail, crs = crumbs([("Resources", "/resources"), ("Videos", "/videos"), (r["label"], path)])
+    w, h = jpeg_size(SRC / r["poster"])
+    ch = v["chapters"]
+    chap = "".join(f'<li><button type="button" class="ch-btn" data-t="{t}"><span class="ch-t">{mmss(t)}</span>'
+                   f'<span>{e(lab)}</span></button></li>' for t, lab, _ in ch)
+    text = "".join(f'<p><b class="ch-t">{mmss(t)}</b>{e(x)}</p>' for t, _, x in ch)
+    links = []
+    if v.get("guide") and GUIDE_BY[v["guide"]] in guides_live():
+        gd = GUIDE_BY[v["guide"]]
+        links.append(f'<a class="other c-blue" href="/guides/{gd["slug"]}">{M.icon("book-open")}<span><b>{e(gd["title"])}</b>'
+                     f'<em>Guide</em></span></a>')
+    if v.get("tour"):
+        links.append(f'<a class="other c-mint" href="/tools/odoo-tours">{M.icon("boxes")}<span><b>Click through it '
+                     f'yourself</b><em>Odoo 20 guided tour</em></span></a>')
+    links.append(f'<a class="other c-mint" href="{svc_href("odoo-launch")}">{M.icon("boxes")}<span><b>Back Office '
+                 f'Launch</b><em>{price("odoo_launch_min", "odoo_launch_max")}</em></span></a>')
+    body = hub_hero(trail, f"{ptag(v['platform'])}Screen recording, {mmss(v['seconds'])}", v["title"],
+                    f"<!--reuse-->{e(r['desc'])}<!--/reuse-->") + f"""
+<section class="section-s"><div class="wrap v-grid">
+  <div>
+    <!--reuse--><figure class="shot v-frame">
+      <div class="shot-bar"><i></i><i></i><i></i><span>Odoo 20 Community · demo database · sample data</span></div>
+      <video class="reel-video" data-chapter-video controls muted playsinline preload="metadata" poster="/{e(r['poster'])}"
+      width="{w}" height="{h}" aria-label="Screen recording: {e(r['desc'])}"><source src="/{e(r['vid'][:-4])}.webm" type="video/webm">
+      <source src="/{e(r['vid'])}" type="video/mp4"></video>
+    </figure>
+    <p class="small"><span class="tag">Sample data, not a client</span>Recorded {nice_date(v['recorded'])} in our own Odoo 20
+    Community database. The recording has no sound.</p><!--/reuse-->
+  </div>
+  <div class="v-side"><h2>Chapters</h2><ol class="chapters">{chap}</ol></div>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>What happens on screen</h2><div class="transcript">{text}</div></div>
+  <div class="reveal" data-i="1"><h2>Related</h2><!--reuse--><div class="others">{''.join(links)}</div><!--/reuse--></div>
+</div></section>"""
+    starts = [t for t, _, _ in ch] + [int(round(v["seconds"]))]
+    vo = {"@context": "https://schema.org", "@type": "VideoObject", "@id": SITE + path + "#video",
+          "name": v["title"], "description": r["desc"] + " Sample data, recorded in an Odoo 20 Community demo database.",
+          "thumbnailUrl": [SITE + "/" + r["poster"]], "uploadDate": v["recorded"],
+          "duration": f"PT{int(round(v['seconds']))}S", "contentUrl": SITE + "/" + r["vid"],
+          "publisher": {"@id": SITE + "/#org"},
+          "hasPart": [{"@type": "Clip", "name": lab, "startOffset": t, "endOffset": starts[i + 1],
+                       "url": SITE + path + f"#t={t}"} for i, (t, lab, _) in enumerate(ch)]}
+    return {"path": path, "file": f"videos/{v['slug']}.html", "h": v["title"],
+            "title": f"{v['title']} | {NAME}",
+            "desc": r["desc"] + " A silent Odoo 20 recording with sample data, chapters and a text version.",
+            "body": body, "schema": [vo, crs], "kind": "video"}
+
+
+def page_tools():
+    trail, crs = crumbs([("Resources", "/resources"), ("Tools", "/tools")])
+    cards = "".join(rcard(h, "Tool", p, t, x, "", ic, c, i) for i, (h, t, p, ic, c, x) in enumerate(TOOLS))
+    body = hub_hero(trail, "Tools", "Small tools for Shopify and Odoo decisions",
+                    "Each one runs in your browser, sends nothing anywhere, and has a written version under it.") + f"""
+<section class="section-s"><div class="wrap">
+  <ul class="rgrid">{cards}</ul>
+  <p class="small">Not sure which service fits? The <a href="/#finder">service finder</a> on the home page asks three
+  questions.</p>
+</div></section>"""
+    return {"path": "/tools", "file": "tools.html", "h": "Tools",
+            "title": f"Shopify and Odoo tools | {NAME}",
+            "desc": ("A Shopify plan picker, a model of how a Shopify and Odoo connector moves stock, and guided tours "
+                     "of Odoo 20 screens."),
+            "body": body, "schema": [crs]}
+
+
+def page_tool_sync():
+    path = "/tools/sync-simulator"
+    trail, crs = crumbs([("Resources", "/resources"), ("Tools", "/tools"), ("Sync model", path)])
+    rules = [("Sell 1 online", "Shopify takes the order. The connector brings it into Odoo, Odoo lowers its count, and "
+                               "the new count goes back to Shopify."),
+             ("Sell 1 at the register", "The same path as an online sale. To Odoo, a register sale is one more order."),
+             ("Receive 10 in Odoo", "Stock arrives on a purchase order in Odoo. Shopify can only sell those units once "
+                                    "the connector sends the new count."),
+             ("Connector off", "Orders pile up in Shopify and received stock stays invisible to it, so both counts "
+                               "drift. Switching it back on catches up the queue.")]
+    rl = "".join(f"<li><b>{e(a)}</b> {e(b)}</li>" for a, b in rules)
+    body = hub_hero(trail, f"{ptag('both')}Tool", "A model of how a connector keeps stock counts in step",
+                    "One product, sample numbers. Odoo owns the stock count and Shopify shows what it can sell.") + f"""
+<section class="section-s"><div class="wrap">
+  <!--reuse-->{sync_sim()}<!--/reuse-->
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>What each button does</h2><ul class="plain-list">{rl}</ul></div>
+  <div class="reveal" data-i="1"><h2>Read more</h2><div class="others">
+  {f'<a class="other c-blue" href="/guides/shopify-connectors-odoo-online">{M.icon("book-open")}<span><b>{e(GUIDE_BY["shopify-connectors-odoo-online"]["title"])}</b><em>Guide</em></span></a>' if live_href("/guides/shopify-connectors-odoo-online") else ''}
+  <a class="other c-blue" href="{svc_href('connection')}">{M.icon('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
+  </div></div>
+</div></section>"""
+    return {"path": path, "file": "tools/sync-simulator.html", "h": "Sync model",
+            "title": f"Shopify and Odoo stock sync model | {NAME}",
+            "desc": ("Sell online, sell at the register, receive stock or switch the connector off, and see what "
+                     "Shopify and Odoo each show. A simplified model with sample numbers."),
+            "body": body, "schema": [crs]}
+
+
+def page_tool_tours():
+    path = "/tools/odoo-tours"
+    trail, crs = crumbs([("Resources", "/resources"), ("Tools", "/tools"), ("Odoo 20 tours", path)])
+    body = hub_hero(trail, f"{ptag('odoo')}Tool", "Guided tours of Odoo 20, step by step",
+                    "Each tour walks through one task on actual Odoo 20 screens with sample data. The highlighted "
+                    "button on each screen takes you to the next step.") + f"""
+<section class="section-s"><div class="wrap">
+  <!--reuse-->{odoo_tour()}<!--/reuse-->
+  <p class="center small">Prefer to watch? <a href="/videos">See the screen recordings</a>. Want to click around freely?
+  <a href="https://demo.odoo.com/" rel="noopener" target="_blank">Open the demo Odoo runs</a>; it may show a newer build
+  than Odoo 20.</p>
+</div></section>"""
+    return {"path": path, "file": "tools/odoo-tours.html", "h": "Odoo 20 guided tours",
+            "title": f"Odoo 20 guided tours with real screens | {NAME}",
+            "desc": ("Click through real Odoo 20 screens with sample data: a web order to a delivery, and a purchase "
+                     "order received into stock."),
+            "body": body, "schema": [crs]}
+
+
+SHOPIFY_PLANS = {  # research/R-Shopify-plans-checked.md, shopify.com/pricing, checked Nov 11, 2026
+    "basic": ("Basic", 29, 39), "grow": ("Grow", 89, 105), "advanced": ("Advanced", 359, 399),
+    "plus": ("Plus", 2300, 2300),
+}
+POS_PRO = 89
+
+
+def page_tool_plans():
+    path = "/tools/shopify-plan-picker"
+    trail, crs = crumbs([("Resources", "/resources"), ("Tools", "/tools"), ("Shopify plan picker", path)])
+
+    def q(key, legend, opts):
+        btns = "".join(f'<button type="button" class="opt" data-v="{v}" aria-pressed="false"><span>{e(t)}</span></button>'
+                       for v, t in opts)
+        return f'<fieldset class="pk-q" data-pq="{key}"><legend>{e(legend)}</legend><div class="opts">{btns}</div></fieldset>'
+
+    qs = (q("loc", "Where do you sell in person?",
+            [("0", "Online only"), ("1", "1 shop"), ("2", "2 shops"), ("3", "3 to 10 shops"), ("11", "More than 10")]) +
+          q("staff", "How many staff need their own Shopify login?",
+            [("0", "Only the owner"), ("5", "Up to 5"), ("15", "6 to 15"), ("16", "More than 15")]) +
+          q("perm", "Do staff at the register need different permissions, or in-store stock tools?",
+            [("no", "No"), ("yes", "Yes")]) +
+          q("b2b", "Do you sell wholesale with more than 3 price lists?", [("no", "No"), ("yes", "Yes")]) +
+          q("sync", "Will Shopify connect to a back office such as Odoo?", [("no", "No"), ("yes", "Yes")]))
+    plans = json.dumps({k: {"n": n, "y": y, "m": m} for k, (n, y, m) in SHOPIFY_PLANS.items()} | {"pro": POS_PRO})
+    rows = "".join(f'<tr><th scope="row">{n}</th><td>${y:,} a month</td><td>${m:,} a month</td></tr>'
+                   for n, y, m in SHOPIFY_PLANS.values())
+    body = hub_hero(trail, f"{ptag('shopify')}Tool", "Which Shopify plan fits your shops and staff",
+                    "Five questions, answered in your browser. The result names a plan, the reason and the monthly "
+                    "cost, using prices checked on shopify.com on Nov 11, 2026.") + f"""
+<section class="section-s"><div class="wrap">
+  <div class="picker" data-picker data-plans="{e(plans)}" hidden>
+    <div class="pk-qs">{qs}</div>
+    <div class="pk-r" aria-live="polite">
+      <div data-pk-empty><p class="eyebrow">Your result</p><p>Answer the questions and the plan that fits shows here.</p></div>
+      <div data-pk-out hidden>
+        <p class="eyebrow">The plan that fits</p>
+        <h2 data-pk-plan>Basic</h2>
+        <ul class="pk-why" data-pk-why></ul>
+        <dl class="facts"><div><dt>Paid yearly</dt><dd data-pk-y></dd></div><div><dt>Paid monthly</dt><dd data-pk-m></dd></div></dl>
+        <p class="small" data-pk-pro></p>
+        <p class="small">Plan prices only, before card fees, apps and hardware. Shopify changes plans often, so check
+        shopify.com before you buy.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>How the picker decides</h2><ul class="plain-list">
+    <li><b>Plus</b> when you sell from more than 10 locations, need more than 15 staff logins, or need more than 3
+    wholesale catalogs. Plus starts at $2,300 a month.</li>
+    <li><b>Advanced</b> when 6 to 15 staff need their own login. It includes 15 staff accounts.</li>
+    <li><b>Grow</b> when up to 5 staff need a login, or Shopify will connect to a back office. Grow includes 5 staff
+    accounts, and Shopify lists full data access for custom apps from Grow up, which some connectors use.</li>
+    <li><b>Basic</b> for an owner-run store. Every plan takes in-person payments and allows up to 10 locations.</li>
+    <li><b>POS Pro</b> adds staff roles, in-store inventory tools, and pickup and delivery for $89 a month per location.
+    Plus includes it for 20 locations.</li>
+  </ul></div>
+  <div class="reveal" data-i="1"><h2>Shopify plan prices</h2>
+    <div class="tbl-wrap gt-wrap"><table class="gtable"><thead><tr><th scope="col">Plan</th><th scope="col">Paid yearly</th>
+    <th scope="col">Paid monthly</th></tr></thead><tbody>{rows}</tbody></table></div>
+    <p class="small">US prices from <a href="https://www.shopify.com/pricing" rel="noopener">shopify.com/pricing</a>,
+    checked Nov 11, 2026. Plus is quoted from $2,300 a month.</p>
+    {f'<p><a class="more" href="/guides/shopify-pos-vs-odoo-pos">Shopify POS or Odoo POS{M.icon("arrow-right")}</a></p>' if live_href("/guides/shopify-pos-vs-odoo-pos") else ''}</div>
+</div></section>"""
+    return {"path": path, "file": "tools/shopify-plan-picker.html", "h": "Shopify plan picker",
+            "title": f"Shopify plan picker for shops and staff | {NAME}",
+            "desc": ("Answer five questions about shops, staff, wholesale and connecting a back office, and see which "
+                     "Shopify plan fits, with prices checked Nov 11, 2026."),
+            "body": body, "schema": [crs]}
+
+
+def hub_pages():
+    pages = [page_resources()] + ([page_guides()] if guides_live() else []) + [page_guide(g) for g in guides_live()]
+    pages += [page_faq_hub()] + [page_faq(*x) for x in R.FAQ_PAGES]
+    pages += [page_videos()] + [page_video(v) for v in R.VIDEOS]
+    pages += [page_tools(), page_tool_plans(), page_tool_sync(), page_tool_tours()]
+    return pages
+
+
+# ---------------------------------------------------------------------------
+# Checks across pages: near-duplicate text and internal links
+# ---------------------------------------------------------------------------
+
+def main_words(html_text):
+    m = re.search(r'<main id="main">(.*?)</main>', html_text, re.S)
+    s = m.group(1) if m else ""
+    s = re.sub(r"<!--reuse-->.*?<!--/reuse-->", " ", s, flags=re.S)
+    s = re.sub(r"<(script|style|svg)\b.*?</\1>", " ", s, flags=re.S)
+    s = re.sub(r"<[^>]+>", " ", s)
+    s = html.unescape(s).lower()
+    return re.findall(r"[a-z0-9$][a-z0-9$.,'%-]*", s)
+
+
+def duplicate_check(built, n=12):
+    """Resource pages must not repeat a long run of words from another page (00: original content)."""
+    shingles = {}
+    for path, words in built.items():
+        for i in range(len(words) - n + 1):
+            shingles.setdefault(" ".join(words[i:i + n]), set()).add(path)
+    pairs = {}
+    for sh, paths in shingles.items():
+        if len(paths) > 1:
+            ps = sorted(paths)
+            for a in ps:
+                for b in ps:
+                    if a < b:
+                        pairs.setdefault((a, b), []).append(sh)
+    core = 0
+    for (a, b), shs in sorted(pairs.items()):
+        if any(p.startswith(HUB_PATHS) for p in (a, b)):
+            if len(shs) >= 2:
+                ERRORS.append(f"near-duplicate text: {len(shs)} repeated {n}-word runs between {a} and {b}, "
+                              f"e.g. {shs[0]!r}. Rewrite it, or wrap a reused widget in <!--reuse--> comments.")
+        else:
+            core += 1
+    if core:
+        NOTES.append(f"{core} pairs of core pages share widget or price text (only resource pages are checked)")
+
+
+def link_check(built_paths):
+    """Every internal link points at a page or file this build writes."""
+    for f in DIST.rglob("*.html"):
+        for href in re.findall(r'href="(/[^"#?]*)', f.read_text()):
+            if href in built_paths or (DIST / href.lstrip("/")).exists():
+                continue
+            ERRORS.append(f"broken internal link {href} in {f.relative_to(DIST)}")
+
+
 def page_sitemap(pages):
     items = "".join(f'<li><a href="{p["path"]}">{e(p["h"])}</a></li>' for p in pages
                     if not p["path"].startswith("/services/"))
@@ -1917,7 +2540,7 @@ def write_site_files(indexable):
         (DIST / "robots.txt").write_text("# Staging build. Not for indexing.\nUser-agent: *\nDisallow: /\n")
     urls = []
     for p in indexable:
-        lm = C.LAST_CHANGED.get(p["path"])
+        lm = p.get("lastmod") or C.LAST_CHANGED.get(p["path"])
         urls.append(f"  <url><loc>{clean_url(p['path'])}</loc>" +
                     (f"<lastmod>{lm}</lastmod>" if lm else "") + "</url>")
     (DIST / "sitemap.xml").write_text(
@@ -1932,6 +2555,11 @@ def write_site_files(indexable):
         contact.append(f"- Email: {C.EMAIL}")
     if C.BOOKING_URL:
         contact.append(f"- Book a call: {C.BOOKING_URL}")
+    guides = ""
+    if guides_live():
+        guides = "\n\n## Guides\n" + "\n".join(
+            f"- [{g['title']}]({SITE}/guides/{g['slug']}): {fill(g['short'])} (checked {g['checked']})"
+            for g in guides_live())
     llms = f"""# {NAME}
 
 > Remote Shopify and Odoo consulting for small and mid-size US businesses. {NAME} is run from {C.STATE} and serves clients across the US. Every project has a fixed fee and a written scope.
@@ -1942,7 +2570,7 @@ def write_site_files(indexable):
 - Larger Odoo projects: {C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from"))}
 
 ## Questions people ask
-""" + "\n".join(f"- {q} {fn()}" for q, fn in HOME_FAQS) + """
+""" + "\n".join(f"- {q} {fn()}" for q, fn in HOME_FAQS) + guides + f"""
 
 ## How we work
 - [How a project works]({SITE}/how-it-works)
@@ -2029,7 +2657,7 @@ def main():
     for sp, x in zip(svc_pages, C.PACKAGES + [C.SUPPORT]):
         sp["h"] = x["name"]
     pages = [page_home(), page_shopify(), page_odoo(), page_services()] + svc_pages + [
-        page_pricing(), page_how(), page_about(), page_book(), page_privacy(), page_terms()]
+        page_pricing(), page_how(), page_about(), page_book(), page_privacy(), page_terms()] + hub_pages()
     heads = {"/": "Home", "/shopify": "Shopify", "/odoo": "Odoo", "/pricing": "Pricing",
              "/services": "Services and prices", "/how-it-works": "How a project works",
              "/about": "About", "/book": "Book a call", "/privacy": "Privacy policy",
@@ -2041,14 +2669,19 @@ def main():
     pages.append(sm)
     pages.append(page_404())
 
+    built = {}
     for p in pages:
         out = layout(p, assets)
         check_output(p["file"], out)
         (DIST / p["file"]).parent.mkdir(parents=True, exist_ok=True)
         (DIST / p["file"]).write_text(out)
+        if p.get("index", True):
+            built[p["path"]] = main_words(out)
+    duplicate_check(built)
 
     indexable = [p for p in pages if p.get("index", True)]
     write_site_files(indexable)
+    link_check({p["path"] for p in pages})
 
     for n in NOTES:
         print("NOTE:", n)
