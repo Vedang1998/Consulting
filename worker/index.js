@@ -1,5 +1,5 @@
-// First-party visit counter for the [DBA name] site.
-// Runs only for /api/* (wrangler.jsonc run_worker_first). Everything else is a static asset.
+// First-party visit counter for the [DBA name] site, plus byte-range video delivery.
+// Runs only for /api/* and /media/* (wrangler.jsonc run_worker_first). Everything else is a static asset.
 // Writes one row per event to Workers Analytics Engine (binding EVENTS).
 // Stores no IP address, no name, no email, nothing typed into the page.
 
@@ -37,9 +37,43 @@ function browser(ua) {
 
 const clip = (s, n = 100) => String(s || "").slice(0, n);
 
+// Static assets answer a Range request with the whole file (200), and Safari needs 206 Partial
+// Content to play video. Media files are small (under 25 MiB by the platform limit), so read the
+// asset once and return the requested bytes.
+async function media(req, env) {
+  const range = req.headers.get("Range");
+  const plain = new Request(req.url, { method: req.method === "HEAD" ? "HEAD" : "GET" });
+  const res = await env.ASSETS.fetch(plain);
+  const headers = new Headers(res.headers);
+  headers.set("Accept-Ranges", "bytes");
+  if (!range || res.status !== 200 || req.method === "HEAD") {
+    return new Response(res.body, { status: res.status, headers });
+  }
+  const m = /^bytes=(\d*)-(\d*)$/.exec(range.trim());
+  const body = await res.arrayBuffer();
+  const size = body.byteLength;
+  let start, end;
+  if (m && m[1] !== "") {
+    start = Number(m[1]);
+    end = m[2] !== "" ? Math.min(Number(m[2]), size - 1) : size - 1;
+  } else if (m && m[2] !== "") {
+    start = Math.max(0, size - Number(m[2]));
+    end = size - 1;
+  }
+  if (start === undefined || start > end || start >= size) {
+    headers.set("Content-Range", `bytes */${size}`);
+    headers.delete("Content-Length");
+    return new Response(null, { status: 416, headers });
+  }
+  headers.set("Content-Range", `bytes ${start}-${end}/${size}`);
+  headers.set("Content-Length", String(end - start + 1));
+  return new Response(body.slice(start, end + 1), { status: 206, headers });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if (url.pathname.startsWith("/media/")) return media(req, env);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
 
     const secure = "; Path=/; Secure; HttpOnly; SameSite=Lax";
