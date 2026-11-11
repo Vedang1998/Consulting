@@ -11,7 +11,7 @@ Workers Builds from this repository.
 | `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, demo videos. Most changes happen here. `# CONFIRM` marks values Vee must supply. |
 | `src/build.py` | Page templates and copy, site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
 | `src/mockups.py` | The drawn workflow demos, sample documents, small illustrations and the icon helper. |
-| `src/illus.py` | Corporate Memphis people scenes, drawn in code as SVG (hero, problems, call, handover, build). |
+| `src/art/`, `src/art.py` | People illustrations from unDraw (undraw.co, free for commercial use, no attribution needed under the unDraw license), recoloured to the brand palette at build and set on CSS Memphis backdrops. Don't repackage them as an illustration set. |
 | `src/media/odoo/` | Real Odoo 19 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. |
 | `src/site.css` | Design system, light and dark. No inline styles anywhere (the CSP is `style-src 'self'`). |
 | `src/site.js` | Demo tabs, service finder, scroll reveals, the first-party visit counter and the privacy opt-out. |

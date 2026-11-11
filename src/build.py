@@ -27,7 +27,7 @@ DIST = ROOT / "dist"
 sys.path.insert(0, str(SRC))
 import config as C  # noqa: E402
 import mockups as M  # noqa: E402
-import illus as I  # noqa: E402
+import art as A  # noqa: E402
 
 RELEASE = "--release" in sys.argv
 TODAY = _dt.date.today()
@@ -202,7 +202,7 @@ def booking_band():
       <ol class="next">{steps}</ol>
       <div class="band-cta">{cta}<p class="small">{secondary_contacts()}</p></div>
     </div>
-    <div class="band-art">{M.scene_flow()}</div>
+    <div class="band-art">{A.art("online-meeting", "c-yellow")}</div>
   </div>
 </section>"""
 
@@ -254,7 +254,7 @@ def offer_bar():
 def org_schema():
     data = {
         "@context": "https://schema.org",
-        "@type": "ProfessionalService",
+        "@type": "Organization",
         "@id": SITE + "/#org",
         "name": NAME,
         "url": SITE + "/",
@@ -271,6 +271,23 @@ def org_schema():
     if C.PROFILES:
         data["sameAs"] = [u for _, u in C.PROFILES]
     return data
+
+
+def service_schema(p, path):
+    """Service and breadcrumb schema for one service page, prices from config."""
+    lo, hi = (C.PRICES[k] for k in (p["price"] if len(p["price"]) == 2 else (p["price"][0], p["price"][0])))
+    url = SITE + path
+    return [{
+        "@context": "https://schema.org", "@type": "Service", "@id": url + "#service",
+        "name": p["name"], "serviceType": p["kind"], "description": p["summary"], "url": url,
+        "provider": {"@id": SITE + "/#org"}, "areaServed": {"@type": "Country", "name": "US"},
+        "offers": {"@type": "Offer", "url": url, "priceSpecification": {
+            "@type": "PriceSpecification", "priceCurrency": "USD", "minPrice": lo, "maxPrice": hi}},
+    }, {
+        "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Services", "item": SITE + "/services"},
+            {"@type": "ListItem", "position": 2, "name": p["name"], "item": url}],
+    }]
 
 
 def faq_schema(faqs):
@@ -346,7 +363,7 @@ def layout(page, assets):
 <meta property="og:image:alt" content="A storefront, warehouse shelves and a ledger joined by one path">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#141c2b">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
@@ -451,6 +468,10 @@ SVC_COLOR = {"systems-roadmap": "c-lilac", "store-move": "c-coral", "odoo-launch
              "connection": "c-blue", "support": "c-yellow"}
 SVC_ICON = {"systems-roadmap": "map", "store-move": "truck", "odoo-launch": "boxes", "connection": "refresh-cw",
             "support": "life-buoy"}
+
+
+SVC_ART = {"systems-roadmap": ("business-plan", "c-lilac"), "store-move": ("moving", "c-coral"),
+           "odoo-launch": ("logistics", "c-mint"), "connection": ("sync", "c-blue")}
 
 
 def svc_href(slug):
@@ -623,7 +644,7 @@ def finder():
 <div class="finder" data-finder hidden>
   <div class="finder-q">{qs}<div class="fq-bar" aria-hidden="true"><i></i></div></div>
   <div class="finder-r" aria-live="polite">
-    <div class="fr-empty" data-empty>{I.scene_call()}<p>Answer three questions and the service that fits shows here,
+    <div class="fr-empty" data-empty>{A.art("five-year-plan", "c-lilac")}<p>Answer three questions and the service that fits shows here,
     with its price range and timeline.</p></div>
     {''.join(results)}
     <button type="button" class="link-btn" data-reset hidden>{M.icon('rotate-ccw')}Start again</button>
@@ -641,6 +662,27 @@ def real_or_drawn(key, drawn_html):
             f'<img src="/{e(f)}" alt="{e(alt)}" loading="lazy" decoding="async" width="1600" height="950">'
             f'<figcaption><span class="tag">Sample data, not a client</span>A real screen, captured in our own '
             f'Odoo 19 demo database.</figcaption></figure>')
+
+
+def hero_stage():
+    """Hero: a real Odoo 19 screen, three sample live-data cards and an illustrated person."""
+    shot = C.SCREENS.get("inventory")
+    screen = (f'<figure class="hs-shot"><div class="shot-bar"><i></i><i></i><i></i><span>Odoo 19 · Inventory</span></div>'
+              f'<img src="/{e(shot[0])}" alt="{e(shot[1])}" width="1600" height="950" fetchpriority="high"></figure>'
+              if shot else M.demo_receipt())
+    return f"""
+<div class="hero-stage">
+  <span class="hs-blob"></span><span class="hs-sun"></span><span class="hs-sq"></span><span class="hs-squig"></span>
+  {screen}
+  <div class="hs-card hs-a" aria-hidden="true"><small>Shopify · online store</small><b>Cabinet with Doors</b>
+    <div class="row"><span>Available</span><span class="n">33</span></div><span class="ok">Matches Odoo</span></div>
+  <div class="hs-card hs-b" aria-hidden="true"><small>Sync log · 09:12</small><b>Stock pushed to 3 locations</b>
+    <span>Online, Store 1, Store 2</span></div>
+  <div class="hs-card hs-c" aria-hidden="true"><small>Register 2 · sale</small><div class="row"><b>$48.29 paid</b>
+    <span class="ok">In Odoo</span></div></div>
+  <span class="hs-person" aria-hidden="true">{A._svg("order-delivered")}</span>
+  <span class="hs-note">Sample data, not a client</span>
+</div>"""
 
 
 def odoo_reel():
@@ -792,7 +834,7 @@ def page_home():
       {hero_cta}
       {assure}
     </div>
-    <div class="hero-art">{I.scene_hero()}</div>
+    <div class="hero-art">{hero_stage()}</div>
   </div>
   <div class="marquee" aria-label="Platforms we work with"><ul>{works_html}</ul></div>
 </section>
@@ -835,7 +877,7 @@ def page_home():
       <p class="eyebrow">Why people call</p>
       <h2>Most projects start with one of these four problems</h2>
       <p class="lead">Each one has a service built around it, with a price range and a typical timeline.</p>
-      <div class="prob-art">{I.scene_chaos()}</div>
+      <div class="prob-art">{A.art("synchronize", "c-coral")}</div>
     </div>
     <ul class="prob-grid">{prob_html}</ul>
   </div>
@@ -981,7 +1023,7 @@ def page_services():
     body = page_hero("Services", "Shopify and Odoo services with fixed fees",
                      "Five things we sell, each with a written scope. The ranges are what most projects of each "
                      "kind cost; your exact fee comes from a scoping call or a Systems Roadmap and is written into "
-                     "your statement of work.", I.scene_build()) + f"""
+                     "your statement of work.", A.art("logistics", "c-mint", "Illustration: a person wheels a cart of stock past warehouse shelves")) + f"""
 <section class="section-s"><div class="wrap">
   <div class="svc-grid">{service_cards()}</div>
 </div></section>
@@ -1052,6 +1094,8 @@ def page_service(p):
     <p class="eyebrow">{e(p['kind'])}</p>
     <h1>{e(x['h1'])}</h1>
     <p class="lead">{e(p['summary'])}</p>
+    <p class="tldr"><b>In short:</b> a {e(p['name'])} costs {price(*p['price'])} as a fixed fee agreed in writing,
+    and typically takes {e(p['timeline'])}.</p>
     <ul class="fitlist">{fit}</ul>
   </div>
   {card}
@@ -1061,7 +1105,7 @@ def page_service(p):
   <div class="reveal"><h2>What's included</h2><ul class="ticks2 big">{inc}</ul>
   <h3>Not included</h3><p>{e(p['excludes'])}</p></div>
   <div class="reveal" data-i="1"><h2>What you have at the end</h2><ol class="after">{after}</ol>
-  <div class="mini-art">{I.SCENES[x['scene']]()}</div></div>
+  <div class="mini-art">{A.art(*SVC_ART[slug])}</div></div>
 </div></section>
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>Questions about the {e(p['name'])}</h2>{qa_list(faqs)}</div>
@@ -1074,7 +1118,7 @@ def page_service(p):
         "title": f"{p['name']}: {p['kind']} | {NAME}"[:66] if len(f"{p['name']}: {p['kind']} | {NAME}") <= 66
                  else f"{p['name']} | {NAME}",
         "desc": f"{x['h1']}. {p['name']}: {price(*p['price'])}, typically {p['timeline']}. Fixed fee in writing.",
-        "body": body, "schema": [faq_schema(faqs)],
+        "body": body, "schema": [faq_schema(faqs)] + service_schema(p, svc_href(slug)),
     }
 
 
@@ -1104,7 +1148,7 @@ def page_support():
 </div></section>
 <section class="section-s"><div class="wrap two-col">
   <div class="reveal"><h2>How the hours work</h2><p>{e(s['terms'])}</p>
-  <div class="mini-art">{I.scene_handover()}</div></div>
+  <div class="mini-art">{A.art("project-completed", "c-yellow")}</div></div>
   <div class="reveal" data-i="1"><h2>Questions</h2>{qa_list(faqs)}</div>
 </div></section>"""
     return {"path": svc_href("support"), "file": "services/support-block.html",
@@ -1152,7 +1196,7 @@ def page_how():
                     for i, (ic, h, t, d) in enumerate(STEPS))
     body = page_hero("How a project works", "How a Shopify or Odoo project runs, from first call to handover",
                      "The same steps for every project, whatever its size. Each one ends with something you can "
-                     "check before the next begins.", I.scene_handover()) + f"""
+                     "check before the next begins.", A.art("completed-steps", "c-blue", "Illustration: a person ticks off the last step on a timeline")) + f"""
 <section class="section-s"><div class="wrap"><ol class="timeline2">{items}</ol></div></section>
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>Changes to scope</h2>
@@ -1204,7 +1248,7 @@ def page_about():
                    for i, (ic, c, h, t) in enumerate(values))
     body = page_hero("About", f"About {NAME} and {C.FOUNDER}",
                      f"{e(NAME)} is a {e(C.STATE)} business. All work is remote, for businesses anywhere in the "
-                     f"US, during {e(C.TIMEZONE_LABEL)} business hours.", photo or I.scene_call()) + f"""
+                     f"US, during {e(C.TIMEZONE_LABEL)} business hours.", photo or A.art("meeting", "c-mint", "Illustration: two people in a working session")) + f"""
 <section class="section-s"><div class="wrap two-col">
   <div class="reveal">{f'<h2>{e(C.FOUNDER)}</h2>{bio}' if bio else ''}{creds}
   <h2>How {e(NAME)} works</h2>
@@ -1234,7 +1278,7 @@ def page_book():
     cov = "".join(f"<li>{M.icon('check')}<span>{e(x)}</span></li>" for x in cover)
     body = page_hero("Book a call", "Book a scoping call about your Shopify or Odoo setup",
                      f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
-                     f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", I.scene_call(), contact) + f"""
+                     f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", A.art("online-meeting", "c-blue", "Illustration: a person on a video call"), contact) + f"""
 <section class="section-s"><div class="wrap two-col">
   <div class="reveal"><h2>What we cover on the call</h2><ul class="ticks2 big">{cov}</ul></div>
   <div class="reveal" data-i="1"><h2>What happens after</h2>
@@ -1452,7 +1496,7 @@ def write_site_files(indexable):
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     svc = "\n".join(
-        f"- [{p['name']}]({SITE}/services#{p['slug']}): {price(*p['price'])}, typically {p['timeline']}. "
+        f"- [{p['name']}]({SITE}{svc_href(p['slug'])}): {price(*p['price'])}, typically {p['timeline']}. "
         f"{p['summary']}" for p in C.PACKAGES)
     sup = "; ".join(f"{h} {price(k)}, {v}" for h, k, v in C.SUPPORT["options"])
     contact = []
@@ -1466,8 +1510,11 @@ def write_site_files(indexable):
 
 ## Services
 {svc}
-- [Support block]({SITE}/services#support): {sup}.
+- [Support block]({SITE}{svc_href('support')}): {sup}.
 - Larger Odoo projects: {C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from"))}
+
+## Questions people ask
+""" + "\n".join(f"- {q} {fn()}" for q, fn in HOME_FAQS) + """
 
 ## How we work
 - [How a project works]({SITE}/how-it-works)
@@ -1518,7 +1565,7 @@ def check_output(path, text):
             ERRORS.append(f"exclamation mark in a heading in {path}")
     if re.search(r"[\U0001F300-\U0001FAFF☀-➿]", visible):
         ERRORS.append(f"emoji in {path}")
-    if re.search(r"555[-. ]\d{4}", text):
+    if re.search(r"555[-. ]\d{4}", re.sub(r"<svg.*?</svg>", "", text, flags=re.S)):
         ERRORS.append(f"555 number in {path}")
     if re.search(r"part[- ]time|first clients|new business|hourly rate", low):
         ERRORS.append(f"over-sharing phrase in {path}")
