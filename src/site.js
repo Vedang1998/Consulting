@@ -118,6 +118,8 @@
     var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute("aria-controls")); });
     var stages = panels.map(function (p) { var s = p.querySelector("[data-stage]"); return s ? makeStage(s) : null; });
     var cur = 0, visible = false, auto = true, playing = false;
+    // The tabs drive playback, so native controls are only kept for reduced-motion visitors.
+    if (!reduce) panels.forEach(function (p) { var v = p.querySelector("video"); if (v) v.controls = false; });
 
     function prog(i, ms) {
       var bar = tabs[i].querySelector(".tab-prog");
@@ -136,7 +138,20 @@
 
     function play() {
       var st = stages[cur], v = panels[cur].querySelector("video");
-      if (v) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); return; }
+      if (v) {
+        if (reduce) return;
+        playing = true;
+        v.currentTime = 0;
+        var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+        var go = function () { if (v.duration) prog(cur, (v.duration - v.currentTime) * 1000); };
+        if (v.readyState >= 1) go(); else v.addEventListener("loadedmetadata", go, { once: true });
+        v.onended = function () {
+          playing = false;
+          if (!visible) return;
+          if (auto) select((cur + 1) % tabs.length, false); else play();
+        };
+        return;
+      }
       if (!st) return;
       if (reduce) { st.finish(); return; }
       playing = true;
@@ -213,6 +228,7 @@
   all("[data-finder]").forEach(function (f) {
     var ans = {}, started = false, shown = "";
     var empty = f.querySelector("[data-empty]"), reset = f.querySelector("[data-reset]");
+    var fbar = f.querySelector(".fq-bar i");
     f.hidden = false;
 
     function pick() {
@@ -240,6 +256,7 @@
         all(".opt", fs).forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
         ans[n] = b.getAttribute("data-v");
         if (!started) { started = true; track("finder", "start"); }
+        if (fbar) fbar.style.transform = "scaleX(" + Object.keys(ans).length / 3 + ")";
         var next = f.querySelector('[data-q="' + (n + 1) + '"]');
         if (next) next.hidden = false;
         if (ans[1] && ans[2] && ans[3]) show();
@@ -247,6 +264,7 @@
       }
       if (ev.target.closest("[data-reset]")) {
         ans = {}; shown = "";
+        if (fbar) fbar.style.transform = "scaleX(0)";
         all(".opt", f).forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
         all("[data-q]", f).forEach(function (q) { q.hidden = q.getAttribute("data-q") !== "1"; });
         all("[data-result]", f).forEach(function (r) { r.hidden = true; });

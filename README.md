@@ -11,6 +11,8 @@ Workers Builds from this repository.
 | `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, demo videos. Most changes happen here. `# CONFIRM` marks values Vee must supply. |
 | `src/build.py` | Page templates and copy, site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
 | `src/mockups.py` | The drawn workflow demos, sample documents, small illustrations and the icon helper. |
+| `src/illus.py` | Corporate Memphis people scenes, drawn in code as SVG (hero, problems, call, handover, build). |
+| `src/media/odoo/` | Real Odoo 19 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. |
 | `src/site.css` | Design system, light and dark. No inline styles anywhere (the CSP is `style-src 'self'`). |
 | `src/site.js` | Demo tabs, service finder, scroll reveals, the first-party visit counter and the privacy opt-out. |
 | `src/fonts/` | Self-hosted Archivo, IBM Plex Sans and IBM Plex Mono (OFL). |
@@ -59,6 +61,8 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
 - Prices: change 08-Service-Catalog first, then 05's math, then `PRICES` in config, in one PR.
 - Promises (reply time, call length, proposal time): change `PROMISES` once; every page follows.
 - A real screen recording replaces a drawn demo when its file is set in `DEMO_VIDEOS`.
+- Real Odoo recordings live in `ODOO_REEL`, real screenshots in `SCREENS`. Record only in a demo database with
+  sample data, never in a client system. Real Shopify footage needs a Shopify development store, recorded by Vee.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
 

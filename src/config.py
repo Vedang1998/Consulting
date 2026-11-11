@@ -248,3 +248,28 @@ DEMO_VIDEOS = {}  # CONFIRM
 # Pages last changed on (ISO date). Shown as "Updated" only on guides; the sitemap
 # omits lastmod unless a real date is set here.
 LAST_CHANGED = {}
+
+# Real product screenshots, key -> (file under src/, alt text). Filled only with genuine
+# captures of sample data; empty keys fall back to the drawn screens.
+SCREENS = {
+    "inventory": ("media/odoo/inventory.webp", "Odoo 19 product catalog with prices and stock on hand. Sample data."),
+    "sales": ("media/odoo/invoice.webp", "Odoo 19 customer invoice for a sales order, posted and marked paid. Sample data."),
+    "delivery": ("media/odoo/delivery.webp", "Odoo 19 delivery order WH/OUT/00046 validated and done. Sample data."),
+}
+
+# Screen recordings made in our own Odoo 19 Community demo database (Odoo's sample data).
+# (key, tab label, icon, one-line description, video file under src/, poster file under src/)
+ODOO_REEL = [
+    ("sale", "Quote to delivery", "receipt",
+     "A quotation is confirmed as a sales order, then the warehouse validates the delivery.",
+     "media/odoo/sale.mp4", "media/odoo/sale-poster.jpg"),
+    ("purchase", "Purchase to stock", "boxes",
+     "A purchase order for 20 chairs is confirmed, then received into stock.",
+     "media/odoo/purchase.mp4", "media/odoo/purchase-poster.jpg"),
+    ("pos", "A sale at the register", "store",
+     "Four items rung up in Odoo Point of Sale and paid in cash, with the receipt.",
+     "media/odoo/pos.mp4", "media/odoo/pos-poster.jpg"),
+    ("invoice", "Invoice to paid", "file-check-2",
+     "The delivered order is invoiced, posted and registered as paid.",
+     "media/odoo/invoice.mp4", "media/odoo/invoice-poster.jpg"),
+]
