@@ -1005,6 +1005,7 @@ html:not(.js) .mv .bar i { transform: none; }
 .sim-state .tag.bad { color: var(--bad); }
 .sim-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .sim-acts .link-btn { margin: 0 0 0 auto; }
+.sim-acts .opt[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .sim-log { max-height: 168px; overflow-y: auto; margin: 18px 0 0; padding: 12px 14px; list-style: none; background: var(--dark); color: var(--on-dark); border-radius: 12px; font: 400 .8rem/1.6 var(--f-mono); }
 .sim-log b { margin-right: 10px; font-weight: 500; color: var(--marker); }
 .sim-note { max-width: 860px; margin: 14px auto 0; text-align: center; color: var(--muted); }
