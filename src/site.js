@@ -118,6 +118,8 @@
     var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute("aria-controls")); });
     var stages = panels.map(function (p) { var s = p.querySelector("[data-stage]"); return s ? makeStage(s) : null; });
     var cur = 0, visible = false, auto = true, playing = false;
+    // The tabs drive playback, so native controls are only kept for reduced-motion visitors.
+    if (!reduce) panels.forEach(function (p) { var v = p.querySelector("video"); if (v) v.controls = false; });
 
     function prog(i, ms) {
       var bar = tabs[i].querySelector(".tab-prog");
@@ -136,7 +138,20 @@
 
     function play() {
       var st = stages[cur], v = panels[cur].querySelector("video");
-      if (v) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); return; }
+      if (v) {
+        if (reduce) return;
+        playing = true;
+        v.currentTime = 0;
+        var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+        var go = function () { if (v.duration) prog(cur, (v.duration - v.currentTime) * 1000); };
+        if (v.readyState >= 1) go(); else v.addEventListener("loadedmetadata", go, { once: true });
+        v.onended = function () {
+          playing = false;
+          if (!visible) return;
+          if (auto) select((cur + 1) % tabs.length, false); else play();
+        };
+        return;
+      }
       if (!st) return;
       if (reduce) { st.finish(); return; }
       playing = true;
@@ -213,10 +228,12 @@
   all("[data-finder]").forEach(function (f) {
     var ans = {}, started = false, shown = "";
     var empty = f.querySelector("[data-empty]"), reset = f.querySelector("[data-reset]");
+    var fbar = f.querySelector(".fq-bar i");
     f.hidden = false;
 
     function pick() {
       if (ans[2] === "l") return "nofit";
+      if (ans[1] === "explore") return ans[2] === "s" ? "notyet" : "systems-roadmap";
       if (ans[1] === "move") return "store-move";
       if (ans[1] === "odoo") return ans[2] === "m" ? "systems-roadmap" : "odoo-launch";
       if (ans[1] === "connect") return "connection";
@@ -240,6 +257,7 @@
         all(".opt", fs).forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
         ans[n] = b.getAttribute("data-v");
         if (!started) { started = true; track("finder", "start"); }
+        if (fbar) fbar.style.transform = "scaleX(" + Object.keys(ans).length / 3 + ")";
         var next = f.querySelector('[data-q="' + (n + 1) + '"]');
         if (next) next.hidden = false;
         if (ans[1] && ans[2] && ans[3]) show();
@@ -247,6 +265,7 @@
       }
       if (ev.target.closest("[data-reset]")) {
         ans = {}; shown = "";
+        if (fbar) fbar.style.transform = "scaleX(0)";
         all(".opt", f).forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
         all("[data-q]", f).forEach(function (q) { q.hidden = q.getAttribute("data-q") !== "1"; });
         all("[data-result]", f).forEach(function (r) { r.hidden = true; });
@@ -300,6 +319,132 @@
   document.addEventListener("click", function (ev) {
     var a = ev.target.closest && ev.target.closest("[data-track]");
     if (a) track(a.getAttribute("data-track"), a.getAttribute("data-where"));
+  });
+
+  // ---- Guided Odoo tours: real screens, one outlined click target per step -----------------------
+  all("[data-tour]").forEach(function (tour) {
+    tour.classList.add("live");
+    all("[data-tour-panel]", tour).forEach(function (panel) {
+      var imgs = all("img[data-step]", panel), items = all(".tour-steps li", panel);
+      var hot = panel.querySelector("[data-hot]"), nav = panel.querySelector("[data-tour-nav]");
+      var count = panel.querySelector("[data-count]"), next = panel.querySelector("[data-next]");
+      var prev = panel.querySelector("[data-prev]"), cur = 1, total = imgs.length, key = panel.getAttribute("data-tour-panel");
+      function go(n) {
+        cur = Math.max(1, Math.min(total, n));
+        imgs.forEach(function (im, i) { im.hidden = i !== cur - 1; });
+        items.forEach(function (li, i) { li.classList.toggle("on", i === cur - 1); });
+        var im = imgs[cur - 1], box = (im.getAttribute("data-box") || "").split(",").map(Number);
+        var last = cur === total;
+        hot.hidden = last || box.length !== 4;
+        if (!hot.hidden) {
+          hot.style.left = box[0] + "%"; hot.style.top = box[1] + "%";
+          hot.style.width = box[2] + "%"; hot.style.height = box[3] + "%";
+          hot.querySelector(".vh").textContent = "Next step: " + im.getAttribute("data-target");
+        }
+        count.textContent = "Step " + cur + " of " + total;
+        next.textContent = last ? "Start again" : "Next step";
+        prev.disabled = cur === 1;
+        if (last) track("demo", "tour:" + key + ":done");
+      }
+      nav.hidden = false;
+      hot.addEventListener("click", function () { go(cur + 1); });
+      next.addEventListener("click", function () { go(cur === total ? 1 : cur + 1); });
+      prev.addEventListener("click", function () { go(cur - 1); });
+      items.forEach(function (li) {
+        li.querySelector("[data-go]").addEventListener("click", function () { go(+li.getAttribute("data-step")); });
+      });
+      go(1);
+    });
+    var tabs = all("[data-tour-tab]", tour);
+    tabs.forEach(function (t) {
+      t.addEventListener("click", function () {
+        tabs.forEach(function (o) { o.setAttribute("aria-selected", o === t ? "true" : "false"); });
+        all("[data-tour-panel]", tour).forEach(function (p) {
+          p.hidden = p.getAttribute("data-tour-panel") !== t.getAttribute("data-tour-tab");
+        });
+        track("demo", "tour:" + t.getAttribute("data-tour-tab"));
+      });
+    });
+  });
+
+  // ---- Sync model: Odoo holds the count; Shopify sells and gets the count back ---------------------
+  all("[data-sim]").forEach(function (sim) {
+    var shopEl = sim.querySelector("[data-shop]"), odooEl = sim.querySelector("[data-odoo]");
+    var stateEl = sim.querySelector("[data-state]"), log = sim.querySelector("[data-log]");
+    var wire = sim.querySelector("[data-wire]"), offBtn = sim.querySelector('[data-act="off"]');
+    var START = 33, shop, odoo, on, queue, held, t, used = false;
+    function clock() {
+      t += 7 + Math.floor(Math.random() * 30);
+      var h = 9 + Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = t % 60;
+      return [h, m, s].map(function (v) { return (v < 10 ? "0" : "") + v; }).join(":");
+    }
+    function line(text) {
+      var li = document.createElement("li"), b = document.createElement("b");
+      b.textContent = clock(); li.appendChild(b); li.appendChild(document.createTextNode(text));
+      log.appendChild(li); log.scrollTop = log.scrollHeight;
+    }
+    function pulse() { wire.classList.remove("go"); void wire.offsetWidth; wire.classList.add("go"); }
+    function paint() {
+      shopEl.textContent = shop; odooEl.textContent = odoo;
+      var gap = Math.abs(shop - odoo);
+      stateEl.textContent = "";
+      var tag = document.createElement("span");
+      tag.className = "tag " + (gap ? "bad" : "ok");
+      tag.textContent = gap ? "Out of step by " + gap : "In step";
+      stateEl.appendChild(tag);
+      var msg = " Both systems show the same count.";
+      var waiting = queue.length + " order" + (queue.length === 1 ? "" : "s") + " waiting in Shopify";
+      if (gap && queue.length && held) msg = " " + waiting + ", and " + held + " received units Shopify can't sell yet. Neither count is right.";
+      else if (gap && queue.length) msg = " " + waiting + ". Until " + (queue.length === 1 ? "it reaches" : "they reach") + " Odoo, Odoo counts stock that's already sold.";
+      else if (gap) msg = " Shopify shows less than you have, so it may stop selling too early.";
+      stateEl.appendChild(document.createTextNode(msg));
+      wire.classList.toggle("off", !on);
+      offBtn.setAttribute("aria-pressed", on ? "false" : "true");
+    }
+    function reset() {
+      shop = START; odoo = START; on = true; queue = []; held = 0; t = 0;
+      log.textContent = ""; line("Connector running. Odoo holds the stock count."); paint();
+    }
+    function sell(where) {
+      if (shop <= 0) { line("Shopify shows 0 available, so the item can't be sold."); return; }
+      shop -= 1;
+      line("Shopify: 1 sold " + (where === "pos" ? "at the register, Store 1" : "online") + ".");
+      if (on) {
+        odoo -= 1; pulse();
+        line("Odoo: order received, delivery created, on hand " + odoo + ".");
+      } else {
+        queue.push(where);
+        line("Connector off: the order waits in Shopify. Odoo still shows " + odoo + ".");
+      }
+      paint();
+    }
+    sim.addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-act]");
+      if (!b) return;
+      var act = b.getAttribute("data-act");
+      if (!used) { used = true; track("demo", "sim:start"); }
+      if (act === "web" || act === "pos") sell(act);
+      if (act === "buy") {
+        odoo += 10;
+        line("Odoo: 10 received from the vendor, on hand " + odoo + ".");
+        if (on) { shop = odoo; pulse(); line("Shopify: available updated to " + shop + "."); }
+        else { held += 10; line("Connector off: Shopify still shows " + shop + "."); }
+        paint();
+      }
+      if (act === "off") {
+        on = !on;
+        if (!on) line("Connector switched off.");
+        else {
+          line("Connector back on. " + queue.length + " waiting order" + (queue.length === 1 ? "" : "s") + " sent to Odoo.");
+          odoo -= queue.length; queue = []; held = 0; shop = odoo; pulse();
+          line("Odoo on hand " + odoo + ", pushed to Shopify. Back in step.");
+        }
+        paint();
+      }
+      if (act === "reset") reset();
+    });
+    sim.hidden = false;
+    reset();
   });
 
   var btn = document.getElementById("optout");

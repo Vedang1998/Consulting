@@ -43,7 +43,7 @@ PROFILES = [
 # ---------------------------------------------------------------------------
 
 ABOUT_BIO = []  # CONFIRM: 2 to 4 paragraphs in Vee's words: real roles, real platform versions, real years. No part-time or "new business" framing.
-ABOUT_CREDENTIALS = []  # CONFIRM: only certifications currently held, e.g. ("Odoo 19 Functional Certification", "2026")
+ABOUT_CREDENTIALS = []  # CONFIRM: only certifications currently held, e.g. ("Odoo 20 Functional Certification", "2026")
 PHOTO = ""  # CONFIRM: path under src/ to a real photo of Vee, or blank. No AI people.
 
 # ---------------------------------------------------------------------------
@@ -248,3 +248,56 @@ DEMO_VIDEOS = {}  # CONFIRM
 # Pages last changed on (ISO date). Shown as "Updated" only on guides; the sitemap
 # omits lastmod unless a real date is set here.
 LAST_CHANGED = {}
+
+# Real product screenshots, key -> (file under src/, alt text). Filled only with genuine
+# captures of sample data; empty keys fall back to the drawn screens.
+SCREENS = {
+    "hero": ("media/odoo/hero-products.webp", "Odoo 20 Inventory products with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
+    "hero-m": ("media/odoo/hero-products-m.webp", ""),
+    "inventory": ("media/odoo/stock-list.webp", "Odoo 20 product list with sales price, on hand and forecasted quantities. Sample data."),
+    "sales": ("media/odoo/invoice.webp", "Odoo 20 customer invoice INV/2026/00011 for sales order S00027, posted and marked paid. Sample data."),
+    "delivery": ("media/odoo/delivery.webp", "Odoo 20 delivery order WH/OUT/00074 for sales order S00027, done, with 3 Large Cabinets shipped. Sample data."),
+}
+
+# Screen recordings made in our own Odoo 20 Community demo database (Odoo's sample data).
+# (key, tab label, icon, one-line description, video file under src/, poster file under src/)
+ODOO_REEL = [
+    ("sale", "Quote to delivery", "receipt",
+     "A quotation is confirmed as a sales order, then the warehouse validates the delivery.",
+     "media/odoo/sale.mp4", "media/odoo/sale-poster.jpg"),
+    ("purchase", "Purchase to stock", "boxes",
+     "A purchase order for 20 chairs is confirmed, then received into stock.",
+     "media/odoo/purchase.mp4", "media/odoo/purchase-poster.jpg"),
+    ("pos", "A sale at the register", "store",
+     "Three items rung up in Odoo Point of Sale and paid in cash.",
+     "media/odoo/pos.mp4", "media/odoo/pos-poster.jpg"),
+    ("invoice", "Invoice to paid", "file-check-2",
+     "The delivered order is invoiced, posted and registered as paid.",
+     "media/odoo/invoice.mp4", "media/odoo/invoice-poster.jpg"),
+]
+
+# Guided tours on /odoo: real Odoo 20 screens from our demo database (Odoo's sample data), captured at
+# 960x600 CSS px at 2x. box = the next click target as left, top, width, height in percent of the screen.
+# (key, tab label, app shown in the window bar, [(image, box, target label, caption), ...])
+ODOO_TOURS = [
+    ("sale", "A web order to a delivery", "Sales", [
+        ("media/odoo/tour/sale-1.webp", (17.65, 19.54, 7.92, 5.5), "Confirm",
+         "This is a quotation for 3 Large Cabinets. Orders from your Shopify store land on this same screen. Confirm turns the quote into a sales order."),
+        ("media/odoo/tour/sale-2.webp", (1.67, 16.71, 10.94, 5.5), "Delivery",
+         "The order is confirmed and Odoo sets aside 3 cabinets in the warehouse. The Delivery button opens the warehouse's list of what to ship."),
+        ("media/odoo/tour/sale-3.webp", (1.67, 25.04, 7.88, 5.5), "Validate",
+         "The warehouse sees what to ship and that all 3 are in stock. Validate once the boxes leave the building."),
+        ("media/odoo/tour/sale-4.webp", (88.81, 25.54, 9.21, 4.5), "Done",
+         "Done. On hand for the Large Cabinet drops by 3. With a connector in place, this is the count your Shopify store shows next."),
+    ]),
+    ("buy", "A purchase order to stock", "Purchase", [
+        ("media/odoo/tour/buy-1.webp", (11.27, 25.04, 12.29, 5.5), "Confirm Order",
+         "A request for quotation to Wood Corner for 20 Office Chairs. Confirm Order turns it into a purchase order."),
+        ("media/odoo/tour/buy-2.webp", (17.13, 16.71, 10.94, 5.5), "Receipt",
+         "The order is confirmed and Odoo expects the chairs on the arrival date. The Receipt button opens what the warehouse should receive."),
+        ("media/odoo/tour/buy-3.webp", (1.67, 25.04, 7.88, 5.5), "Validate",
+         "The chairs arrive. The receipt shows 20 ordered and 20 counted. Validate puts them on the shelf in Odoo."),
+        ("media/odoo/tour/buy-4.webp", (88.81, 25.54, 9.21, 4.5), "Done",
+         "Done. On hand for Office Chair Black goes up by 20, and the vendor's bill can be matched against this receipt."),
+    ]),
+]
