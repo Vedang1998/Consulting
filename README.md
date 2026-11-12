@@ -11,6 +11,7 @@ Workers Builds from this repository.
 | `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, demo videos. Most changes happen here. `# CONFIRM` marks values Vee must supply. |
 | `src/build.py` | Page templates and copy, site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
 | `src/content.py` | Resources copy: the FAQ answers (`FAQ_SHOPIFY`, `FAQ_ODOO`, `FAQ_US`), the guides (`GUIDES`) and the video chapters and transcripts (`VIDEOS`). Prices and limits carry the date they were checked. |
+| `src/spot.py` | Custom spot icons (27, drawn for this site, no third-party license) and Memphis shapes. `SPOT_FOR` maps the Lucide names the pages pass to the custom icon that replaces them in tiles, doors, cards and service links. |
 | `src/mockups.py` | The drawn workflow demos, sample documents, small illustrations and the icon helper. |
 | `src/art/`, `src/art.py` | People illustrations from unDraw (undraw.co, free for commercial use, no attribution needed under the unDraw license), recoloured to the brand palette at build and set on CSS Memphis backdrops. Don't repackage them as an illustration set. |
 | `src/media/odoo/` | Real Odoo 20 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. `tour/` holds the guided tour steps listed in `ODOO_TOURS`. |
@@ -83,6 +84,10 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
 - Shopify plan prices for the plan picker live in `SHOPIFY_PLANS` in build.py, from
   `research/R-Shopify-plans-checked.md`. Connector facts for guide 1 come from
   `research/R-Shopify-Odoo-connectors-checked.md`. Re-check both before changing them.
+- Icons: tiles, doors, cards and service links call `ico(name)`, which uses the custom icon from `spot.py` when one
+  exists and Lucide otherwise. Small inline icons (arrows, checks, chevrons, 16px labels) stay Lucide. A new concept
+  icon gets drawn in `spot.py` in the same style (ink outline, 48-unit grid, offset color block) and added to
+  `SPOT_FOR`, so no list mixes the two sets. Hero shapes come from `hero_shapes()` on pages without an illustration.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
 
