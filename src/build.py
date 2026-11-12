@@ -1175,7 +1175,7 @@ def page_service(p):
     <p class="eyebrow">{e(p['kind'])}</p>
     <h1>{e(x['h1'])}</h1>
     <p class="lead">{e(p['summary'])}</p>
-    <p class="tldr"><b>In short:</b> a {e(p['name'])} costs {price(*p['price'])} as a fixed fee agreed in writing,
+    <p class="tldr">A {e(p['name'])} costs {price(*p['price'])} as a fixed fee agreed in writing,
     and typically takes {e(p['timeline'])}.</p>
     <ul class="fitlist">{fit}</ul>
   </div>
