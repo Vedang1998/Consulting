@@ -368,7 +368,7 @@ def layout(page, assets):
 <meta property="og:image" content="{SITE}/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="A storefront, warehouse shelves and a ledger joined by one path">
+<meta property="og:image:alt" content="A shop, a box of stock and an invoice joined by one dotted path">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#141c2b">
 <meta name="color-scheme" content="light">
