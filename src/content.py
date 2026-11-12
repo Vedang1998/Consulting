@@ -261,7 +261,7 @@ GUIDES = [
     {
         "slug": "shopify-connectors-odoo-online",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Which Shopify connectors work with Odoo Online",
         "seo_title": "Shopify connectors that work with Odoo Online",
         "desc": ("Odoo-side Shopify connectors need Odoo.sh, Odoo's own included. Apps on the Shopify side can "
@@ -363,7 +363,7 @@ If you take a handful of orders a day, keep stock in Shopify and use Odoo mainly
     {
         "slug": "odoo-online-vs-odoo-sh",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "Odoo Online vs Odoo.sh: when a connector or custom module forces the move",
         "seo_title": "Odoo Online vs Odoo.sh: when you have to move",
         "desc": ("Odoo Online includes hosting but runs no third-party modules. What forces a move to Odoo.sh, what "
@@ -440,7 +440,7 @@ For a business with 5 to 15 users on Odoo's standard apps, Online is the lower-e
     {
         "slug": "quickbooks-to-odoo-data",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "Moving from QuickBooks to Odoo: the data you need before you start",
         "seo_title": "QuickBooks to Odoo: the data you need first",
         "desc": ("The lists, balances and counts to pull from QuickBooks before an Odoo setup, how to pick a cutover "
@@ -512,7 +512,7 @@ Some businesses do need their history in Odoo. A lender or auditor may want seve
     {
         "slug": "shopify-pos-vs-odoo-pos",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Shopify POS vs Odoo POS for a two-location retailer",
         "seo_title": "Shopify POS vs Odoo POS for two locations",
         "desc": ("How Shopify POS and Odoo Point of Sale compare for a two-location retailer: hardware, card "
