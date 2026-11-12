@@ -1183,6 +1183,94 @@ VIDEOS = [
              "The invoice now carries the Paid stamp."),
         ],
     },
+    {
+        "key": "locations", "slug": "odoo-stock-two-locations", "platform": "odoo", "shelf": "stock",
+        "title": "Odoo 20: one product stocked in two locations",
+        "seconds": 49.8, "recorded": "2026-11-12",
+        "guide": "shopify-odoo-inventory-sync", "tour": "",
+        "chapters": [
+            (0, "Open Cabinet with Doors",
+             "The product form for Cabinet with Doors shows 45 units on hand."),
+            (4, "See stock by location",
+             "Clicking the on-hand count splits it by location: 33 in WH/Stock, the main warehouse, and 12 in "
+             "SHOP/Stock, the shop."),
+            (7, "Start an internal transfer",
+             "Operations, then Internal, opens a new internal transfer that starts from WH/Stock."),
+            (14, "Send 5 to the shop",
+             "The destination is set to SHOP/Stock, and 5 Cabinet with Doors go on the transfer."),
+            (26, "Confirm and validate",
+             "Mark as To Do confirms the transfer, and Validate completes it as WH/INT/00001."),
+            (33, "Check the counts again",
+             "Back on the product, WH/Stock now holds 28 and SHOP/Stock holds 17. The total is still 45."),
+        ],
+    },
+    {
+        "key": "count", "slug": "odoo-stock-count", "platform": "odoo", "shelf": "stock",
+        "title": "Odoo 20: counting stock and fixing the difference",
+        "seconds": 25.3, "recorded": "2026-11-12",
+        "guide": "shopify-odoo-inventory-sync", "tour": "",
+        "chapters": [
+            (0, "Open Physical Inventory",
+             "From the Inventory overview, Operations, then Physical Inventory lists each product in each location "
+             "with its on-hand count."),
+            (7, "Find Office Chair Black",
+             "A search narrows the list to Office Chair Black in WH/Stock, with 80 on hand."),
+            (10, "Enter the count",
+             "The counted quantity goes in as 78 and is saved. Odoo shows the difference as -2."),
+            (15, "Apply the count",
+             "Apply sets on hand to 78."),
+            (18, "Check the history",
+             "History lists the adjustment: 2 chairs out of WH/Stock into Odoo's inventory adjustment location, "
+             "dated the day of the count."),
+        ],
+    },
+    {
+        "key": "return", "slug": "odoo-return-and-refund", "platform": "odoo", "shelf": "stock",
+        "title": "Odoo 20: a customer return and refund",
+        "seconds": 43.4, "recorded": "2026-11-12",
+        "guide": "odoo-20-changes", "tour": "",
+        "chapters": [
+            (0, "Open sales order S00026",
+             "Sales order S00026 for Azure Interior shows 3 Large Cabinets, all delivered and invoiced."),
+            (4, "Open the delivery",
+             "The Delivery button opens WH/OUT/00073, the finished delivery for those 3 cabinets."),
+            (7, "Create the return",
+             "Return creates WH/IN/00016, a receipt back into WH/Stock, and the quantity is set to 1 cabinet."),
+            (14, "Validate the return",
+             "Validate puts the cabinet back in stock."),
+            (18, "Back on the order",
+             "S00026 now shows 2 delivered and 3 invoiced, so 1 cabinet is due a refund."),
+            (24, "Create the credit note",
+             "Create Invoice makes a draft credit note for the returned cabinet: $368.00 with tax."),
+            (31, "Post the credit note",
+             "Confirm posts it as RINV/2026/00005."),
+            (35, "Refund the customer",
+             "Pay opens the payment form for the full $368.00, and Create Payment records the refund. The credit "
+             "note now carries the Paid stamp."),
+        ],
+    },
+    {
+        "key": "reports", "slug": "odoo-weekly-reports", "platform": "odoo", "shelf": "stock",
+        "title": "Odoo 20: the weekly sales and stock reports",
+        "seconds": 44.4, "recorded": "2026-11-12",
+        "guide": "when-you-dont-need-an-erp", "tour": "",
+        "chapters": [
+            (0, "Open sales by product",
+             "In Sales, Reporting, then Products opens a chart of the quantity ordered per product over the last "
+             "365 days."),
+            (7, "Switch to a table",
+             "The pivot view lists each product. Folding the sales team columns leaves one total per product."),
+            (12, "Add revenue and sort",
+             "Measures adds Untaxed Total, and sorting on it puts the top seller by revenue first: Acoustic Bloc "
+             "Screens, 47 units for $13,635."),
+            (21, "Open the stock report",
+             "In Inventory, Reporting, then Stock lists every product with its on-hand, free-to-use and "
+             "forecasted quantities."),
+            (34, "Find what will run short",
+             "The Negative Forecasted Quantity filter leaves 6 products whose open orders are larger than their "
+             "stock. Office Lamp has 19 on hand and a forecast of -182."),
+        ],
+    },
 ]
 
 

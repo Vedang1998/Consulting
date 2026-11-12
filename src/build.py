@@ -132,10 +132,10 @@ def build_assets():
         shutil.copy(SRC / fname, DIST / fname)
     if (SRC / "media").exists():
         shutil.copytree(SRC / "media", DIST / "media", dirs_exist_ok=True)
-    for row in C.ODOO_REEL:
+    for row in C.ODOO_REEL + C.ODOO_CLIPS:
         for fname in (row[4], row[5], row[4][:-4] + ".webm"):
             if not (SRC / fname).exists():
-                ERRORS.append(f"ODOO_REEL[{row[0]!r}]: {fname} is not in src/")
+                ERRORS.append(f"ODOO_REEL/ODOO_CLIPS[{row[0]!r}]: {fname} is not in src/")
     for key, (fname, _alt) in C.SCREENS.items():
         if not (SRC / fname).exists():
             ERRORS.append(f"SCREENS[{key!r}]: {fname} is not in src/")
@@ -774,6 +774,19 @@ def odoo_reel():
 </div>"""
 
 
+def more_recordings(keys, head="More recordings from the same database"):
+    """Link rows to the video pages of recordings that sit outside the tabbed reel."""
+    by = {v["key"]: v for v in R.VIDEOS}
+    links = []
+    for k in keys:
+        v, r = by[k], reel(k)
+        links.append(f'<a class="other c-mint" href="/videos/{v["slug"]}">{ico(r["ic"])}<span><b>{e(r["label"])}</b>'
+                     f'<em>Screen recording, {mmss(v["seconds"])}</em></span></a>')
+    cls = {1: "others others1", 3: "others others3", 4: "others others4"}.get(len(links), "others")
+    return (f'<div class="more-rec reveal"><p class="eyebrow">{e(head)}</p><!--reuse--><div class="{cls}">'
+            f'{"".join(links)}</div><!--/reuse--></div>')
+
+
 def feature_rows():
     rows = [
         ("Stock", "c-mint", "boxes", "One count for the shelf, the website and the books",
@@ -1135,9 +1148,11 @@ def page_services():
 
 def service_art(slug):
     if slug == "connection":
-        return f'<div class="svc-demo">{M.demo_tabs(C.DEMO_VIDEOS)}</div>'
+        return (f'<div class="svc-demo">{M.demo_tabs(C.DEMO_VIDEOS)}</div>'
+                f'{more_recordings(["locations"], "Recorded in Odoo 20")}')
     if slug == "odoo-launch":
-        return f'<div class="sec-head reveal"><p class="eyebrow">Recorded in Odoo 20</p><h2>What your team will do in Odoo</h2></div>{odoo_reel()}'
+        return (f'<div class="sec-head reveal"><p class="eyebrow">Recorded in Odoo 20</p><h2>What your team will do in '
+                f'Odoo</h2></div>{odoo_reel()}{more_recordings(["count", "return", "reports"])}')
     if slug == "store-move":
         return f'<div class="paper-solo">{M.MINIS["store-move"]()}</div>'
     if slug == "systems-roadmap":
@@ -1514,6 +1529,7 @@ def page_odoo():
 <section class="section-s"><div class="wrap">
   <div class="sec-head reveal"><p class="eyebrow">Recorded in Odoo 20</p><h2>Watch the everyday work</h2></div>
   <div class="reveal">{odoo_reel()}</div>
+  {more_recordings(["locations", "count", "return", "reports"])}
 </div></section>
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>Odoo Online, Odoo.sh or your own server</h2>
@@ -1998,7 +2014,7 @@ def jpeg_size(path):
 
 
 def reel(key):
-    for k, lab, ic, desc, vid, poster in C.ODOO_REEL:
+    for k, lab, ic, desc, vid, poster in C.ODOO_REEL + C.ODOO_CLIPS:
         if k == key:
             return {"label": lab, "ic": ic, "desc": desc, "vid": vid, "poster": poster}
     raise KeyError(key)
@@ -2213,20 +2229,31 @@ def page_faq(slug, label_, platform, h1, lead, lst):
 
 def page_videos():
     trail, crs = crumbs([("Resources", "/resources"), ("Videos", "/videos")])
-    cards = "".join(video_card(v, i) for i, v in enumerate(R.VIDEOS))
+    shelves = [("flow", "Odoo 20, from order to payment"), ("stock", "Odoo 20, stock, returns and reports")]
+    secs = []
+    for n, (key, h2) in enumerate(shelves):
+        vids = [v for v in R.VIDEOS if v.get("shelf", "flow") == key]
+        if not vids:
+            continue
+        cards = "".join(video_card(v, i) for i, v in enumerate(vids))
+        secs.append(f"""
+<section class="section-s{' tint' if n % 2 else ''}"><div class="wrap">
+  <div class="sec-head reveal"><p class="eyebrow">{ptag('odoo')}Walkthroughs</p><h2>{e(h2)}</h2></div>
+  <ul class="vgrid">{cards}</ul>
+</div></section>""")
+    days = sorted({v["recorded"] for v in R.VIDEOS})
+    when = nice_date(days[0]) if len(days) == 1 else f"between {nice_date(days[0])} and {nice_date(days[-1])}"
     body = hub_hero(trail, "Videos", "Screen recordings of Odoo 20 at work",
                     "Short, silent recordings made in our own Odoo 20 Community database with Odoo's sample data. "
-                    "Each one has chapters and a written version of what happens on screen.") + f"""
+                    "Each one has chapters and a written version of what happens on screen.") + "".join(secs) + f"""
 <section class="section-s"><div class="wrap">
-  <div class="sec-head reveal"><p class="eyebrow">{ptag('odoo')}Walkthroughs</p><h2>Odoo 20, from order to payment</h2></div>
-  <ul class="vgrid">{cards}</ul>
-  <p class="small"><span class="tag">Sample data, not a client</span>Recorded {nice_date(R.VIDEOS[0]['recorded'])}.
+  <p class="small"><span class="tag">Sample data, not a client</span>Recorded {when}.
   Want to click instead of watch? <a href="/tools/odoo-tours">Try the guided tours</a>.</p>
 </div></section>"""
     return {"path": "/videos", "file": "videos.html", "h": "Videos",
             "title": f"Odoo 20 screen recordings | {NAME}",
-            "desc": ("Short screen recordings of Odoo 20 with sample data: a quote to a delivery, a purchase to stock, "
-                     "a register sale and an invoice marked paid."),
+            "desc": ("Short screen recordings of Odoo 20 with sample data: orders, purchases, invoices, stock moves, "
+                     "a stock count, a return and weekly reports."),
             "body": body, "schema": [crs]}
 
 
