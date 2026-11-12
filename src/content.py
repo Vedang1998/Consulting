@@ -840,6 +840,261 @@ If a module you rely on has no 20.0 version yet, or you're in the middle of a bu
         "notes": ["AI credit pack prices sit on iap.odoo.com, which this workspace can't reach, so the guide gives none.",
                   "Title changed from the plan's 'what AI credits cost' to 'what the AI features cost', since the plan "
                   "change is the cost that matters and credit prices weren't readable."],
+    },    {
+        "slug": "odoo-standard-vs-custom-plan",
+        "platform": "odoo",
+        "status": "draft",
+        "title": "Odoo Standard vs Custom plan for a 10-user business",
+        "seo_title": "Odoo Standard vs Custom plan for 10 users",
+        "desc": ("What Odoo's Custom plan adds over Standard, what each costs for 10 users, and the five things "
+                 "that move a database onto Custom. US prices checked on odoo.com."),
+        "checked": "2026-11-12",
+        "short": ("Standard is enough if you run Odoo's own apps on Odoo Online and nothing outside Odoo reads or "
+                  "writes your data. You need Custom for Studio, a second company, Odoo.sh or your own server, outside "
+                  "apps that use the External API, and the AI app. For 10 users paid yearly, Custom costs $241 more a "
+                  "month in the first year."),
+        "body": """
+## What each plan includes
+
+| | Standard | Custom |
+| Per user, paid yearly, first 12 months | $24.90 a month | $49.00 a month |
+| Per user, paid yearly, after that | $31.10 a month | $61.00 a month |
+| Apps | All of Odoo's apps | All of Odoo's apps |
+| Hosting | Odoo Online only | Odoo Online, Odoo.sh or your own server |
+| Studio | Not included | Included |
+| More than one company | Not included | Included |
+| External API for outside apps | Not included | Included |
+| AI agents | Not included | Included, with credits bought separately |
+
+Odoo's US prices from odoo.com/pricing, checked Nov 11, 2026. AI details from Odoo's AI documentation, read Nov 12, 2026.
+
+## What 10 users pay
+
+| Billing | Standard | Custom | Difference |
+| Paid yearly, first 12 months | $249 a month | $490 a month | $241 a month |
+| Paid yearly, after that | $311 a month | $610 a month | $299 a month |
+| Paid monthly, first 12 months | $311 a month | $611 a month | $300 a month |
+| Paid monthly, after that | $389 a month | $762 a month | $373 a month |
+
+Across the first year, paid yearly, that's $2,988 on Standard and $5,880 on Custom. Odoo's footnote says the lower first-year price is valid for 12 months for the users in the first order, so budget the regular price for year two.
+
+## Five things that move a database to Custom
+
+1. Installing Studio, to add your own fields or screens.
+2. Adding a second company.
+3. Installing the AI app. Odoo's documentation says this triggers an upsell to Custom on a Standard database.
+4. Hosting on Odoo.sh or your own server, usually because you need a module that isn't one of Odoo's standard apps.
+5. Connecting an outside app that reads or updates Odoo records through the API. Most Shopify connectors that run on the Shopify side work this way.
+
+The plan applies to the whole database. If one of these happens, every user moves to the Custom price, not only the person who needed it.
+
+## How to decide
+
+Answer these before you sign:
+
+- Will anything outside Odoo send data in or read it out? A Shopify app, a shipping tool, a reporting tool?
+- Do you need a field or a screen Odoo doesn't have? That's Studio.
+- Do you run, or plan to run, two legal companies?
+- Is there a module from the Odoo Apps store you can't do without?
+- Do you want the AI agents?
+
+If every answer is no, Standard fits. If any answer is yes, price Custom before you sign.
+
+## When the other option wins: Custom from day one
+
+If you already know you'll connect Shopify through an outside app, or you need an Apps store module, start on Custom. Switching partway through a project changes the budget for every user, and it tends to happen right after go-live, when nobody planned for it.
+""",
+        "faqs": [
+            ("Can we start on Standard and move to Custom later?",
+             "Yes. Installing Studio, adding a company or installing the AI app moves the database to Custom, and "
+             "the new price applies to every user. Check the price for your whole team before anyone clicks install."),
+            ("Does the Custom plan include Odoo.sh hosting?",
+             "No. Odoo's pricing page says Odoo.sh hosting is billed on top of the plan. Odoo Online hosting is "
+             "included on both plans, with storage up to 100 GB."),
+            ("Do outside apps really need Custom?",
+             "Apps that call Odoo's API from outside, to read or update records, fall under External API, which "
+             "Odoo lists only under Custom. A Shopify-side connector usually works that way. Ask the vendor how it "
+             "connects."),
+        ],
+        "sources": [
+            ("Odoo pricing (US) and pricing FAQ", "https://www.odoo.com/pricing", CHECKED),
+            ("Odoo 20 documentation: AI", "https://www.odoo.com/documentation/20.0/applications/productivity/ai.html",
+             "2026-11-12"),
+        ],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "odoo-20-changes"],
+        "notes": ["Odoo's pricing page also lists a Light User at $8.90. Its terms were not read, so the guide leaves "
+                  "it out."],
+    },
+    {
+        "slug": "shopify-plan-for-pos-pro",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Shopify Basic, Grow or Advanced before adding POS Pro",
+        "seo_title": "Shopify Basic, Grow or Advanced with POS Pro",
+        "desc": ("How to pick a Shopify plan when you also sell in person: staff accounts, card rates, when the "
+                 "lower rates pay for the higher plan, and what POS Pro adds."),
+        "checked": CHECKED,
+        "short": ("Pick the plan for your staff and online sales first, then add POS Pro only where a shop needs "
+                  "staff roles or in-store inventory tools. Basic fits an owner-run shop, Grow adds 5 staff accounts "
+                  "and Advanced 15. POS Pro is $89 a month per location on all three. Lower card rates rarely pay "
+                  "for a higher plan alone."),
+        "body": """
+## The three plans side by side
+
+| | Basic | Grow | Advanced |
+| Paid yearly | $29 a month | $89 a month | $359 a month |
+| Paid monthly | $39 a month | $105 a month | $399 a month |
+| Staff accounts | None listed beyond the owner | 5 | 15 |
+| Inventory locations | 10 | 10 | 10 |
+| In-person card rate | 2.6% + 10¢ | 2.5% + 10¢ | 2.4% + 10¢ |
+| Online card rate | 2.9% + 30¢ | 2.7% + 30¢ | 2.5% + 30¢ |
+| Extra fee without Shopify Payments | 2% | 1% | 0.6% |
+| Custom apps through Shopify's API | Limited data access | Full data access | Full data access |
+| POS Pro | $89 a month per location | $89 a month per location | $89 a month per location |
+
+From shopify.com/pricing, US prices, checked Nov 11, 2026.
+
+## What POS Pro adds
+
+Every plan can take payments at a counter with a phone or a card reader, keep simple customer profiles, and handle returns at the shop where the item was bought. Shopify lists four things for POS Pro on top of that:
+
+- Unlimited staff roles and permissions.
+- In-store inventory management.
+- In-store pickup.
+- Flexible delivery options.
+
+If your shop has one or two people who can do everything, you may not need it. If you want each person's role at the register to limit what they can do, that's POS Pro.
+
+## When the lower card rates pay for a higher plan
+
+Each step up lowers the card rate by a little. Here's how much you'd need to sell by card each month before the savings cover the higher plan, paid yearly:
+
+| Move | Extra plan cost | In-person savings | Break-even, in-person only | Online savings | Break-even, online only |
+| Basic to Grow | $60 a month | 0.1% | $60,000 a month | 0.2% | $30,000 a month |
+| Grow to Advanced | $270 a month | 0.1% | $270,000 a month | 0.2% | $135,000 a month |
+
+Staff accounts are usually the better reason to move up. Treat any rate savings as a bonus.
+
+## Pricing a two-shop setup
+
+Say two shops, six staff who need their own logins, and roles at both counters. That points to Grow, with POS Pro at both locations: $89 plus 2 × $89, or $267 a month paid yearly. The same setup on Advanced comes to $537 a month. The difference only makes sense if you need more than 5 staff accounts or Advanced's other features.
+
+To try your own numbers, use the [Shopify plan picker](/tools/shopify-plan-picker).
+
+## When the other option wins: Shopify Plus
+
+More than 10 selling locations, more than 15 staff accounts, or more than 3 B2B catalogs all point past Advanced. Plus costs $2,300 a month or more, includes POS Pro for 20 locations, and goes up to 200 locations with Shopify Payments. It's a different budget, so price it only when one of those limits is real.
+""",
+        "faqs": [
+            ("Do I need POS Pro to sell in person?",
+             "No. Every Shopify plan can sell at a counter with the POS app and a card reader. POS Pro adds staff "
+             "roles, in-store inventory tools, pickup and delivery options, at $89 a month per location (checked Nov "
+             "11, 2026)."),
+            ("Does an Odoo connector work on the Basic plan?",
+             "Check before you buy. Shopify's pricing page lists limited data access for custom apps on Basic and "
+             "full access from Grow up. Odoo's own connector can link through a custom app, so test it on the plan "
+             "you'll actually use."),
+            ("Can we change plans later?",
+             "Yes. A plan change keeps your products, orders and customers. Price the move against what you need "
+             "now, such as staff accounts, rather than buying a bigger plan early."),
+        ],
+        "sources": [
+            ("Shopify pricing", "https://www.shopify.com/pricing", CHECKED),
+            ("Odoo documentation: Shopify Connector configuration",
+             "https://www.odoo.com/documentation/19.0/applications/sales/sales/shopify_connector/setup.html", CHECKED),
+        ],
+        "services": ["store-move"],
+        "related": ["shopify-pos-vs-odoo-pos", "when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
+        "notes": ["The 'Can we change plans later' answer says a plan change keeps data. That's Shopify's normal "
+                  "behavior but was not read on a Shopify page on Nov 11; re-check on help.shopify.com before "
+                  "approving.",
+                  "Break-even figures are our own arithmetic from the checked rates."],
+    },
+    {
+        "slug": "odoo-implementation-timeline",
+        "platform": "odoo",
+        "status": "draft",
+        "title": "How long an Odoo implementation takes for 10 users",
+        "seo_title": "How long an Odoo implementation takes for 10 users",
+        "desc": ("Where the weeks go in a 10-user Odoo setup, what stretches the timeline, what shortens it, and a "
+                 "sample eight-week plan for a retailer."),
+        "checked": "2026-11-12",
+        "short": ("Plan for 6 to 12 weeks from a signed scope to go-live for a 10-user business on Odoo's standard "
+                  "apps, then a few weeks of support. Most of that time goes to data and testing, not settings. "
+                  "Manufacturing, a second company, years of transaction history or a Shopify connector each add "
+                  "time."),
+        "body": """
+## Where the weeks go
+
+| Stage | Typical length | What happens | What you do |
+| Setup in a staging copy | Weeks 1 to 3 | Company, warehouses, products, taxes, users and access | Answer setup questions, confirm tax settings with your accountant |
+| First data load | Weeks 2 to 4 | Products, customers, vendors, opening stock and open balances | Check record counts and totals against your old system |
+| Testing | Weeks 4 to 8 | Real orders, receipts, invoices, payments and a register session, run against written checks | Run your own daily work in the test copy |
+| Training and second load | Weeks 6 to 10 | Short recorded sessions, then a fresh load of current data | Attend, and sign off the counts again |
+| Go-live | About one week | Backup, a short freeze on changes, the final load, checks on live orders | Stop entering data in the old system on the agreed day |
+| Support | Four weeks after | Fixes and questions as real work starts | Report anything that looks wrong early |
+
+The stages overlap. Run one after another, they'd take far longer.
+
+## Why data takes the longest
+
+Odoo's documentation warns that imports are permanent and can't be undone. That's why data goes into a staging copy first, gets checked, and gets loaded a second time just before go-live. Each load needs someone on your side to compare counts and totals: number of products, stock value, open invoices, money owed to vendors.
+
+## What makes it longer
+
+- Products without SKUs, duplicate customers or vendors spelled three ways. Cleaning comes before loading.
+- Bringing years of transaction history instead of opening balances.
+- Manufacturing, with bills of materials and work orders.
+- A second company, with transactions between the two.
+- A Shopify connector, which has its own setup and testing.
+- Decisions that wait a week for the one person who can make them.
+- Going live in your busy season or at year-end.
+
+## What makes it shorter
+
+- One person on your side who can decide, with a few hours a week set aside.
+- A clean product list with a SKU on every item.
+- Starting on opening balances at the start of a month or quarter.
+- Using Odoo's standard features as they are, and keeping a list of nice-to-haves for after go-live.
+
+## A sample eight-week plan for a 10-user retailer
+
+1. Week 1: kickoff, access, staging copy, warehouse and product structure agreed.
+2. Week 2: products and customers loaded into staging, sales and inventory settings.
+3. Week 3: vendors, purchasing and reorder rules, opening stock loaded.
+4. Week 4: accounting setup, open balances, taxes confirmed by your accountant.
+5. Week 5: testing with your team, problems logged and fixed.
+6. Week 6: training sessions, second round of testing, sign-off on the written checks.
+7. Week 7: second data load, counts signed off, go-live date confirmed.
+8. Week 8: backup, freeze, final load, go-live, daily check-ins.
+
+Treat it as a sample. Your own plan depends on your data and how quickly decisions get made.
+
+## When the other option wins: a smaller first phase
+
+If 6 weeks is more than you can spare, start smaller. Sales, inventory and purchasing can go live first, with accounting moving over at the start of the next quarter. You get the stock benefits sooner, and the books move at a clean cut-off date. The trade-off is a few weeks of running accounting in your old system alongside.
+""",
+        "faqs": [
+            ("Can Odoo be set up for 10 users in two weeks?",
+             "Not with data loaded twice and tested. A two-week setup usually skips the test load, the training or "
+             "both, and that's where go-live problems come from. Settings are quick. Checking your data takes the "
+             "time."),
+            ("When is the best time to go live?",
+             "At the start of a month or quarter, right after a stock count, and outside your busy season. Opening "
+             "balances are easier to agree at a clean cut-off date, and staff learn faster when they're not rushed."),
+            ("How much of our time does it take?",
+             "Plan for one lead person at a few hours a week, more during testing. Each user needs time for training "
+             "and for running their own work in the test copy before go-live."),
+        ],
+        "sources": [
+            ("Odoo 20 documentation: Export and import data",
+             "https://www.odoo.com/documentation/20.0/applications/essentials/export_import_data.html", "2026-11-12"),
+        ],
+        "services": ["odoo-launch"],
+        "related": ["quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan", "odoo-online-vs-odoo-sh"],
+        "notes": ["The 6 to 12 weeks matches the Back Office Launch timeline in config.py. The stage lengths and the "
+                  "sample plan are our own planning, not a track record."],
     },
 ]
 
