@@ -583,6 +583,263 @@ An Odoo business that sells mostly online may still be better off with Shopify P
         "services": ["store-move", "odoo-launch"],
         "related": ["shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh", "quickbooks-to-odoo-data"],
         "notes": ["Offline behavior of both registers was not checked, so the guide doesn't compare it."],
+    },    {
+        "slug": "when-you-dont-need-an-erp",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "When you don't need an ERP yet",
+        "seo_title": "When a Shopify store doesn't need an ERP yet",
+        "desc": ("The signs a Shopify store can wait on an ERP, the signs it can't, and the cheaper fixes to try "
+                 "first. Plan limits checked on Shopify and Odoo's own pages."),
+        "checked": "2026-11-12",
+        "short": ("If you sell from a few locations, Shopify's stock counts match your shelves, and your bookkeeper "
+                  "closes the month without retyping orders, you can wait. Shopify's paid plans already handle stock "
+                  "in up to 10 locations, in-person sales and basic wholesale pricing. An ERP starts to pay when "
+                  "purchasing, assembly or accounting can't keep pace with sales."),
+        "body": """
+## What Shopify already handles
+
+A lot of what people buy an ERP for is already in a Shopify plan. From Shopify's pricing page, checked Nov 11, 2026:
+
+- Stock counts in up to 10 locations on Basic, Grow and Advanced.
+- Selling in person with the POS app on every plan. POS Pro, at $89 a month per location, adds staff roles and in-store inventory tools.
+- Wholesale price lists through Shopify B2B, with up to 3 catalogs below the Plus plan.
+- Sales tax calculated on every plan. Your accountant still confirms the settings.
+
+Pair that with an accounting app your bookkeeper already uses, and that covers a lot of stores.
+
+## Signs you can wait
+
+- Your stock counts in Shopify match what's on the shelf when you count.
+- One person handles purchasing from a spreadsheet in an hour or two a week.
+- You sell finished goods. Nothing gets assembled from parts.
+- Your bookkeeper closes each month from the data the accounting app pulls in, with no retyping.
+- Your sales come through the online store and the counter, both already in Shopify.
+
+## Signs it's time
+
+- Someone copies orders, invoices or stock numbers from one system to another every week.
+- Fast sellers run out while slow ones pile up, because reordering is guesswork.
+- You build kits or make products, and need to know what the parts cost and how many are left.
+- Wholesale customers want payment terms, credit limits and statements that your setup can't produce.
+- Freight and duty never make it into product cost, so margins on paper look better than they are.
+- Stock sits in a warehouse, two shops and a third-party warehouse, and nobody trusts one number.
+
+One of these alone can often be fixed with an app. Three or more, and the fixes start costing more than one system would.
+
+## Cheaper steps to try first
+
+1. Give every product and variant its own SKU. You'll need clean SKUs whatever you choose next.
+2. Count your stock once a quarter and correct Shopify on the spot. Find out how far off it drifts.
+3. Write down the weekly jobs that eat the most hours. Price an app for the worst one before pricing a whole system.
+4. Try an ERP screen with your own products. Odoo's One App Free plan runs one app, plus the apps it depends on, for any number of users at no charge (odoo.com/pricing, checked Nov 11, 2026). It won't connect to Shopify on that plan, but it shows how purchasing or inventory would look.
+
+## When the other option wins: start the ERP now
+
+Some changes are easier to make with the ERP already in place. Opening a warehouse, adding wholesale at volume, starting to make products, or replacing an accounting system that's being retired are all good moments to set it up. Moving in the middle of one of those means doing the big change twice.
+""",
+        "faqs": [
+            ("Is Shopify an ERP?",
+             "No. Shopify runs your store, your registers, your stock counts and your orders. An ERP adds purchasing "
+             "rules, manufacturing, accounting and the reports that tie them together. Many stores pair Shopify with "
+             "an accounting app instead, and that's enough for a long time."),
+            ("What does an ERP cost for a small store?",
+             "Odoo's Standard plan is $24.90 per user a month paid yearly for the first 12 months, then $31.10 "
+             "(odoo.com/pricing, checked Nov 11, 2026). Five users comes to about $125 a month in the first year. "
+             "Setup work is extra, and it's usually the bigger number."),
+            ("If we add an ERP later, do we have to rebuild the Shopify store?",
+             "No. Shopify stays your storefront and checkout. The ERP sits behind it, joined by a connector or a "
+             "regular import. Clean SKUs and accurate stock counts now make that step much shorter."),
+        ],
+        "sources": [
+            ("Shopify pricing", "https://www.shopify.com/pricing", CHECKED),
+            ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
+        ],
+        "services": ["systems-roadmap"],
+        "related": ["shopify-pos-vs-odoo-pos", "shopify-odoo-inventory-sync", "odoo-online-vs-odoo-sh"],
+        "notes": ["The six 'time' signs are judgment, not vendor facts. Vee should check they match what Vee sees "
+                  "on calls."],
+    },
+    {
+        "slug": "shopify-odoo-inventory-sync",
+        "platform": "both",
+        "status": "draft",
+        "title": "Shopify to Odoo inventory sync: what moves which way, and how often",
+        "seo_title": "Shopify Odoo inventory sync: direction and timing",
+        "desc": ("What a Shopify to Odoo connector sends in each direction, how often stock updates, where "
+                 "overselling comes from, and how to test it before go-live."),
+        "checked": CHECKED,
+        "short": ("With Odoo's own Shopify Connector, orders and products flow from Shopify into Odoo, and Odoo "
+                  "sends stock levels back after each order pull. Those pulls run every 10 minutes by default, so the "
+                  "two counts can disagree for a few minutes. Apps that run on the Shopify side keep their own "
+                  "schedules, so ask each vendor how often stock moves."),
+        "body": """
+## Decide which system owns the count
+
+Stock changes in both places. Online orders and Shopify POS sales happen in Shopify. Vendor receipts, counts and transfers usually happen in Odoo. If both systems are allowed to set the number, they'll overwrite each other.
+
+The rule we use: once a connector is live, Odoo holds the real on-hand count, and Shopify shows what's available to sell. Receive stock and do counts in Odoo only. If staff fix a number in Shopify directly, the next sync can put Odoo's number back.
+
+## What moves which way with Odoo's connector
+
+| What | Direction | When |
+| Orders | Shopify to Odoo | Every 10 minutes by default |
+| Products | Shopify to Odoo | On import. A product needs a SKU in Shopify to come across |
+| Customers | Shopify to Odoo | With their orders |
+| Stock levels | Odoo to Shopify | After each order pull |
+| Fulfillments and deliveries | Both ways | With the scheduled runs |
+| Returns and refunds | Shopify to Odoo | With the scheduled runs |
+| Invoices and payments | Created in Odoo | From the imported orders |
+
+From Odoo's Shopify Connector documentation, read Nov 11, 2026. The connector runs only on Odoo.sh, with Odoo 19.0 or 20.0.
+
+## Where overselling comes from
+
+The connector works on scheduled runs, not live updates. Say the last lamp sells online at 2:01. Until the next run brings that order into Odoo, Odoo still counts one lamp, and so does any register selling from Odoo. If someone sells it at the counter at 2:05, you've sold the same lamp twice.
+
+For most stores, a few minutes of gap is fine. It matters when the same item sells online and in person on the same day, or when you run limited stock. Three ways to narrow it:
+
+- Run the order pull more often, if your Odoo setup allows it, and watch the server load.
+- Keep the last one or two units of quick sellers off the online count. Ask your connector vendor whether it supports a buffer like this.
+- Sell the counter's stock from a separate location, so online orders can't take it.
+
+## Two or more locations
+
+On Basic, Grow and Advanced, Shopify lets you track stock in up to 10 locations (shopify.com/pricing, checked Nov 11, 2026). Each Shopify location has to match a warehouse or location in Odoo, or the stock lands in the wrong place. Before you buy a connector, confirm it sends a separate count per location, not a total. Then test it with a transfer between two shops.
+
+## What changes with an app on the Shopify side
+
+Apps installed in Shopify, rather than in Odoo, reach your database through Odoo's External API. On Odoo Online that needs the Custom plan. They also set their own sync schedules, which can be faster or slower than Odoo's 10 minutes. Ask the vendor three things in writing: how often stock moves, whether it moves per location, and what happens to orders placed while the app is down.
+
+## When the other option wins: no live sync
+
+A store with a few orders a day may not need a sync at all. Keep stock in Shopify, use Odoo for invoices and books, and bring orders across with a weekly export and import. It's slower, but nothing can overwrite anything, and it costs no connector fees. Add a sync when retyping takes hours or the counts start to drift.
+
+## How to test it before go-live
+
+1. Set one test product to 5 units in Odoo and wait for Shopify to show 5.
+2. Buy one online with a test payment. Check that Odoo shows 4 after the next run.
+3. Receive 10 units in Odoo. Check that Shopify shows 14 after the next run.
+4. Refund the online order. Check where the unit ends up in each system.
+5. Switch the connector off for an hour and sell the product on both sides. Switch it back on and see how it settles the difference.
+""",
+        "faqs": [
+            ("Does Shopify to Odoo stock sync happen in real time?",
+             "Not with Odoo's own connector. It runs on a schedule, every 10 minutes by default, and sends stock to "
+             "Shopify after each order pull. Some Shopify-side apps sync more often. Ask for the interval in writing "
+             "before you buy."),
+            ("What happens to stock when a Shopify order is refunded?",
+             "Odoo's connector brings returns and refunds into Odoo. Whether the unit goes back on the shelf depends "
+             "on how the return is processed there. Make a refund one of your test cases and check both systems "
+             "after the next run."),
+            ("What if the connector stops working?",
+             "Both systems keep selling, and their counts drift apart. When it's running again, check that it picked "
+             "up the orders placed while it was down, then count your quick sellers and correct the numbers in Odoo."),
+        ],
+        "sources": [
+            ("Odoo documentation: Shopify Connector overview",
+             "https://www.odoo.com/documentation/19.0/applications/sales/sales/shopify_connector.html", CHECKED),
+            ("Odoo documentation: Shopify Connector configuration",
+             "https://www.odoo.com/documentation/19.0/applications/sales/sales/shopify_connector/setup.html", CHECKED),
+            ("Shopify pricing", "https://www.shopify.com/pricing", CHECKED),
+            ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
+        ],
+        "services": ["connection"],
+        "related": ["shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos", "odoo-online-vs-odoo-sh"],
+        "notes": ["Whether the order-pull interval can be shortened was not checked on a live Odoo.sh database; the "
+                  "guide says 'if your Odoo setup allows it'."],
+    },
+    {
+        "slug": "odoo-20-changes",
+        "platform": "odoo",
+        "status": "draft",
+        "title": "Odoo 20 for store owners: what changed, and what the AI features cost",
+        "seo_title": "Odoo 20 for store owners: changes and AI costs",
+        "desc": ("The Odoo 20 changes that matter to a store, from offline mode to suggested reorder levels, and "
+                 "what the AI features cost in credits and plan price."),
+        "checked": "2026-11-12",
+        "short": ("Odoo 20 came out in September 2026. For a store, the useful changes are offline mode, suggested "
+                  "reorder levels, a stock aging report, simpler returns and several register updates. The AI "
+                  "features run on prepaid credits, and Odoo's documentation says installing the AI app on "
+                  "Standard moves the database to the Custom plan, which roughly doubles the per-user price."),
+        "body": """
+## What changed that a store will notice
+
+| Area | Change in Odoo 20 | Why it matters |
+| Inventory | Suggested minimum and maximum levels for reorder rules, based on demand history, days of coverage and order frequency | A starting point for reorder rules, where most stores guess |
+| Inventory | A stock aging report in Moves Analysis | Shows which stock has sat longest |
+| Inventory | Stock on hand at a past date, with a precise time | Month-end and year-end counts without a spreadsheet |
+| Inventory | Landed costs on specific products in a transfer | Freight and duty land on the items that carried them |
+| Inventory | Returns without the old return wizard | Fewer clicks at the returns desk |
+| Inventory | A ShipStation connector for rates, labels and tracking | One fewer app for stores already on ShipStation |
+| Point of Sale | Runs with simplified inventory, without the Inventory app | One on-hand number per product for a small shop |
+| Point of Sale | Snooze products, search orders by receipt number, more than one currency | Day-to-day counter work |
+| Sales | Discount codes limited to one use per customer | Welcome codes that can't be reused |
+| Accounting | Payment statuses renamed: In Process is now Paid, and Paid is now Reconciled | Bookkeepers need to know before they read reports |
+| Accounting | Automatic invoice reminders | Fewer manual follow-ups on unpaid invoices |
+| US sales tax | A cheaper Avalara option, Avalara Included, and a redesigned US Sales Tax Report | Your accountant still confirms the settings |
+| Everywhere | Offline mode: create, edit and archive records with no connection | Useful in back rooms and warehouses with weak signal |
+
+From Odoo's Odoo 20 release notes, read Nov 12, 2026.
+
+## What the AI features cost
+
+Three facts from Odoo's own pages, read Nov 12, 2026:
+
+- The release notes say all AI features now need credits, bought through in-app purchases.
+- In-app purchase credits are prepaid, sold in packs, and priced per service in Odoo's catalog.
+- The AI app's documentation warns that installing it on a Standard plan database triggers an upsell to the Custom plan.
+
+The credits are usually the small part. The plan change is the big one, because it applies to every user in the database. Odoo's US prices, paid yearly, checked Nov 11, 2026:
+
+| Users | Standard, first year | Custom, first year | Standard, after year one | Custom, after year one |
+| 5 | $124.50 a month | $245 a month | $155.50 a month | $305 a month |
+| 10 | $249 a month | $490 a month | $311 a month | $610 a month |
+| 15 | $373.50 a month | $735 a month | $466.50 a month | $915 a month |
+
+If you're already on Custom for Studio or a connector, AI adds only the credits. If you're on Standard, decide whether AI is worth the plan change before anyone installs the app.
+
+## Shopify and Odoo 20
+
+The release notes add marketplace links for TikTok and Lazada, and none for Shopify. Odoo's own Shopify Connector supports 19.0 and 20.0, but its documentation says it works only on Odoo.sh. On Odoo Online, Shopify still means an app on the Shopify side, or a regular import.
+
+## Before you upgrade from 19
+
+- Brief your bookkeeper on the renamed payment statuses before the first month-end on 20.
+- On Odoo.sh, check that every third-party module has a 20.0 version. Without one, the upgrade stops or the module's features go.
+- Run the upgrade on a copy of your database first, and do a few days of normal work in it: sales, receipts, a register session, a bank reconciliation.
+
+## When the other option wins: wait on 19
+
+If a module you rely on has no 20.0 version yet, or you're in the middle of a busy season, waiting is the safer call. Nothing in Odoo 20 forces an urgent move for a small store. Plan the upgrade for a quiet month.
+""",
+        "faqs": [
+            ("Do we have to use Odoo's AI features?",
+             "No. Odoo 20 runs without them. They need prepaid credits, and Odoo's documentation says installing the "
+             "AI app on Standard moves the database to Custom. If you stay off the AI app, your plan doesn't change."),
+            ("Does Odoo 20 have a built-in Shopify connector?",
+             "Odoo makes a Shopify Connector that supports 19.0 and 20.0, but its documentation says it runs only on "
+             "Odoo.sh. On Odoo Online, the options are an app on the Shopify side, which needs the Custom plan, or a "
+             "regular import."),
+            ("What's the most useful Odoo 20 change for a retailer?",
+             "For most stores, suggested reorder levels and the stock aging report. One tells you when to buy, the "
+             "other shows what isn't selling. Offline mode helps too if your stockroom has weak signal."),
+        ],
+        "sources": [
+            ("Odoo 20 release notes", "https://www.odoo.com/odoo-20-release-notes", "2026-11-12"),
+            ("Odoo 20 documentation: AI", "https://www.odoo.com/documentation/20.0/applications/productivity/ai.html",
+             "2026-11-12"),
+            ("Odoo 20 documentation: In-app purchases",
+             "https://www.odoo.com/documentation/20.0/applications/essentials/in_app_purchase.html", "2026-11-12"),
+            ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
+            ("Odoo documentation: Shopify Connector configuration",
+             "https://www.odoo.com/documentation/19.0/applications/sales/sales/shopify_connector/setup.html", CHECKED),
+        ],
+        "services": ["odoo-launch"],
+        "related": ["odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "shopify-odoo-inventory-sync"],
+        "notes": ["AI credit pack prices sit on iap.odoo.com, which this workspace can't reach, so the guide gives none.",
+                  "Title changed from the plan's 'what AI credits cost' to 'what the AI features cost', since the plan "
+                  "change is the cost that matters and credit prices weren't readable."],
     },
 ]
 
