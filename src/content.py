@@ -586,7 +586,7 @@ An Odoo business that sells mostly online may still be better off with Shopify P
     },    {
         "slug": "when-you-dont-need-an-erp",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "When you don't need an ERP yet",
         "seo_title": "When a Shopify store doesn't need an ERP yet",
         "desc": ("The signs a Shopify store can wait on an ERP, the signs it can't, and the cheaper fixes to try "
@@ -665,7 +665,7 @@ Some changes are easier to make with the ERP already in place. Opening a warehou
     {
         "slug": "shopify-odoo-inventory-sync",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Shopify to Odoo inventory sync: what moves which way, and how often",
         "seo_title": "Shopify Odoo inventory sync: direction and timing",
         "desc": ("What a Shopify to Odoo connector sends in each direction, how often stock updates, where "
@@ -754,7 +754,7 @@ A store with a few orders a day may not need a sync at all. Keep stock in Shopif
     {
         "slug": "odoo-20-changes",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "Odoo 20 for store owners: what changed, and what the AI features cost",
         "seo_title": "Odoo 20 for store owners: changes and AI costs",
         "desc": ("The Odoo 20 changes that matter to a store, from offline mode to suggested reorder levels, and "
@@ -845,7 +845,7 @@ If a module you rely on has no 20.0 version yet, or you're in the middle of a bu
     },    {
         "slug": "odoo-standard-vs-custom-plan",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "Odoo Standard vs Custom plan for a 10-user business",
         "seo_title": "Odoo Standard vs Custom plan for 10 users",
         "desc": ("What Odoo's Custom plan adds over Standard, what each costs for 10 users, and the five things "
@@ -931,7 +931,7 @@ If you already know you'll connect Shopify through an outside app, or you need a
     {
         "slug": "shopify-plan-for-pos-pro",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Shopify Basic, Grow or Advanced before adding POS Pro",
         "seo_title": "Shopify Basic, Grow or Advanced with POS Pro",
         "desc": ("How to pick a Shopify plan when you also sell in person: staff accounts, card rates, when the "
@@ -1016,7 +1016,7 @@ More than 10 selling locations, more than 15 staff accounts, or more than 3 B2B 
     {
         "slug": "odoo-implementation-timeline",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "How long an Odoo implementation takes for 10 users",
         "seo_title": "How long an Odoo implementation takes for 10 users",
         "desc": ("Where the weeks go in a 10-user Odoo setup, what stretches the timeline, what shortens it, and a "
