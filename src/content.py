@@ -627,6 +627,8 @@ Pair that with an accounting app your bookkeeper already uses, and that covers a
 
 One of these alone can often be fixed with an app. Three or more, and the fixes start costing more than one system would.
 
+To score your own setup, try the [ERP readiness check](/tools/erp-readiness). It asks eight questions like these.
+
 ## Cheaper steps to try first
 
 1. Give every product and variant its own SKU. You'll need clean SKUs whatever you choose next.
@@ -1181,4 +1183,99 @@ VIDEOS = [
              "The invoice now carries the Paid stamp."),
         ],
     },
+]
+
+
+# ---------------------------------------------------------------------------
+# Glossary: (term, plain definition, page that uses it, link text). Definitions are one or two sentences,
+# written for this page. Vendor facts carry the same checks as the guides (Nov 11 and 12, 2026).
+# ---------------------------------------------------------------------------
+
+GLOSSARY = [
+    ("API", "The door one program uses to read or change data in another. Connectors use APIs to move orders "
+     "and stock between Shopify and Odoo.", "/guides/shopify-connectors-odoo-online", "Which connectors work with Odoo Online"),
+    ("Available quantity", "The units you can still sell: what's on hand, minus units already promised to open "
+     "orders.", "/guides/shopify-odoo-inventory-sync", "How stock moves between Shopify and Odoo"),
+    ("B2B catalog", "A wholesale price list in Shopify, assigned to business customers. Plans below Plus allow up "
+     "to 3.", "/guides/shopify-plan-for-pos-pro", "Shopify plans compared"),
+    ("Community and Enterprise", "Odoo's two editions. Community is free and open source; Enterprise is the paid "
+     "edition with more apps, sold through Odoo's Standard and Custom plans.", "/faq/odoo", "Odoo questions"),
+    ("Connector", "Software that copies orders, products and stock levels between two systems, either on a "
+     "schedule or as changes happen.", "/guides/shopify-connectors-odoo-online", "Which connectors work with Odoo Online"),
+    ("Custom plan", "Odoo's higher-priced plan. It adds Studio, more than one company, outside apps through the "
+     "External API, and hosting on Odoo.sh or your own server.", "/guides/odoo-standard-vs-custom-plan",
+     "Standard or Custom for 10 users"),
+    ("Cutover", "The point where you stop entering work in the old system and start in the new one, with a final "
+     "data load in between.", "/guides/odoo-implementation-timeline", "How long an Odoo setup takes"),
+    ("ERP", "Enterprise resource planning: one system for sales, stock, purchasing and accounting, so every "
+     "department works from the same records.", "/guides/when-you-dont-need-an-erp", "When you don't need one yet"),
+    ("External API", "Odoo's name for outside software reading or updating your Odoo records. Odoo lists it only "
+     "under the Custom plan.", "/guides/odoo-standard-vs-custom-plan", "Standard or Custom for 10 users"),
+    ("Forecasted quantity", "Odoo's count of what you'll have once planned receipts arrive and planned deliveries "
+     "leave.", "/tools/odoo-tours", "See it in the Odoo 20 tours"),
+    ("In-app purchase credits", "Prepaid credits for Odoo's paid services, such as text messages and the AI "
+     "features. They're bought in packs, priced per service.", "/guides/odoo-20-changes", "What changed in Odoo 20"),
+    ("Landed cost", "Freight, duty and other charges added to the vendor's price, so a product's cost shows what it "
+     "took to get it onto your shelf.", "/guides/odoo-20-changes", "What changed in Odoo 20"),
+    ("Location", "In Shopify, a shop, warehouse or app that holds stock or fills orders. In Odoo, a place inside a "
+     "warehouse, such as a shelf or a returns area.", "/guides/shopify-odoo-inventory-sync",
+     "How stock moves between Shopify and Odoo"),
+    ("Module", "An add-on that extends Odoo. Odoo's own apps are modules, and so is anything bought on the Odoo Apps "
+     "store, which Odoo Online can't run.", "/guides/odoo-online-vs-odoo-sh", "Odoo Online or Odoo.sh"),
+    ("Odoo Online", "Odoo's own cloud hosting, included in the plan price. It runs Odoo's standard apps only.",
+     "/guides/odoo-online-vs-odoo-sh", "Odoo Online or Odoo.sh"),
+    ("Odoo.sh", "Odoo's hosting for databases that need custom or third-party modules, with branches for testing "
+     "changes. It needs the Custom plan, and hosting is billed on top.", "/guides/odoo-online-vs-odoo-sh",
+     "Odoo Online or Odoo.sh"),
+    ("On hand", "The units the system says are physically in a location right now.",
+     "/guides/shopify-odoo-inventory-sync", "How stock moves between Shopify and Odoo"),
+    ("Opening balance", "What each account holds on the day you start in a new accounting system: cash, money "
+     "customers owe you, money you owe vendors.", "/guides/quickbooks-to-odoo-data", "Moving from QuickBooks to Odoo"),
+    ("Payout", "Shopify's transfer of your sales money to your bank, after fees and refunds. Your bookkeeper matches "
+     "each payout to the orders inside it.", "/faq/shopify", "Shopify questions"),
+    ("POS", "Point of sale: the register app and card reader you sell with at a counter.",
+     "/guides/shopify-pos-vs-odoo-pos", "Shopify POS or Odoo POS"),
+    ("POS Pro", "A Shopify add-on for staff roles, in-store inventory tools, pickup and delivery, priced per "
+     "location.", "/guides/shopify-plan-for-pos-pro", "Shopify plans compared"),
+    ("Purchase order", "A written order to a vendor for goods at agreed prices. In Odoo, receiving it adds the "
+     "stock.", "/videos/odoo-purchase-to-stock", "Watch a purchase order received"),
+    ("Reconciliation", "Matching the payments in your books to the lines on your bank statement until the two "
+     "agree.", "/guides/quickbooks-to-odoo-data", "Moving from QuickBooks to Odoo"),
+    ("Redirect", "A rule that sends people and search engines from an old page address to its new one, so links "
+     "and rankings carry over after a store move.", "/services/store-move", "Store Move"),
+    ("Reordering rule", "An Odoo setting with a minimum and maximum for a product. When the forecast falls below "
+     "the minimum, Odoo proposes a purchase back up to the maximum.", "/guides/odoo-20-changes",
+     "What changed in Odoo 20"),
+    ("Shopify Payments", "Shopify's own card processing. Using a different provider adds a fee on each sale, from 2% "
+     "on Basic to 0.6% on Advanced.", "/guides/shopify-plan-for-pos-pro", "Shopify plans compared"),
+    ("SKU", "Stock keeping unit: the code that tells one product or variant from another. Connectors use it to "
+     "match products between systems.", "/guides/shopify-odoo-inventory-sync", "How stock moves between Shopify and Odoo"),
+    ("Staging database", "A copy of your database for trying changes and data loads before they touch the live "
+     "one.", "/faq/odoo", "Odoo questions"),
+    ("Standard plan", "Odoo's lower-priced plan with all apps, on Odoo Online only.",
+     "/guides/odoo-standard-vs-custom-plan", "Standard or Custom for 10 users"),
+    ("Statement of work", "The written scope, price, deliverables and payment terms for a project, signed before "
+     "work starts.", "/how-it-works", "How a project runs"),
+    ("Studio", "Odoo's tool for adding fields, screens and automations without code. Installing it moves a "
+     "database to the Custom plan.", "/guides/odoo-standard-vs-custom-plan", "Standard or Custom for 10 users"),
+    ("Transfer", "A stock move from one place to another, like warehouse to shop. Odoo also files receipts and "
+     "deliveries as transfers.", "/guides/shopify-odoo-inventory-sync", "How stock moves between Shopify and Odoo"),
+    ("Variant", "One version of a product, such as a size or a color. Odoo's own Shopify connector brings each "
+     "Shopify variant in as a separate product.", "/guides/shopify-connectors-odoo-online",
+     "Which connectors work with Odoo Online"),
+    ("Webhook", "A message one system sends another the moment something happens, such as a new order. Odoo's own "
+     "Shopify connector uses scheduled runs instead.", "/guides/shopify-odoo-inventory-sync",
+     "How stock moves between Shopify and Odoo"),
+]
+
+# ERP readiness check: eight yes or no questions. A yes is a sign the current setup is straining.
+ERP_CHECK = [
+    ("copy", "Does someone copy orders, invoices or stock numbers from one system to another every week?"),
+    ("reorder", "Do quick sellers run out, or slow ones pile up, because reordering is guesswork?"),
+    ("make", "Do you build kits or make products from parts?"),
+    ("terms", "Do wholesale customers need payment terms, credit limits or statements?"),
+    ("landed", "Do freight and duty costs stay out of your product costs?"),
+    ("places", "Is stock kept in three or more places, such as a warehouse, shops and an outside warehouse?"),
+    ("close", "Does month-end take days because sales, stock and bank figures don't match?"),
+    ("change", "Are you opening a warehouse, adding wholesale or starting to make products in the next 12 months?"),
 ]
