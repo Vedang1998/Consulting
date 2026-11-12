@@ -496,7 +496,7 @@ SVC_ICON = {"systems-roadmap": "map", "store-move": "store-move", "odoo-launch":
 
 
 SVC_ART = {"systems-roadmap": ("business-plan", "c-lilac"), "store-move": ("moving", "c-coral"),
-           "odoo-launch": ("logistics", "c-mint"), "connection": ("sync", "c-blue")}
+           "odoo-launch": ("logistics", "c-mint"), "connection": ("shop-sync", "c-yellow")}
 
 
 def svc_href(slug):
