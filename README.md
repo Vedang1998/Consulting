@@ -10,11 +10,12 @@ Workers Builds from this repository.
 | --- | --- |
 | `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, demo videos. Most changes happen here. `# CONFIRM` marks values Vee must supply. |
 | `src/build.py` | Page templates and copy, site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
+| `src/content.py` | Resources copy: the FAQ answers (`FAQ_SHOPIFY`, `FAQ_ODOO`, `FAQ_US`), the guides (`GUIDES`) and the video chapters and transcripts (`VIDEOS`). Prices and limits carry the date they were checked. |
 | `src/mockups.py` | The drawn workflow demos, sample documents, small illustrations and the icon helper. |
 | `src/art/`, `src/art.py` | People illustrations from unDraw (undraw.co, free for commercial use, no attribution needed under the unDraw license), recoloured to the brand palette at build and set on CSS Memphis backdrops. Don't repackage them as an illustration set. |
 | `src/media/odoo/` | Real Odoo 20 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. `tour/` holds the guided tour steps listed in `ODOO_TOURS`. |
 | `src/site.css` | Design system, light only. No inline style attributes anywhere (the CSP is `style-src 'self'`); scripts set positions through `el.style`, which the CSP allows. |
-| `src/site.js` | Demo tabs, service finder, guided Odoo tours, the stock sync model on /shopify, scroll reveals, the first-party visit counter and the privacy opt-out. |
+| `src/site.js` | Demo tabs, service finder, guided Odoo tours, the stock sync model, resource filters, video chapters, the Shopify plan picker, scroll reveals, the first-party visit counter and the privacy opt-out. |
 | `src/fonts/` | Self-hosted Archivo, IBM Plex Sans and IBM Plex Mono (OFL). |
 | `src/icons/` | Lucide icons (ISC), inlined at build. |
 | `src/og.png`, `src/apple-touch-icon.png` | Share image (1200x630) and phone home-screen icon. |
@@ -73,6 +74,15 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
   Its wording lives in `site.js`; keep it in step with how real connectors behave.
 - Odoo 20 facts on /odoo come from Odoo's release notes, checked Nov 11, 2026
   (`research/R-Odoo-20-checked.md` in project files). Re-check before changing that section.
+- Guides start with `status: "draft"`. Staging builds show them with a draft note; the release build leaves them
+  out, and links to them drop away, until Vee sets `status: "approved"`. Every guide needs a 40 to 60 word short
+  answer, a "When the other option wins" section and a date on every price; the build stops if one is missing.
+- Resource pages (/resources, /guides, /faq, /videos, /tools) must stay original. The build stops when one shares
+  two or more 12-word runs with any other page. Wrap text that is meant to repeat, such as a shared widget, in
+  `<!--reuse-->` and `<!--/reuse-->`. Every internal link must point to a built page or file.
+- Shopify plan prices for the plan picker live in `SHOPIFY_PLANS` in build.py, from
+  `research/R-Shopify-plans-checked.md`. Connector facts for guide 1 come from
+  `research/R-Shopify-Odoo-connectors-checked.md`. Re-check both before changing them.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
 

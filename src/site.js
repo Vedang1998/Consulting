@@ -1,5 +1,5 @@
 // [DBA name] site behavior: the first-party visit counter, the privacy opt-out, the workflow demo,
-// the service finder and scroll reveals.
+// the service finder, scroll reveals, resource filters, video chapters and the Shopify plan picker.
 // Sends to /api/e on our own domain only. No third-party scripts, no IP logging, no contact details,
 // and nothing typed or picked on the page except which demo tab and which finder result were shown.
 (function () {
@@ -445,6 +445,119 @@
     });
     sim.hidden = false;
     reset();
+  });
+
+  // ---- Resource filters: Shopify, Odoo, both together, or everything -----------------------------
+  // Shopify shows Shopify and both-together items, Odoo shows Odoo and both, Both shows only both.
+  var SHOWS = { all: null, shopify: ["shopify", "both"], odoo: ["odoo", "both"], both: ["both"] };
+  all("[data-chips]").forEach(function (box) {
+    var list = document.querySelector('[data-filter-list="' + box.getAttribute("data-chips") + '"]');
+    if (!list) return;
+    var btns = all(".chip-btn", box), none = document.createElement("p");
+    none.className = "small chips-none"; none.setAttribute("aria-live", "polite");
+    list.parentNode.insertBefore(none, list.nextSibling);
+    function pick(f) {
+      var keep = SHOWS[f], shown = 0;
+      btns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-filter") === f ? "true" : "false"); });
+      all(":scope > li[data-platform]", list).forEach(function (li) {
+        var on = !keep || keep.indexOf(li.getAttribute("data-platform")) > -1;
+        if (on) { li.removeAttribute("data-hide"); shown += 1; } else li.setAttribute("data-hide", "");
+      });
+      none.textContent = shown ? "" : "Nothing in this list for that filter yet.";
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () { pick(b.getAttribute("data-filter")); track("demo", "filter:" + b.getAttribute("data-filter")); });
+    });
+    box.hidden = false;
+  });
+
+  // ---- Video chapters: jump to a chapter, and mark the one playing -------------------------------
+  all("video[data-chapter-video]").forEach(function (vid) {
+    var btns = all(".ch-btn[data-t]");
+    var starts = btns.map(function (b) { return +b.getAttribute("data-t"); });
+    function mark() {
+      var at = vid.currentTime, on = 0;
+      starts.forEach(function (s, i) { if (at + 0.25 >= s) on = i; });
+      btns.forEach(function (b, i) {
+        b.classList.toggle("on", i === on);
+        if (i === on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+      });
+    }
+    function seek(t, play) {
+      function go() { vid.currentTime = t; mark(); if (play) { var p = vid.play(); if (p && p.catch) p.catch(function () {}); } }
+      if (vid.readyState >= 1) go(); else vid.addEventListener("loadedmetadata", go, { once: true });
+    }
+    btns.forEach(function (b, i) {
+      b.addEventListener("click", function () { seek(starts[i], true); track("demo", "video:chapter" + i); });
+    });
+    vid.addEventListener("timeupdate", mark);
+    vid.addEventListener("seeked", mark);
+    vid.addEventListener("play", function () { track("demo", "video:play"); }, { once: true });
+    var m = /^#t=(\d+(?:\.\d+)?)$/.exec(location.hash);
+    if (m) { if (vid.preload === "none") vid.preload = "metadata"; seek(+m[1], false); }
+    mark();
+  });
+
+  // ---- Shopify plan picker: five answers, one plan, the reason and the monthly cost ---------------
+  all("[data-picker]").forEach(function (box) {
+    var P;
+    try { P = JSON.parse(box.getAttribute("data-plans")); } catch (err) { return; }
+    var qs = all("[data-pq]", box), ans = {};
+    var out = box.querySelector("[data-pk-out]"), empty = box.querySelector("[data-pk-empty]");
+    var nameEl = box.querySelector("[data-pk-plan]"), why = box.querySelector("[data-pk-why]");
+    var yEl = box.querySelector("[data-pk-y]"), mEl = box.querySelector("[data-pk-m]"), pro = box.querySelector("[data-pk-pro]");
+    var used = false, lastPlan = "";
+    function usd(n) { return "$" + n.toLocaleString("en-US"); }
+    function decide(a) {
+      var loc = +a.loc, reasons = [], k = "basic";
+      if (a.loc === "11") reasons.push("You sell from more than 10 locations. Basic, Grow and Advanced allow up to 10.");
+      if (a.staff === "16") reasons.push("More than 15 staff need a login. Advanced includes 15 staff accounts.");
+      if (a.b2b === "yes") reasons.push("You need more than 3 wholesale catalogs. Plans below Plus allow 3.");
+      if (reasons.length) k = "plus";
+      else if (a.staff === "15") { k = "advanced"; reasons.push("6 to 15 staff need their own login. Advanced includes 15 staff accounts, Grow includes 5."); }
+      else if (a.staff === "5" || a.sync === "yes") {
+        k = "grow";
+        if (a.staff === "5") reasons.push("Up to 5 staff need a login. Grow includes 5 staff accounts.");
+        if (a.sync === "yes") reasons.push("Shopify lists full data access for custom apps from Grow up, which some back office connectors need.");
+      } else reasons.push("An owner-run store fits Basic. Every plan takes in-person payments and allows up to 10 locations.");
+      var p = { k: k, reasons: reasons, pro: "" };
+      if (loc > 0 && a.perm === "yes") {
+        if (k === "plus") p.pro = "POS Pro is included on Plus for 20 locations.";
+        else if (loc <= 2) p.pro = "POS Pro for staff roles and in-store stock tools adds " + usd(P.pro * loc) + " a month (" +
+          usd(P.pro) + " a location, " + loc + " shop" + (loc === 1 ? "" : "s") + ").";
+        else p.pro = "POS Pro for staff roles and in-store stock tools adds " + usd(P.pro) + " a month for each location.";
+      } else if (loc > 0) p.pro = "Your shops can use the POS app that comes with every plan. POS Pro is not needed for what you described.";
+      return p;
+    }
+    function paint() {
+      var done = qs.every(function (q) { return ans[q.getAttribute("data-pq")] !== undefined; });
+      empty.hidden = done; out.hidden = !done;
+      if (!done) return;
+      var r = decide(ans), plan = P[r.k];
+      if (!lastPlan && out.getBoundingClientRect().top > window.innerHeight - 80) {
+        out.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      }
+      nameEl.textContent = plan.n;
+      why.textContent = "";
+      r.reasons.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; why.appendChild(li); });
+      var from = r.k === "plus" ? "From " : "";
+      yEl.textContent = from + usd(plan.y) + " a month";
+      mEl.textContent = from + usd(plan.m) + " a month";
+      pro.textContent = r.pro; pro.hidden = !r.pro;
+      if (r.k !== lastPlan) { lastPlan = r.k; track("demo", "plan:" + r.k); }
+    }
+    qs.forEach(function (q) {
+      var key = q.getAttribute("data-pq"), opts = all(".opt", q);
+      opts.forEach(function (o) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.setAttribute("aria-pressed", x === o ? "true" : "false"); });
+          ans[key] = o.getAttribute("data-v");
+          if (!used) { used = true; track("demo", "plan:start"); }
+          paint();
+        });
+      });
+    });
+    box.hidden = false;
   });
 
   var btn = document.getElementById("optout");
