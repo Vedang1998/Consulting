@@ -29,7 +29,8 @@ sys.path.insert(0, str(SRC))
 import config as C  # noqa: E402
 import mockups as M  # noqa: E402
 import art as A  # noqa: E402
-import content as R  # noqa: E402
+import content as R
+import spot as S  # noqa: E402
 
 RELEASE = "--release" in sys.argv
 TODAY = _dt.date.today()
@@ -476,9 +477,21 @@ def first_sentence(text):
 
 SVC_URL = {"systems-roadmap": "systems-roadmap", "store-move": "store-move", "odoo-launch": "back-office-launch",
            "connection": "store-to-back-office-sync", "support": "support-block"}
+
+def ico(name):
+    """Icon for a tile, door or card: the custom spot icon (spot.py) when one exists, otherwise Lucide."""
+    n = name if name in S.ICONS else S.SPOT_FOR.get(name)
+    return S.icon(n) if n else M.icon(name)
+
+
+def sp(name):
+    """Extra class for a tile that holds a spot icon: the tile drops its own box and the icon brings its color block."""
+    return " spot-tile" if (name in S.ICONS or name in S.SPOT_FOR) else ""
+
 SVC_COLOR = {"systems-roadmap": "c-lilac", "store-move": "c-coral", "odoo-launch": "c-mint",
              "connection": "c-blue", "support": "c-yellow"}
-SVC_ICON = {"systems-roadmap": "map", "store-move": "truck", "odoo-launch": "boxes", "connection": "refresh-cw",
+SVC_SMALL = {"store-move": "truck"}  # 16px labels keep Lucide; the storefront spot icon is too detailed that small
+SVC_ICON = {"systems-roadmap": "map", "store-move": "store-move", "odoo-launch": "boxes", "connection": "refresh-cw",
             "support": "life-buoy"}
 
 
@@ -564,7 +577,7 @@ def svc_card(slug, kind, name, summary, price_html, meta, big=False):
 <a class="svc {SVC_COLOR[slug]} reveal{' svc-big' if big else ''}" href="{svc_href(slug)}">
   <span class="svc-top">{M.MINIS[slug]()}</span>
   <span class="svc-in">
-    <span class="svc-kind">{M.icon(SVC_ICON[slug])}{e(kind)}</span>
+    <span class="svc-kind">{M.icon(SVC_SMALL.get(slug, SVC_ICON[slug]))}{e(kind)}</span>
     <span class="svc-name">{e(name)}</span>
     <span class="svc-sum">{e(summary)}</span>
     <span class="svc-foot"><span class="price">{price_html}</span><span>{e(meta)}</span>
@@ -624,7 +637,7 @@ def finder():
                     f'so a go-live inside two months needs a narrow first phase. Raise it on the call.</p>')
         results.append(f"""
 <div class="fr {SVC_COLOR[slug]}" data-result="{slug}" hidden>
-  <span class="fr-ic">{M.icon(SVC_ICON[slug])}</span>
+  <span class="fr-ic{sp(SVC_ICON[slug])}">{ico(SVC_ICON[slug])}</span>
   <p class="eyebrow">Where we would start</p>
   <h3>{e(p['name'])}</h3>
   <dl class="facts"><div><dt>Price</dt><dd class="price">{price(*p['price'])}</dd></div>
@@ -635,7 +648,7 @@ def finder():
     s = C.SUPPORT
     results.append(f"""
 <div class="fr c-yellow" data-result="support" hidden>
-  <span class="fr-ic">{M.icon('life-buoy')}</span>
+  <span class="fr-ic{sp('life-buoy')}">{ico('life-buoy')}</span>
   <p class="eyebrow">Where we would start</p>
   <h3>{e(s['name'])}</h3>
   <dl class="facts"><div><dt>10 hours</dt><dd class="price">{price('support_10h')}</dd></div>
@@ -646,7 +659,7 @@ def finder():
 </div>""")
     results.append(f"""
 <div class="fr c-mint" data-result="notyet" hidden>
-  <span class="fr-ic">{M.icon('circle-check')}</span>
+  <span class="fr-ic{sp('circle-check')}">{ico('circle-check')}</span>
   <p class="eyebrow">Where you stand</p>
   <h3>You may not need us yet</h3>
   <p>For a team of up to 15, Shopify and a bookkeeping app often cover it. Look at Odoo once two or more of these
@@ -656,7 +669,7 @@ def finder():
 </div>""")
     results.append(f"""
 <div class="fr c-coral" data-result="nofit" hidden>
-  <span class="fr-ic">{M.icon('triangle-alert')}</span>
+  <span class="fr-ic{sp('triangle-alert')}">{ico('triangle-alert')}</span>
   <p class="eyebrow">Probably not us</p>
   <h3>A larger agency is the better fit</h3>
   <p>Setups for more than 50 users are outside the work we take on. An Odoo partner with a bigger team,
@@ -814,7 +827,7 @@ def page_home():
         ("key-round", "c-yellow", "Your accounts stay yours", "Store, database and apps stay in your name."),
         ("shield-check", "c-coral", "Our access removed", "Confirmed in writing at handover."),
     ]
-    proof_html = "".join(f'<li class="reveal" data-i="{i}"><span class="pi {c}">{M.icon(ic)}</span><div><b>{e(h)}</b>'
+    proof_html = "".join(f'<li class="reveal" data-i="{i}"><span class="pi {c}{sp(ic)}">{ico(ic)}</span><div><b>{e(h)}</b>'
                          f'<span>{e(t)}</span></div></li>' for i, (ic, c, h, t) in enumerate(proof))
     works = ["Shopify", "Shopify POS", "Odoo 20", "Odoo.sh", "Odoo Online", "QuickBooks Online", "WooCommerce",
              "BigCommerce", "Square", "Wix"]
@@ -837,7 +850,7 @@ def page_home():
     by = {p["slug"]: p for p in C.PACKAGES}
     prob_html = "".join(f"""
 <li class="prob reveal" data-i="{i}">
-  <span class="pi {c}">{M.icon(ic)}</span>
+  <span class="pi {c}{sp(ic)}">{ico(ic)}</span>
   <h3>{e(h)}</h3><p>{e(t)}</p>
   <a class="more" href="{svc_href(slug)}">{e(by[slug]['name'])}{M.icon('arrow-right')}</a>
 </li>""" for i, (ic, c, h, t, slug) in enumerate(problems))
@@ -853,7 +866,7 @@ def page_home():
          "A backup, the cutover and checks on live orders, then fixes for the support period in your package."),
     ]
     steps_html = "".join(f"""
-<li class="reveal" data-i="{i}"><span class="st-n">{i + 1}</span><span class="pi {c}">{M.icon(ic)}</span>
+<li class="reveal" data-i="{i}"><span class="st-n">{i + 1}</span><span class="pi {c}{sp(ic)}">{ico(ic)}</span>
 <span class="st-meta">{e(meta)}</span><h3>{e(h)}</h3><p>{e(t)}</p></li>""" for i, (ic, c, h, meta, t) in enumerate(steps))
 
     fit_yes = ["Roughly 5 to 50 people", "Selling on Shopify online, in stores or both",
@@ -895,13 +908,13 @@ def page_home():
 
 <section class="section-s doors-sec" data-sec="doors">
   <div class="wrap"><div class="doors">
-    <a class="door c-coral reveal" href="/shopify"><span class="pi">{M.icon("shopping-cart")}</span><b>If you sell on Shopify</b>
+    <a class="door c-coral reveal" href="/shopify"><span class="pi{sp("store-move")}">{ico("store-move")}</span><b>If you sell on Shopify</b>
     <span>Your store runs well, but stock, purchasing and the books live in spreadsheets. We add the back office
     without rebuilding the store.</span><em>Shopify setup and moves{M.icon("arrow-right")}</em></a>
-    <a class="door c-mint reveal" data-i="1" href="/odoo"><span class="pi">{M.icon("boxes")}</span><b>If you run on Odoo</b>
+    <a class="door c-mint reveal" data-i="1" href="/odoo"><span class="pi{sp("boxes")}">{ico("boxes")}</span><b>If you run on Odoo</b>
     <span>Odoo is in, or half in. We finish the setup, load your data and connect it to your store and
     registers.</span><em>Odoo 20 setup{M.icon("arrow-right")}</em></a>
-    <a class="door c-lilac reveal" data-i="2" href="#finder"><span class="pi">{M.icon("search")}</span><b>Not sure yet</b>
+    <a class="door c-lilac reveal" data-i="2" href="#finder"><span class="pi{sp("questions")}">{ico("questions")}</span><b>Not sure yet</b>
     <span>Answer three questions and we'll point you to one service, or tell you plainly that you don't need
     one yet.</span><em>Use the finder{M.icon("arrow-right")}</em></a>
   </div></div>
@@ -1141,12 +1154,12 @@ def page_service(p):
                     for n, i in enumerate(x["after"]))
     cta = primary_cta("service")
     faqs = x["faqs"] + SERVICE_FAQS[:2]
-    others = "".join(f'<a class="other {SVC_COLOR[o["slug"]]}" href="{svc_href(o["slug"])}">{M.icon(SVC_ICON[o["slug"]])}'
+    others = "".join(f'<a class="other {SVC_COLOR[o["slug"]]}" href="{svc_href(o["slug"])}">{ico(SVC_ICON[o["slug"]])}'
                      f'<span><b>{e(o["name"])}</b><em>{price(*o["price"])}</em></span></a>'
                      for o in C.PACKAGES if o["slug"] != slug)
     card = f"""
 <aside class="price-card {SVC_COLOR[slug]}">
-  <span class="pc-ic">{M.icon(SVC_ICON[slug])}</span>
+  <span class="pc-ic{sp(SVC_ICON[slug])}">{ico(SVC_ICON[slug])}</span>
   <dl><div><dt>Price</dt><dd class="price big">{price(*p['price'])}</dd></div>
   <div><dt>Typical timeline</dt><dd>{e(p['timeline'])}</dd></div>
   <div><dt>Payment</dt><dd>{e(p['payment'])}</dd></div></dl>
@@ -1178,7 +1191,7 @@ def page_service(p):
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>Questions about the {e(p['name'])}</h2>{qa_list(faqs)}</div>
   <div class="reveal" data-i="1"><h2>Other services</h2><div class="others">{others}
-  <a class="other c-yellow" href="{svc_href('support')}">{M.icon('life-buoy')}<span><b>{e(C.SUPPORT['name'])}</b>
+  <a class="other c-yellow" href="{svc_href('support')}">{ico('life-buoy')}<span><b>{e(C.SUPPORT['name'])}</b>
   <em>From {price('support_10h')}</em></span></a></div></div>
 </div></section>"""
     return {
@@ -1210,7 +1223,7 @@ def page_support():
     {e(C.TIMEZONE_LABEL)} time.</p>
     <div class="opt-cards">{opts}</div>
   </div>
-  <aside class="price-card c-yellow"><span class="pc-ic">{M.icon('life-buoy')}</span>
+  <aside class="price-card c-yellow"><span class="pc-ic{sp('life-buoy')}">{ico('life-buoy')}</span>
   <div class="mini-solo">{M.MINIS['support']()}</div>
   {cta or '<a class="btn" href="/book">How to book a call</a>'}</aside>
 </div></section>
@@ -1383,7 +1396,7 @@ PRICING_FAQS = [
 
 
 def tick_cards(items):
-    return "".join(f'<li class="reveal" data-i="{i % 3}"><span class="pi {c}">{M.icon(ic)}</span><div><b>{e(h)}</b>'
+    return "".join(f'<li class="reveal" data-i="{i % 3}"><span class="pi {c}{sp(ic)}">{ico(ic)}</span><div><b>{e(h)}</b>'
                    f'<span>{e(t)}</span></div></li>' for i, (ic, c, h, t) in enumerate(items))
 
 
@@ -1445,9 +1458,9 @@ def page_shopify():
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>Shopify questions</h2>{qa_list(SHOPIFY_FAQS)}</div>
   <div class="reveal" data-i="1"><h2>Shopify services</h2><div class="others">
-  <a class="other c-coral" href="{svc_href('store-move')}">{M.icon('truck')}<span><b>Store Move</b><em>{price('store_move_min', 'store_move_max')}</em></span></a>
-  <a class="other c-blue" href="{svc_href('connection')}">{M.icon('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
-  <a class="other c-lilac" href="{svc_href('systems-roadmap')}">{M.icon('map')}<span><b>Systems Roadmap</b><em>{price('roadmap_min', 'roadmap_max')}</em></span></a>
+  <a class="other c-coral" href="{svc_href('store-move')}">{ico('store-move')}<span><b>Store Move</b><em>{price('store_move_min', 'store_move_max')}</em></span></a>
+  <a class="other c-blue" href="{svc_href('connection')}">{ico('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
+  <a class="other c-lilac" href="{svc_href('systems-roadmap')}">{ico('map')}<span><b>Systems Roadmap</b><em>{price('roadmap_min', 'roadmap_max')}</em></span></a>
   </div></div>
 </div></section>"""
     return {
@@ -1529,9 +1542,9 @@ def page_odoo():
   <p>A single-location store with simple stock often does better with Shopify and a bookkeeping app. Odoo is a big
   system, and it earns its keep when several people, places or vendors need the same numbers.</p>
   <h2>Odoo services</h2><div class="others">
-  <a class="other c-mint" href="{svc_href('odoo-launch')}">{M.icon('boxes')}<span><b>Back Office Launch</b><em>{price('odoo_launch_min', 'odoo_launch_max')}</em></span></a>
-  <a class="other c-blue" href="{svc_href('connection')}">{M.icon('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
-  <a class="other c-yellow" href="{svc_href('support')}">{M.icon('life-buoy')}<span><b>{e(C.SUPPORT['name'])}</b><em>From {price('support_10h')}</em></span></a>
+  <a class="other c-mint" href="{svc_href('odoo-launch')}">{ico('boxes')}<span><b>Back Office Launch</b><em>{price('odoo_launch_min', 'odoo_launch_max')}</em></span></a>
+  <a class="other c-blue" href="{svc_href('connection')}">{ico('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
+  <a class="other c-yellow" href="{svc_href('support')}">{ico('life-buoy')}<span><b>{e(C.SUPPORT['name'])}</b><em>From {price('support_10h')}</em></span></a>
   </div></div>
 </div></section>"""
     return {
@@ -1553,7 +1566,7 @@ def page_pricing():
     }
     cards = "".join(f"""
 <div class="pr-card {SVC_COLOR[s]} reveal" data-i="{i}">
-  <span class="pc-ic">{M.icon(SVC_ICON[s])}</span>
+  <span class="pc-ic{sp(SVC_ICON[s])}">{ico(SVC_ICON[s])}</span>
   <h3><a href="{svc_href(s)}">{e(by[s]['name'])}</a></h3>
   <p class="price big">{price(*by[s]['price'])}</p>
   <dl><div><dt>Typical timeline</dt><dd>{e(by[s]['timeline'])}</dd></div>
@@ -1607,7 +1620,7 @@ def page_how():
         index.append(f'<li><a href="#phase-{pid}"><span class="pi {col}">{n + 1}</span><span><b>{e(name)}</b>'
                      f'<em>Steps {a + 1}–{b} · {e(sub)}</em></span></a></li>')
         items = "".join(
-            f'<li class="reveal"><span class="tl-dot pi {col}">{M.icon(ic)}</span><div class="tl-card">'
+            f'<li class="reveal"><span class="tl-dot pi {col}{sp(ic)}">{ico(ic)}</span><div class="tl-card">'
             f'<span class="st-meta">Step {i + 1} · {e(t)}</span><h4 class="h3">{e(h)}</h4><p>{e(d)}</p></div></li>'
             for i, (ic, h, t, d) in list(enumerate(STEPS))[a:b])
         groups.append(f'<section class="phase {col}" id="phase-{pid}" aria-labelledby="ph-{pid}">'
@@ -1671,7 +1684,7 @@ def page_about():
                f"{C.FOUNDER} scopes the project, writes the statement of work and runs it."),
               ("clock", "c-coral", "US business hours",
                f"{C.PROMISES['business_days']}, {C.TIMEZONE_LABEL} time, with a reply {C.PROMISES['first_reply']}.")]
-    vals = "".join(f'<li class="reveal" data-i="{i}"><span class="pi {c}">{M.icon(ic)}</span><b>{e(h)}</b><span>{e(t)}</span></li>'
+    vals = "".join(f'<li class="reveal" data-i="{i}"><span class="pi {c}{sp(ic)}">{ico(ic)}</span><b>{e(h)}</b><span>{e(t)}</span></li>'
                    for i, (ic, c, h, t) in enumerate(values))
     body = page_hero("About", f"About {NAME} and {C.FOUNDER}",
                      f"{e(NAME)} is a {e(C.STATE)} business. All work is remote, for businesses anywhere in the "
@@ -1911,9 +1924,20 @@ def crumbs(items):
     return f'<nav class="crumbs" aria-label="Breadcrumb">{"".join(parts)}</nav>', schema
 
 
+SHAPE_SETS = [("squiggle", "dots", "triangle"), ("zigzag", "ring", "confetti"), ("half-moon", "dots", "plus"),
+              ("stripe-pill", "triangle", "squiggle"), ("ring", "zigzag", "dots")]
+
+
+def hero_shapes(key):
+    """Three Memphis shapes for the empty side of a hero, picked from the page so neighbours differ."""
+    a, b, c = SHAPE_SETS[sum(map(ord, key)) % len(SHAPE_SETS)]
+    return (f'<div class="hero-shapes" aria-hidden="true">{S.shape(a, "m1")}{S.shape(b, "m2")}'
+            f'{S.shape(c, "m3")}</div>')
+
+
 def hub_hero(trail, eyebrow, h1, lead, art=""):
     return f"""
-<section class="phero hub-hero{' with-art' if art else ''}"><div class="wrap phero-grid">
+<section class="phero hub-hero{' with-art' if art else ''}">{'' if art else hero_shapes(h1)}<div class="wrap phero-grid">
   <div>{trail}<p class="eyebrow">{eyebrow}</p><h1>{e(h1)}</h1><p class="lead">{lead}</p></div>
   {f'<div class="phero-art">{art}</div>' if art else ''}
 </div></section>"""
@@ -1929,7 +1953,7 @@ def chips(target):
 
 def rcard(href, kind, platform, title, text, meta="", ic="book-open", color="c-blue", i=0):
     return (f'<!--reuse--><li data-platform="{platform}"><a class="rcard reveal" data-i="{i % 3}" href="{href}">'
-            f'<span class="rc-top"><span class="pi {color}">{M.icon(ic)}</span><span class="rc-kind">{e(kind)}</span>'
+            f'<span class="rc-top"><span class="pi {color}{sp(ic)}">{ico(ic)}</span><span class="rc-kind">{e(kind)}</span>'
             f'{ptag(platform)}</span><b>{e(title)}</b><span class="rc-text">{e(text)}</span>'
             f'{f"<em>{e(meta)}</em>" if meta else ""}</a></li><!--/reuse-->')
 
@@ -1994,7 +2018,7 @@ def video_card(v, i=0):
 
 
 TOOLS = [
-    ("/tools/shopify-plan-picker", "Shopify plan picker", "shopify", "calculator", "c-coral",
+    ("/tools/shopify-plan-picker", "Shopify plan picker", "shopify", "tools", "c-coral",
      "Answer five questions about shops, staff and wholesale, and see which Shopify plan fits, with the monthly cost."),
     ("/tools/sync-simulator", "Sync model", "both", "refresh-cw", "c-blue",
      "Sell an item online or at the register, receive stock, or switch the connector off, and watch both counts."),
@@ -2024,20 +2048,20 @@ def page_resources():
     n_faq = sum(len(x[5]) for x in R.FAQ_PAGES)
     doors = [("/guides", "book-open", "c-blue", "Guides", "Long answers to the questions store owners ask before "
               "they buy a plan, a connector or a setup.", f"{len(guides_live())} guides"),
-             ("/videos", "monitor-smartphone", "c-mint", "Videos", "Short screen recordings of real Odoo 20 screens "
+             ("/videos", "videos", "c-mint", "Videos", "Short screen recordings of real Odoo 20 screens "
               "with sample data, each with a text version.", f"{len(R.VIDEOS)} recordings"),
-             ("/faq", "list-checks", "c-yellow", "Questions", "Short answers on Shopify, Odoo and how we work, each "
+             ("/faq", "questions", "c-yellow", "Questions", "Short answers on Shopify, Odoo and how we work, each "
               "linked to the page that goes further.", f"{n_faq} answers"),
-             ("/tools", "calculator", "c-coral", "Tools", "A Shopify plan picker, the sync model and the Odoo 20 "
+             ("/tools", "tools", "c-coral", "Tools", "A Shopify plan picker, the sync model and the Odoo 20 "
               "tours, each on its own page.", f"{len(TOOLS)} tools")]
     doors = [d for d in doors if live_href(d[0])]
-    door_html = "".join(f'<a class="door {c} reveal" data-i="{i % 3}" href="{h}"><span class="pi">{M.icon(ic)}</span>'
+    door_html = "".join(f'<a class="door {c} reveal" data-i="{i % 3}" href="{h}"><span class="pi{sp(ic)}">{ico(ic)}</span>'
                         f'<b>{e(t)}</b><span>{e(x)}</span><em>{e(m)}{M.icon("arrow-right")}</em></a>'
                         for i, (h, ic, c, t, x, m) in enumerate(doors))
     items = [guide_card(g, i) for i, g in enumerate(guides_live())]
     items += [video_card(v, i) for i, v in enumerate(R.VIDEOS)]
     items += [rcard(h, "Tool", p, t, x, "", ic, c, i) for i, (h, t, p, ic, c, x) in enumerate(TOOLS)]
-    items += [rcard(f"/faq/{s}", "Questions", p, h1, lead, f"{len(lst)} answers", "list-checks", "c-yellow", i)
+    items += [rcard(f"/faq/{s}", "Questions", p, h1, lead, f"{len(lst)} answers", "questions", "c-yellow", i)
               for i, (s, _, p, h1, lead, lst) in enumerate(R.FAQ_PAGES)]
     body = hub_hero(trail, "Resources", "Guides, videos and answers on Shopify and Odoo",
                     "Plain answers to the questions that come up before and during a Shopify or Odoo project. Prices "
@@ -2078,7 +2102,7 @@ def guide_side(g):
     svc = []
     for s in g["services"]:
         p = next(x for x in C.PACKAGES if x["slug"] == s)
-        svc.append(f'<a class="other {SVC_COLOR[s]}" href="{svc_href(s)}">{M.icon(SVC_ICON[s])}<span><b>{e(p["name"])}</b>'
+        svc.append(f'<a class="other {SVC_COLOR[s]}" href="{svc_href(s)}">{ico(SVC_ICON[s])}<span><b>{e(p["name"])}</b>'
                    f'<em>{price(*p["price"])}</em></span></a>')
     toc = "".join(f'<li><a href="#{anchor(h)}">{e(h)}</a></li>' for h in re.findall(r"^## (.+)$", g["body"], re.M))
     cta = primary_cta("guide")
@@ -2112,7 +2136,7 @@ def page_guide(g):
                       if GUIDE_BY[s] in guides_live())
     faqs = [(q, fill(a)) for q, a in g["faqs"]]
     body = f"""
-<section class="ghero"><div class="wrap"><div class="g-head">
+<section class="ghero">{hero_shapes(g["slug"])}<div class="wrap"><div class="g-head">
   {trail}
   <p class="eyebrow">{ptag(g['platform'])}Guide</p>
   <h1>{e(g['title'])}</h1>
@@ -2148,7 +2172,7 @@ def page_guide(g):
 def page_faq_hub():
     trail, crs = crumbs([("Resources", "/resources"), ("Questions", "/faq")])
     doors = "".join(
-        f'<a class="door {c} reveal" data-i="{i}" href="/faq/{s}"><span class="pi">{M.icon(ic)}</span><b>{e(h1)}</b>'
+        f'<a class="door {c} reveal" data-i="{i}" href="/faq/{s}"><span class="pi{sp(ic)}">{ico(ic)}</span><b>{e(h1)}</b>'
         f'<span>{e(lead)}</span><em>{len(lst)} answers{M.icon("arrow-right")}</em></a>'
         for i, ((s, _, p, h1, lead, lst), (ic, c)) in enumerate(
             zip(R.FAQ_PAGES, [("shopping-cart", "c-coral"), ("boxes", "c-mint"), ("users", "c-lilac")])))
@@ -2165,14 +2189,14 @@ def page_faq_hub():
 def page_faq(slug, label_, platform, h1, lead, lst):
     path = f"/faq/{slug}"
     trail, crs = crumbs([("Resources", "/resources"), ("Questions", "/faq"), (label_, path)])
-    others = "".join(f'<a class="other c-yellow" href="/faq/{s}">{M.icon("list-checks")}<span><b>{e(h)}</b>'
+    others = "".join(f'<a class="other c-yellow" href="/faq/{s}">{ico("questions")}<span><b>{e(h)}</b>'
                      f'<em>{len(x)} answers</em></span></a>' for s, _, _, h, _, x in R.FAQ_PAGES if s != slug)
     cta = primary_cta("faq")
     body = hub_hero(trail, f"{ptag(platform)}Questions", h1, e(lead)) + f"""
 <section class="section-s"><div class="wrap faq-page">
   <div>{qa_links(lst)}</div>
   <!--reuse--><aside class="g-side"><div class="g-box"><p class="eyebrow">More answers</p><div class="others">{others}
-  {f'<a class="other c-blue" href="/guides">{M.icon("book-open")}<span><b>Guides</b><em>The longer answers</em></span></a>' if live_href("/guides") else ''}</div></div>
+  {f'<a class="other c-blue" href="/guides">{ico("book-open")}<span><b>Guides</b><em>The longer answers</em></span></a>' if live_href("/guides") else ''}</div></div>
   {f'<div class="g-box"><p class="eyebrow">Not answered here</p><p class="small">Ask on a free 30-minute scoping call.</p><div class="g-cta">{cta}</div></div>' if cta else ''}
   </aside><!--/reuse-->
 </div></section>"""
@@ -2213,12 +2237,12 @@ def page_video(v):
     links = []
     if v.get("guide") and GUIDE_BY[v["guide"]] in guides_live():
         gd = GUIDE_BY[v["guide"]]
-        links.append(f'<a class="other c-blue" href="/guides/{gd["slug"]}">{M.icon("book-open")}<span><b>{e(gd["title"])}</b>'
+        links.append(f'<a class="other c-blue" href="/guides/{gd["slug"]}">{ico("book-open")}<span><b>{e(gd["title"])}</b>'
                      f'<em>Guide</em></span></a>')
     if v.get("tour"):
-        links.append(f'<a class="other c-mint" href="/tools/odoo-tours">{M.icon("boxes")}<span><b>Click through it '
+        links.append(f'<a class="other c-mint" href="/tools/odoo-tours">{ico("boxes")}<span><b>Click through it '
                      f'yourself</b><em>Odoo 20 guided tour</em></span></a>')
-    links.append(f'<a class="other c-mint" href="{svc_href("odoo-launch")}">{M.icon("boxes")}<span><b>Back Office '
+    links.append(f'<a class="other c-mint" href="{svc_href("odoo-launch")}">{ico("boxes")}<span><b>Back Office '
                  f'Launch</b><em>{price("odoo_launch_min", "odoo_launch_max")}</em></span></a>')
     body = hub_hero(trail, f"{ptag(v['platform'])}Screen recording, {mmss(v['seconds'])}", v["title"],
                     f"<!--reuse-->{e(r['desc'])}<!--/reuse-->") + f"""
@@ -2289,8 +2313,8 @@ def page_tool_sync():
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>What each button does</h2><ul class="plain-list">{rl}</ul></div>
   <div class="reveal" data-i="1"><h2>Read more</h2><div class="others">
-  {f'<a class="other c-blue" href="/guides/shopify-connectors-odoo-online">{M.icon("book-open")}<span><b>{e(GUIDE_BY["shopify-connectors-odoo-online"]["title"])}</b><em>Guide</em></span></a>' if live_href("/guides/shopify-connectors-odoo-online") else ''}
-  <a class="other c-blue" href="{svc_href('connection')}">{M.icon('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
+  {f'<a class="other c-blue" href="/guides/shopify-connectors-odoo-online">{ico("book-open")}<span><b>{e(GUIDE_BY["shopify-connectors-odoo-online"]["title"])}</b><em>Guide</em></span></a>' if live_href("/guides/shopify-connectors-odoo-online") else ''}
+  <a class="other c-blue" href="{svc_href('connection')}">{ico('refresh-cw')}<span><b>Store to Back Office Sync</b><em>{price('connection_min', 'connection_max')}</em></span></a>
   </div></div>
 </div></section>"""
     return {"path": path, "file": "tools/sync-simulator.html", "h": "Sync model",

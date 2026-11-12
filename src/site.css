@@ -1200,3 +1200,24 @@ li[data-hide] { display: none; }
   .gtable td + td { margin-top: 8px; }
   .gtable td::before { content: attr(data-label); display: block; margin-bottom: 2px; font: 600 .7rem/1.3 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 }
+
+/* ---- Custom spot icons and Memphis shapes (src/spot.py) -------------------------------------- */
+.sp-c { fill: var(--c, var(--sp)); }
+.sd-blue { --sp: #2f55d4; } .sd-coral { --sp: #ff7a59; } .sd-mint { --sp: #3ecf9e; } .sd-lilac { --sp: #a99bff; } .sd-yellow { --sp: #ffc53d; }
+.spot { display: block; flex: none; width: 100%; height: 100%; overflow: visible; }
+/* A tile that holds a spot icon drops its own box: the icon's offset color block does that job. */
+.pi.spot-tile, .pc-ic.spot-tile, .fr-ic.spot-tile { background: none; border: 0; border-radius: 0; box-shadow: none; }
+.timeline2 .tl-dot.spot-tile { background: var(--paper); border-radius: 12px; }
+.other > .spot { width: 44px; height: 44px; }
+.rc-top .pi.spot-tile { width: 42px; height: 42px; }
+.door .pi.spot-tile { width: 56px; height: 56px; }
+
+.ghero { position: relative; overflow: hidden; }
+.hero-shapes { position: absolute; inset: 0; pointer-events: none; }
+.hero-shapes .mshape { position: absolute; width: 96px; height: 96px; }
+.hero-shapes .m1 { right: 7%; top: 16%; width: 128px; height: 128px; }
+.hero-shapes .m2 { right: 21%; bottom: 12%; }
+.hero-shapes .m3 { right: 3%; bottom: 10%; width: 72px; height: 72px; }
+.ghero .hero-shapes .m1 { top: 10%; }
+@media (max-width: 1180px) { .ghero .hero-shapes { display: none; } }
+@media (max-width: 900px) { .hero-shapes { display: none; } }
