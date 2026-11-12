@@ -19,7 +19,7 @@ Workers Builds from this repository.
 | `src/site.js` | Demo tabs, service finder, guided Odoo tours, the stock sync model, resource filters, video chapters, the Shopify plan picker, scroll reveals, the first-party visit counter and the privacy opt-out. |
 | `src/fonts/` | Self-hosted Archivo, IBM Plex Sans and IBM Plex Mono (OFL). |
 | `src/icons/` | Lucide icons (ISC), inlined at build. |
-| `src/og.png`, `src/apple-touch-icon.png` | Share image (1200x630) and phone home-screen icon. |
+| `src/og.png`, `src/apple-touch-icon.png` | Share image (1200x630) and phone home-screen icon. The share image is drawn by `tools/share_image.py` from the site's fonts, spot icons and shapes; run it, then `node tools/shot.js` to render a new `src/og.png`. No AI images. |
 | `worker/index.js` | The Worker on `/api/*` and `/media/*`. Media requests get byte ranges (206), which Safari needs to play video; Cloudflare's static assets ignore Range on their own. On `/api/*` it writes visit events to Workers Analytics Engine, sets one HttpOnly cookie, stores no IP or contact details, honors the opt-out cookie and Global Privacy Control. |
 | `wrangler.jsonc` | Workers config: assets from `dist/`, Worker first for `/api/*` and `/media/*`, 404 page, Analytics Engine binding. |
 | `dist/` | Build output, git-ignored. |
