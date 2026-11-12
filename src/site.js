@@ -1,5 +1,5 @@
 // [DBA name] site behavior: the first-party visit counter, the privacy opt-out, the workflow demo,
-// the service finder, scroll reveals, resource filters, video chapters and the Shopify plan picker.
+// the service finder, scroll reveals, resource filters, video chapters, the Shopify plan picker and the ERP readiness check.
 // Sends to /api/e on our own domain only. No third-party scripts, no IP logging, no contact details,
 // and nothing typed or picked on the page except which demo tab and which finder result were shown.
 (function () {
@@ -553,6 +553,40 @@
           opts.forEach(function (x) { x.setAttribute("aria-pressed", x === o ? "true" : "false"); });
           ans[key] = o.getAttribute("data-v");
           if (!used) { used = true; track("demo", "plan:start"); }
+          paint();
+        });
+      });
+    });
+    box.hidden = false;
+  });
+
+  // ---- ERP readiness check: eight yes or no answers, three results -------------------------------
+  all("[data-erp]").forEach(function (box) {
+    var qs = all("[data-eq]", box), ans = {}, used = false, last = "";
+    var empty = box.querySelector("[data-er-empty]"), count = box.querySelector("[data-er-count]");
+    var nEl = box.querySelector("[data-er-n]"), res = all("[data-er]", box);
+    function paint() {
+      var keys = Object.keys(ans), yes = 0;
+      keys.forEach(function (k) { yes += ans[k]; });
+      var done = keys.length === qs.length;
+      count.textContent = done || !keys.length ? "" : keys.length + " of " + qs.length + " answered.";
+      empty.hidden = done; nEl.hidden = !done;
+      var k = yes <= 2 ? "0" : yes <= 5 ? "1" : "2";
+      res.forEach(function (r) { r.hidden = !done || r.getAttribute("data-er") !== k; });
+      if (!done) return;
+      nEl.textContent = yes + " of " + qs.length + " answers were yes.";
+      if (!last && box.querySelector(".pk-r").getBoundingClientRect().top > window.innerHeight - 80) {
+        box.querySelector(".pk-r").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      }
+      if (k !== last) { last = k; track("demo", "erp:" + k); }
+    }
+    qs.forEach(function (q) {
+      var key = q.getAttribute("data-eq"), opts = all(".opt", q);
+      opts.forEach(function (o) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.setAttribute("aria-pressed", x === o ? "true" : "false"); });
+          ans[key] = +o.getAttribute("data-v");
+          if (!used) { used = true; track("demo", "erp:start"); }
           paint();
         });
       });

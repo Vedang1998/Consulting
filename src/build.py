@@ -1773,8 +1773,9 @@ def page_privacy():
 the page you landed on, the website that sent you (its domain only), any campaign tags in the link,
 whether you have visited before, your country and region as Cloudflare estimates them, the name of the
 network you connect through (for example your internet provider), your device type and browser, how far
-down a page you scrolled and which sections came into view, clicks on the workflow demo and the service
-finder, and taps on our booking, email or phone links.</p>
+down a page you scrolled and which sections came into view, clicks on the workflow demo, the service
+finder and our free tools (including which result a tool showed, never your answers), and taps on our
+booking, email or phone links.</p>
 <p>To tell new visits from returning ones it sets one first-party cookie holding a random ID. The cookie
 cannot be read by scripts on the page, is not shared with anyone, and expires after one year. The counter
 does not store your IP address, name, email address or anything you type.</p>
@@ -2024,6 +2025,8 @@ TOOLS = [
      "Sell an item online or at the register, receive stock, or switch the connector off, and watch both counts."),
     ("/tools/odoo-tours", "Odoo 20 guided tours", "odoo", "boxes", "c-mint",
      "Click through real Odoo 20 screens: a web order to a delivery, and a purchase order to stock."),
+    ("/tools/erp-readiness", "ERP readiness check", "shopify", "checklist", "c-yellow",
+     "Eight yes or no questions about your stock, purchasing and books, and a plain read on whether an ERP fits yet."),
 ]
 
 
@@ -2052,8 +2055,10 @@ def page_resources():
               "with sample data, each with a text version.", f"{len(R.VIDEOS)} recordings"),
              ("/faq", "questions", "c-yellow", "Questions", "Short answers on Shopify, Odoo and how we work, each "
               "linked to the page that goes further.", f"{n_faq} answers"),
-             ("/tools", "tools", "c-coral", "Tools", "A Shopify plan picker, the sync model and the Odoo 20 "
-              "tours, each on its own page.", f"{len(TOOLS)} tools")]
+             ("/tools", "tools", "c-coral", "Tools", "A Shopify plan picker, an ERP readiness check, the sync "
+              "model and the Odoo 20 tours.", f"{len(TOOLS)} tools"),
+             ("/glossary", "key", "c-lilac", "Glossary", "Plain definitions of the Shopify and Odoo terms used "
+              "across this site.", f"{len(R.GLOSSARY)} terms")]
     doors = [d for d in doors if live_href(d[0])]
     door_html = "".join(f'<a class="door {c} reveal" data-i="{i % 3}" href="{h}"><span class="pi{sp(ic)}">{ico(ic)}</span>'
                         f'<b>{e(t)}</b><span>{e(x)}</span><em>{e(m)}{M.icon("arrow-right")}</em></a>'
@@ -2068,7 +2073,7 @@ def page_resources():
                     "and limits carry the date we checked them on the vendor's own page.",
                     A.art("idea-to-plan", "c-blue", "Illustration: a person turning an idea into a plan",
                           shape="card")) + f"""
-<section class="section-s doors-sec"><div class="wrap"><!--reuse--><div class="doors doors4">{door_html}</div><!--/reuse--></div></section>
+<section class="section-s doors-sec"><div class="wrap"><!--reuse--><div class="doors doors5">{door_html}</div><!--/reuse--></div></section>
 <section class="section-s tint"><div class="wrap">
   <div class="sec-head reveal"><p class="eyebrow">Everything here</p><h2>All guides, videos, tools and answers</h2></div>
   {chips("all")}
@@ -2281,16 +2286,16 @@ def page_tools():
     trail, crs = crumbs([("Resources", "/resources"), ("Tools", "/tools")])
     cards = "".join(rcard(h, "Tool", p, t, x, "", ic, c, i) for i, (h, t, p, ic, c, x) in enumerate(TOOLS))
     body = hub_hero(trail, "Tools", "Small tools for Shopify and Odoo decisions",
-                    "Each one runs in your browser, sends nothing anywhere, and has a written version under it.") + f"""
+                    "Each one runs in your browser and has a written version under it.") + f"""
 <section class="section-s"><div class="wrap">
-  <ul class="rgrid">{cards}</ul>
-  <p class="small">Not sure which service fits? The <a href="/#finder">service finder</a> on the home page asks three
+  <ul class="rgrid{' rgrid2' if len(TOOLS) % 3 == 1 else ''}">{cards}</ul>
+  <p class="small after-grid">Not sure which service fits? The <a href="/#finder">service finder</a> on the home page asks three
   questions.</p>
 </div></section>"""
     return {"path": "/tools", "file": "tools.html", "h": "Tools",
             "title": f"Shopify and Odoo tools | {NAME}",
-            "desc": ("A Shopify plan picker, a model of how a Shopify and Odoo connector moves stock, and guided tours "
-                     "of Odoo 20 screens."),
+            "desc": ("A Shopify plan picker, an ERP readiness check, a model of how a connector moves stock, and "
+                     "guided tours of Odoo 20 screens."),
             "body": body, "schema": [crs]}
 
 
@@ -2393,7 +2398,7 @@ def page_tool_plans():
 <section class="section-s tint"><div class="wrap two-col">
   <div class="reveal"><h2>How the picker decides</h2><ul class="plain-list">
     <li><b>Plus</b> when you sell from more than 10 locations, need more than 15 staff logins, or need more than 3
-    wholesale catalogs. Plus starts at $2,300 a month.</li>
+    wholesale catalogs. Plus is quoted from $2,300 a month.</li>
     <li><b>Advanced</b> when 6 to 15 staff need their own login. It includes 15 staff accounts.</li>
     <li><b>Grow</b> when up to 5 staff need a login, or Shopify will connect to a back office. Grow includes 5 staff
     accounts, and Shopify lists full data access for custom apps from Grow up, which some connectors use.</li>
@@ -2415,11 +2420,103 @@ def page_tool_plans():
             "body": body, "schema": [crs]}
 
 
+def page_glossary():
+    path = "/glossary"
+    trail, crs = crumbs([("Resources", "/resources"), ("Glossary", path)])
+    terms = sorted(R.GLOSSARY, key=lambda t: t[0].lower())
+    letters = sorted({t[0][0].upper() for t in terms})
+    jump = "".join(f'<a href="#letter-{c}">{c}</a>' for c in letters)
+    rows, cur = [], ""
+    for term, text, href, ltxt in terms:
+        c = term[0].upper()
+        if c != cur:
+            if cur:
+                rows.append("</dl></div>")
+            rows.append(f'<div class="gl-group" id="letter-{c}"><h2 class="gl-letter">{c}</h2><dl class="gl-list">')
+            cur = c
+        link = live_href(href)
+        more = f' <a class="more" href="{link}">{e(ltxt)}{M.icon("arrow-right")}</a>' if link else ""
+        rows.append(f'<div class="gl-item" id="{anchor(term)}"><dt>{e(term)}</dt><dd>{e(fill(text))}{more}</dd></div>')
+    rows.append("</dl></div>")
+    schema = {"@context": "https://schema.org", "@type": "DefinedTermSet", "name": "Shopify and Odoo glossary",
+              "url": SITE + path, "hasDefinedTerm": [
+                  {"@type": "DefinedTerm", "name": t, "description": fill(x), "url": f"{SITE}{path}#{anchor(t)}"}
+                  for t, x, _, _ in terms]}
+    body = hub_hero(trail, "Glossary", "Shopify and Odoo terms in plain words",
+                    f"{len(terms)} terms that come up in our guides and on calls, each with a link to the page that "
+                    "uses it.") + f"""
+<section class="section-s"><div class="wrap gl-wrap">
+  <nav class="gl-jump" aria-label="Jump to a letter">{jump}</nav>
+  {''.join(rows)}
+</div></section>"""
+    return {"path": path, "file": "glossary.html", "h": "Glossary",
+            "title": f"Shopify and Odoo glossary in plain words | {NAME}",
+            "desc": ("Plain definitions of Shopify and Odoo terms: SKU, on hand, landed cost, Odoo.sh, the Custom "
+                     "plan, POS Pro, cutover, reconciliation and more."),
+            "body": body, "schema": [crs, schema]}
+
+
+def page_tool_erp():
+    path = "/tools/erp-readiness"
+    trail, crs = crumbs([("Resources", "/resources"), ("Tools", "/tools"), ("ERP readiness check", path)])
+    qs = "".join(
+        f'<fieldset class="pk-q" data-eq="{k}"><legend>{i + 1}. {e(q)}</legend><div class="opts">'
+        f'<button type="button" class="opt" data-v="1" aria-pressed="false"><span>Yes</span></button>'
+        f'<button type="button" class="opt" data-v="0" aria-pressed="false"><span>No</span></button></div></fieldset>'
+        for i, (k, q) in enumerate(R.ERP_CHECK))
+    erp_guide = live_href("/guides/when-you-dont-need-an-erp")
+    results = [
+        ("0", "Not yet", "Your setup is coping. Fix the one or two weak spots with Shopify's own tools or a single "
+         "app, and run this check again in six months."),
+        ("1", "Worth a roadmap", "Several jobs are straining your setup. Before you buy anything, map what an ERP would "
+         f"change and what it would cost. That's what our Systems Roadmap does, for "
+         f"{price('roadmap_min', 'roadmap_max')}."),
+        ("2", "Ready for an ERP", "Workarounds are likely costing more than one system would. The next step is a "
+         "written scope: which apps, which data, and a go-live date outside your busy season."),
+    ]
+    res = "".join(f'<div data-er="{k}" hidden><p class="eyebrow">Your result</p><h2>{e(t)}</h2><p>{x}</p></div>'
+                  for k, t, x in results)
+    rule = "".join(f"<li><b>{e(t)}</b> {x}</li>" for t, x in [
+        ("0 to 2 yes answers: not yet.", "One or two problems can usually be fixed with an app or a better routine."),
+        ("3 to 5: worth a roadmap.", "Several jobs are straining at once, so it's worth mapping what an ERP would "
+                                     "change before you spend on more apps."),
+        ("6 to 8: ready.", "Most of the signs are there, and more workarounds will cost more than one system."),
+    ])
+    body = hub_hero(trail, f"{ptag('shopify')}Tool", "An eight-question ERP readiness check",
+                    "Answer yes or no. Your answers stay in your browser. Our visit counter notes only which "
+                    "of the three results came up.") + f"""
+<section class="section-s"><div class="wrap">
+  <div class="picker" data-erp hidden>
+    <div class="pk-qs">{qs}</div>
+    <div class="pk-r" aria-live="polite">
+      <div data-er-empty><p class="eyebrow">Your result</p><p>Answer all eight and your result shows here.</p>
+      <p class="small" data-er-count></p></div>
+      {res}
+      <p class="small" data-er-n hidden></p>
+    </div>
+  </div>
+</div></section>
+<section class="section-s tint"><div class="wrap two-col">
+  <div class="reveal"><h2>How the check scores</h2><p>Each yes is a sign that your current setup is straining.</p>
+    <ul class="plain-list">{rule}</ul></div>
+  <div class="reveal" data-i="1"><h2>Read more</h2><div class="others">
+  {f'<a class="other c-blue" href="{erp_guide}">{ico("book-open")}<span><b>When you don&#39;t need an ERP yet</b><em>Guide</em></span></a>' if erp_guide else ''}
+  <a class="other c-yellow" href="{svc_href('systems-roadmap')}">{ico('map')}<span><b>Systems Roadmap</b><em>{price('roadmap_min', 'roadmap_max')}</em></span></a>
+  </div></div>
+</div></section>"""
+    return {"path": path, "file": "tools/erp-readiness.html", "h": "ERP readiness check",
+            "title": f"ERP readiness check for Shopify stores | {NAME}",
+            "desc": ("Eight yes or no questions about stock, purchasing, wholesale and month-end. See whether your "
+                     "store is ready for an ERP, worth a roadmap, or fine as it is."),
+            "body": body, "schema": [crs]}
+
+
 def hub_pages():
     pages = [page_resources()] + ([page_guides()] if guides_live() else []) + [page_guide(g) for g in guides_live()]
     pages += [page_faq_hub()] + [page_faq(*x) for x in R.FAQ_PAGES]
     pages += [page_videos()] + [page_video(v) for v in R.VIDEOS]
-    pages += [page_tools(), page_tool_plans(), page_tool_sync(), page_tool_tours()]
+    pages += [page_tools(), page_tool_plans(), page_tool_erp(), page_tool_sync(), page_tool_tours()]
+    pages += [page_glossary()]
     return pages
 
 

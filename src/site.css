@@ -1073,6 +1073,8 @@ html:not(.js) .mv .bar i { transform: none; }
 .rgrid, .vgrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .rgrid > li, .vgrid > li { display: flex; }
+.rgrid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.after-grid { margin-top: 24px; }
 .rcard, .vcard {
   display: flex; flex-direction: column; gap: 10px; width: 100%; padding: 20px; color: var(--ink); text-decoration: none;
   background: var(--surface); border: 2px solid var(--edge); border-radius: var(--r-lg); box-shadow: var(--pop);
@@ -1154,8 +1156,31 @@ li[data-hide] { display: none; }
 .pk-why { margin: 0 0 12px; padding-left: 1.2em; }
 .pk-why li { margin-bottom: 6px; }
 
+/* Five doors on the Resources hub: three across, then two wider ones. */
+.doors5 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.doors5 > :nth-child(-n+3) { grid-column: span 2; }
+.doors5 > :nth-child(n+4) { grid-column: span 3; }
+
+/* Glossary */
+.gl-wrap { max-width: 860px; }
+.gl-jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 28px; }
+.gl-jump a { display: grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border: 2px solid var(--edge); border-radius: 10px; background: var(--surface); color: var(--ink); font: 700 1rem/1 var(--f-head); text-decoration: none; }
+.gl-jump a:hover { background: var(--marker-tint); }
+.gl-group { scroll-margin-top: 96px; margin-bottom: 26px; }
+.gl-letter { margin: 0 0 10px; font-size: 1.6rem; }
+.gl-list { margin: 0; border-top: 2px solid var(--edge); }
+.gl-item { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 6px 24px; padding: 16px 0; border-bottom: 1.5px dashed var(--line); scroll-margin-top: 96px; }
+.gl-item dt { font: 700 1.05rem/1.4 var(--f-head); }
+.gl-item dd { margin: 0; }
+.gl-item dd .more { display: inline; margin-left: 4px; }
+.gl-item dd .more .ic { display: inline-block; vertical-align: -3px; margin-left: 6px; }
+.gl-item:target { background: var(--marker-tint); }
+
 @media (max-width: 1080px) {
   .foot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .doors5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doors5 > :nth-child(n) { grid-column: auto; }
+  .doors5 > :last-child { grid-column: 1 / -1; }
   .doors4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rgrid, .vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .g-grid, .faq-page { grid-template-columns: minmax(0, 1fr) 260px; gap: 36px; }
@@ -1172,6 +1197,9 @@ li[data-hide] { display: none; }
 }
 @media (max-width: 700px) {
   .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doors5 { grid-template-columns: minmax(0, 1fr); }
+  .gl-item { grid-template-columns: minmax(0, 1fr); }
+  .gl-jump a { min-width: 36px; padding: 0 4px; }
   .doors4, .rgrid, .vgrid { grid-template-columns: minmax(0, 1fr); }
   .ghero { padding: 40px 0 32px; }
   .answer { padding: 16px 16px; }
