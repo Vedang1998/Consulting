@@ -276,6 +276,23 @@ ODOO_REEL = [
      "media/odoo/invoice.mp4", "media/odoo/invoice-poster.jpg"),
 ]
 
+# More recordings from the same database, same row shape. They get their own video pages and are linked
+# under the reel, but stay out of the tabbed reel so it doesn't run long.
+ODOO_CLIPS = [
+    ("locations", "Stock in two locations", "warehouse",
+     "One product is stocked in the warehouse and the shop, and 5 units move from one to the other.",
+     "media/odoo/locations.mp4", "media/odoo/locations-poster.jpg"),
+    ("count", "Fix a stock count", "scan-barcode",
+     "A recount finds 78 chairs where Odoo expected 80, and the count is applied.",
+     "media/odoo/count.mp4", "media/odoo/count-poster.jpg"),
+    ("return", "Return and refund", "undo-2",
+     "One cabinet comes back from a customer, goes back into stock and is refunded.",
+     "media/odoo/return.mp4", "media/odoo/return-poster.jpg"),
+    ("reports", "Weekly reports", "chart-column",
+     "Sales by product, sorted by revenue, then the products that will run short against open orders.",
+     "media/odoo/reports.mp4", "media/odoo/reports-poster.jpg"),
+]
+
 # Guided tours on /odoo: real Odoo 20 screens from our demo database (Odoo's sample data), captured at
 # 960x600 CSS px at 2x. box = the next click target as left, top, width, height in percent of the screen.
 # (key, tab label, app shown in the window bar, [(image, box, target label, caption), ...])
