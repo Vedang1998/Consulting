@@ -9,7 +9,7 @@ import json
 import industries as I
 from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SPOT, clip, crumbs, e,  # noqa: F401
                  faq_schema, facts, icon, ind_tile, more_link, price, primary_cta, qa_list,
-                 ask_form, ask_href, ASK_ON, deco_cluster, deco_pair, gap_art, hero_art, hl, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
+                 ask_form, ask_href, ASK_ON, RELEASE, deco_cluster, deco_pair, gap_art, hero_art, hl, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
                  svc_stack, svc_time, ticks)
 import content as R
 
@@ -371,6 +371,33 @@ def erp_check():
 worth it, and 6 to 8 means you are ready for an ERP.</p></noscript>
 <p class="small">Your answers stay in your browser. Our visit counter notes only which of the three results came up.
 0 to 2 yes answers: not yet. 3 to 5: worth a roadmap. 6 to 8: ready.</p>"""
+
+
+def manual_cost():
+    """Cost-of-manual-work calculator (lead capture research 6.3). The visitor's own figures; nothing leaves the page."""
+    fields = [
+        ("orders", "Orders retyped by hand each week", "From the store into the books, the warehouse or a spreadsheet", 40, 1),
+        ("mins", "Minutes per order", "Typing, checking and fixing mistakes", 5, 1),
+        ("counts", "Stock counts or corrections a month", "Each time someone recounts or fixes a number", 2, 1),
+        ("count_h", "Hours each count takes", "Across everyone involved", 3, 0.5),
+        ("other", "Other copy-and-paste hours a week", "Reports, price updates, matching payouts", 2, 0.5),
+        ("rate", "Cost of an hour of that person's time, in dollars", "Pay plus payroll taxes. Use your own figure", 25, 1),
+    ]
+    inp = "".join(f'<label class="fld"><span>{e(t)}</span><input type="number" inputmode="decimal" min="0" step="{s}" '
+                  f'name="{k}" value="{v}"><em class="hint">{e(h)}</em></label>' for k, t, h, v, s in fields)
+    return f"""
+<div class="calc" data-calc>
+  <form class="calc-in" novalidate>{inp}</form>
+  <div class="calc-out" aria-live="polite">
+    <p class="calc-k">Hours a year</p><p class="calc-v" data-out="hours">0</p>
+    <p class="calc-k">What those hours cost a year</p><p class="calc-v" data-out="cost">$0</p>
+    <p class="small">Weeks counted: 50. Mistakes, refunds and stockouts caused by the retyping aren't in this number.</p>
+  </div>
+</div>
+<noscript><p>Without JavaScript: orders a week times minutes per order, divided by 60, plus other hours a week, times
+50 weeks; add counts a month times hours each, times 12. Multiply the hours by your hourly cost.</p></noscript>
+<p class="small">The figures are yours and stay in your browser. Our visit counter notes only that the calculator was
+used.</p>"""
 
 
 SHOPIFY_PLANS = {  # research/R-Shopify-plans-checked.md, shopify.com/pricing, checked Nov 11, 2026
@@ -782,6 +809,9 @@ def page_pricing():
           ("What moves the fee", e(drivers[s]))], "stack")}
   <p class="pr-links">{more_link(svc_href(s), "What's included")}<a class="quiet" href="{ask_href(s)}">Ask about this package</a></p>
 </div>""" for s in ORDER)
+    cg = GUIDE_BY.get("shopify-odoo-project-cost")
+    cost_link = (f'<p>{more_link("/guides/shopify-odoo-project-cost", "What a Shopify and Odoo setup costs in total")}</p>'
+                 if cg and (cg["status"] == "approved" or not RELEASE) else "")
     sup = C.SUPPORT
     sup_opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><em>{e(v)}</em></div>' for h, k, v in sup["options"])
     steps = [f"A free {C.PROMISES['call_length']} call. We ask what you sell, where you sell it, which systems you run "
@@ -812,6 +842,7 @@ def page_pricing():
   <p>Your Shopify plan and apps, your Odoo subscription and any Odoo.sh hosting, connector licenses, card processing
   and hardware are billed to you by each vendor at their published prices. None of it is part of our fee, and every
   item is listed in your proposal.</p>
+  {cost_link}
   <p>{more_link("/guides/odoo-standard-vs-custom-plan", "What Odoo's plans cost")}</p>
   <p>{more_link(svc_href("store-move") + "#plan-picker", "Which Shopify plan fits")}</p>
   <p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p>
