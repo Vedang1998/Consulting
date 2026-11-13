@@ -465,8 +465,17 @@ BANNED = ["transform", "elevate", "seamless", "unlock", "leverage", "empower", "
           "digital transformation", "synergy", "robust", "cutting-edge", "curated", "effortless"]
 
 
+# Vendor list prices that happen to equal one of our internal numbers. Each is matched in its exact context
+# and removed before the fee check, so only that vendor fact passes.
+VENDOR_PRICE_OK = [
+    r'data-label="Hours">50</td><td data-label="List price">\$7,000',  # Odoo Success Pack Standard, odoo.com/pricing-packs
+]
+
+
 def check_fees(path, text):
     """Our package fees are internal (Vee, Nov 13). Fail if any of them reaches a public file, source included."""
+    for ok in VENDOR_PRICE_OK:
+        text = re.sub(ok, "", text)
     for k, v in C.PRICES.items():
         if re.search(r"\$\s?" + f"{v:,}".replace(",", ",?") + r"(?!\d)", text):
             ERRORS.append(f"our fee {k} (${v:,}) appears in {path}; fees are quoted after a call only")

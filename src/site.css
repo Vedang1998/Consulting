@@ -173,6 +173,19 @@ mark.hl { color: inherit; padding: 0 .05em; -webkit-box-decoration-break: clone;
 .hero-shapes .h1s { top: 18%; right: 14%; } .hero-shapes .h2s { top: 48%; right: 40%; width: 80px; height: 80px; }
 .hero-shapes .h3s { bottom: 14%; right: 10%; }
 .hero-grid { position: relative; }
+/* Cost of manual work calculator */
+.calc { display: grid; gap: 16px; margin: 8px 0 16px; }
+.calc-in { display: grid; gap: 0; padding: 6px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.calc-in .fld { grid-template-columns: minmax(0, 1fr) 120px; grid-template-areas: "t i" "h i"; column-gap: 20px; row-gap: 2px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.calc-in .fld:last-child { border-bottom: 0; }
+.calc-in .fld > span { grid-area: t; font-size: .95rem; line-height: 1.35; }
+.calc-in .fld .hint { grid-area: h; }
+.calc-in .fld input { grid-area: i; text-align: right; font-variant-numeric: tabular-nums; }
+.calc-out { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 24px; padding: 22px; background: var(--marker-tint); border: 1px solid var(--edge); border-radius: var(--r); }
+.calc-out p { margin: 0; }
+.calc-k { grid-row: 1; font-size: .9rem; color: var(--muted); }
+.calc-v { grid-row: 2; font: 700 2rem/1.2 var(--f-head); font-variant-numeric: tabular-nums; color: var(--ink); }
+.calc-out .small { grid-column: 1 / -1; margin-top: 10px; }
 /* Question form */
 .ask { display: grid; gap: 18px; padding: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
 .ask-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
@@ -645,6 +658,7 @@ li[data-hide] { display: none; }
   .book-card { padding: 32px 22px; gap: 20px; }
   .book-copy { grid-template-columns: minmax(0, 1fr); }
   .ask-row { grid-template-columns: minmax(0, 1fr); }
+  .calc-in .fld { grid-template-columns: minmax(0, 1fr) 96px; }
   .ask { padding: 20px; }
     .facts > div { flex-basis: 50%; border-bottom: 1px solid var(--line); }
   .sim { padding: 18px; }

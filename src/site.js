@@ -347,6 +347,20 @@
     box.hidden = false;
   });
 
+  // ---- Cost of manual work: the visitor's own figures, worked out in the browser ---------------------
+  all("[data-calc]").forEach(function (box) {
+    var form = box.querySelector("form"), used = false;
+    function n(k) { var v = parseFloat(form.elements[k].value); return isFinite(v) && v > 0 ? v : 0; }
+    function paint() {
+      var hours = (n("orders") * n("mins") / 60 + n("other")) * 50 + n("counts") * n("count_h") * 12;
+      box.querySelector('[data-out="hours"]').textContent = Math.round(hours).toLocaleString("en-US");
+      box.querySelector('[data-out="cost"]').textContent = "$" + Math.round(hours * n("rate")).toLocaleString("en-US");
+    }
+    form.addEventListener("input", function () { if (!used) { used = true; track("demo", "calc:start"); } paint(); });
+    form.addEventListener("submit", function (ev) { ev.preventDefault(); });
+    paint();
+  });
+
   // ---- Question form: inline checks that keep what was typed, then a JSON post to /api/ask ----------
   all("[data-ask]").forEach(function (form) {
     var status = form.querySelector(".ask-status"), q = new URLSearchParams(location.search), started = false;

@@ -8,7 +8,9 @@ from kit import (C, moved, NAME, ERRORS, RELEASE, SITE, SVC_COLOR, SVC_SPOT, anc
                  faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, hero_art, qa_list,
                  sec_head, spot, svc_href, svc_name, svc_time)
 import content as R
-from pages import hero
+from pages import hero, manual_cost
+
+TOOLS = {"manual-cost": ("Cost of the work you do by hand", manual_cost)}
 
 PLATFORMS = {"shopify": "Shopify", "odoo": "Odoo", "both": "Shopify and Odoo"}
 GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
@@ -82,7 +84,9 @@ def guide_side(g):
     svc = "".join(f'<a class="svc-mini {SVC_COLOR[s]}" href="{svc_href(s)}"><span class="ic-block">{spot(SVC_SPOT[s])}</span>'
                   f'<span><b>{e(svc_name(s))}</b><em>{e(svc_time(s))}</em></span>{icon("arrow-right")}</a>'
                   for s in g["services"])
-    toc = "".join(f'<li><a href="#{anchor(h)}">{e(h)}</a></li>' for h in re.findall(r"^## (.+)$", g["body"], re.M))
+    heads = re.findall(r"^(?:## (.+)|(@tool))$", g["body"], re.M)
+    heads = [h or TOOLS[g["tool"]][0] for h, t in heads]
+    toc = "".join(f'<li><a href="#{anchor(h)}">{e(h)}</a></li>' for h in heads)
     return f"""<!--reuse-->
 <aside class="g-side">
   <div class="g-box"><p class="g-label">In this guide</p><ol class="g-toc">{toc}<li><a href="#questions">Questions</a></li>
@@ -110,6 +114,10 @@ def page_guide(g):
                    for t, u, d in g["sources"])
     related = "".join(guide_card(GUIDE_BY[s]) for s in g["related"] if GUIDE_BY[s] in guides_live())
     faqs = [(q, fill(a)) for q, a in g["faqs"]]
+    body_html = md(g["body"])
+    if "<p>@tool</p>" in body_html:
+        th, tf = TOOLS[g["tool"]]
+        body_html = body_html.replace("<p>@tool</p>", f'<h2 id="{anchor(th)}">{e(th)}</h2>{tf()}')
     body = f"""
 <section class="ghero"><div class="wrap"><div class="g-head">
   {trail}
@@ -122,7 +130,7 @@ def page_guide(g):
 </div></div></section>
 <div class="wrap g-grid">
   <article class="prose g-body">
-    {md(g["body"])}
+    {body_html}
     <h2 id="questions">Questions</h2>
     {qa_list(faqs)}
     <h2 id="sources">Sources</h2>

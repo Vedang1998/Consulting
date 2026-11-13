@@ -1095,6 +1095,101 @@ If 6 weeks is more than you can spare, start smaller. Sales, inventory and purch
         "related": ["quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan", "odoo-online-vs-odoo-sh"],
         "notes": ["The 6 to 12 weeks matches the Back Office Launch timeline in config.py. The stage lengths and the "
                   "sample plan are our own planning, not a track record."],
+    },    {
+        "slug": "shopify-odoo-project-cost",
+        "platform": "both",
+        "status": "draft",
+        "title": "What a Shopify and Odoo setup costs a small business",
+        "seo_title": "Shopify and Odoo setup cost for a small business",
+        "desc": ("The yearly software bill for a 10-person store on Shopify and Odoo, what outside help costs on "
+                 "Odoo's own price list, and what makes a project bigger. Vendor prices dated."),
+        "checked": CHECKED,
+        "short": ("Budget in two parts. Software is a yearly bill: for a 10-person business on Shopify Grow and Odoo "
+                  "Custom with a connector, our worked example lands near $7,200 to $8,400 in year one. Setup help is "
+                  "a one-time cost that depends on your data, locations and apps, and it is usually the bigger number."),
+        "body": """
+## The two bills
+
+Owners often price the software and forget the setup, or the other way round. The software is a subscription you pay the vendors every month or year for as long as you use it. The setup is the work of deciding what goes where, moving your data, connecting the two systems and getting your team through the first weeks. You pay for that once, to whoever does it, whether that's a consultant, Odoo's own team or someone on your staff.
+
+## The software, for a 10-person business
+
+This example is a store with one shop and a website, 10 people who need Odoo, and Shopify connected to Odoo. Prices are the US list prices on shopify.com and odoo.com, paid yearly, checked Nov 11, 2026.
+
+| Item | Per month | First year |
+| Shopify Grow (5 staff accounts) | $89 | $1,068 |
+| POS Pro for the shop, if staff need roles or in-store stock tools | $89 | $1,068 |
+| Odoo Custom, 10 users, first-year price | $490 | $5,880 |
+| A connector that runs on the Shopify side | $20–35 | $240–420 |
+
+That comes to $7,188 to $7,368 without POS Pro and $8,256 to $8,436 with it. From the second year, Odoo Custom for 10 users rises to $610 a month on the list price, which adds $1,440 a year.
+
+Why Custom and not Standard? A connector has to reach your Odoo data from outside, and Odoo lists that access (the External API) under Custom. Odoo's own Shopify connector needs Odoo.sh hosting, which also needs Custom and bills hosting on top. The full reasoning is in [Odoo Standard or Custom for 10 users](/guides/odoo-standard-vs-custom-plan).
+
+Leave room for card processing fees, apps you already pay for, hardware for the counter, and Odoo's paid credits if your team plans to use its AI features or text messages.
+
+## What outside help costs
+
+The clearest public price list for Odoo setup work is Odoo's own. Odoo sells Success Packs, blocks of hours run by its project team, and points companies under 50 employees to them. From odoo.com/pricing-packs, checked Nov 6, 2026:
+
+| Pack | Hours | List price |
+| Starter | 4 | $580 |
+| Basic | 25 | $3,600 |
+| Standard | 50 | $7,000 |
+| Custom | 100 | $12,500 |
+| Pro | 200 | $25,000 |
+
+That works out to about $125 to $145 an hour at list. Odoo takes 15% off a new customer's first pack, and bills travel and the upkeep of custom modules separately. The packs cover Odoo. Work on the Shopify side, the connector and your store move is a separate question.
+
+A Shopify agency or an Odoo partner will usually quote a project rather than hours. Most ask for a discovery step first, paid or free, because the same plan can mean very different work in two businesses.
+
+## What makes a project bigger
+
+- A few hundred clean SKUs load in an afternoon. Several thousand variants with missing barcodes and costs take days of cleanup before anything moves.
+- Open orders, open invoices and opening balances are the minimum to bring over. Every extra year of past orders adds mapping, loading and checking.
+- Each warehouse, shop or third-party warehouse adds stock rules, transfers and counts to test.
+- Registers bring hardware, payment terminals, staff roles and end-of-day closing to set up and train.
+- Every app the new setup replaces needs its data moved and its job covered. Custom modules add build time now and upkeep with every Odoo version.
+- Testing and data checks need people who know the business. When they can't spare the hours, the dates slide.
+
+## Where budgets go over
+
+Most overruns trace back to two things: scope that grows mid-project and data that turns out messier than anyone said. A fixed fee with a written scope protects you from the first, as long as additions go through a signed change order. A short paid discovery step protects you from the second, because someone looks at the real data before the price is set.
+
+The other quiet cost is the work you already pay for. If your team retypes orders or fixes stock counts by hand, put a number on it with the calculator below and set that next to the setup cost.
+
+@tool
+
+## When a smaller spend is the better choice
+
+You may not need both systems yet. A store with one or two locations, finished goods and a bookkeeper who closes the month without retyping can often stay on Shopify with an accounting app; see [When you don't need an ERP yet](/guides/when-you-dont-need-an-erp). If you only need Odoo and your team has time to do much of the work, a Success Pack bought from Odoo can cost less than a full outside project. A connected setup earns its cost when the same orders, stock and refunds have to agree across your store, your shop counters and your books.
+""",
+        "faqs": [
+            ("Why don't you publish a price for your own work?",
+             "Because two stores on the same plan can need very different amounts of work. Product count, history, "
+             "locations and apps move the number several times over. We set a fixed fee after a free call and put it "
+             "in writing, with the scope, before anything starts."),
+            ("Can we start smaller and add Odoo later?",
+             "Yes. Many stores start with Shopify and an accounting app, then add Odoo when purchasing, wholesale or "
+             "several locations outgrow it. Clean SKUs and accurate stock counts now make that later step shorter "
+             "and cheaper."),
+            ("Do we pay for the software through you?",
+             "No. Shopify, Odoo and any connector vendor bill you directly, at their published prices, in your name. "
+             "Our fee covers the work only, and every software line is listed in the proposal so you see the "
+             "whole cost."),
+        ],
+        "sources": [
+            ("Shopify pricing", "https://www.shopify.com/pricing", CHECKED),
+            ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
+            ("Odoo Success Packs", "https://www.odoo.com/pricing-packs", "2026-11-06"),
+            ("Odoo Apps store: Shopify connectors, 20.0", "https://apps.odoo.com/apps/modules/browse?search=shopify", CHECKED),
+            ("Shopify App Store: Odoo connectors", "https://apps.shopify.com/search?q=odoo", "2026-11-06"),
+        ],
+        "services": ["systems-roadmap", "connection"],
+        "related": ["odoo-standard-vs-custom-plan", "when-you-dont-need-an-erp", "odoo-implementation-timeline"],
+        "tool": "manual-cost",
+        "notes": ["Market numbers are vendor list prices only. The Octura cost report and Clutch agency rates were left "
+                  "out until someone re-checks them on the live pages."],
     },
 ]
 
