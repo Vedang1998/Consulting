@@ -9,7 +9,7 @@ import json
 import industries as I
 from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SPOT, clip, crumbs, e,  # noqa: F401
                  faq_schema, facts, icon, ind_tile, more_link, price, primary_cta, qa_list,
-                 deco_cluster, deco_pair, gap_art, hero_art, hl, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
+                 ask_form, ask_href, ASK_ON, deco_cluster, deco_pair, gap_art, hero_art, hl, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
                  svc_stack, svc_time, ticks)
 import content as R
 
@@ -542,7 +542,8 @@ def page_service(p):
     body = hero(x["h1"], e(p["summary"]), trail=trail, eyebrow=e(p["kind"]),
                 extra=facts([("Fee", "Fixed, quoted after a call"),
                              ("Typical timeline", e(p["timeline"]))], "hero-facts"),
-                cta=primary_cta("service"), art=svc_stack(slug, eager=True), cls=SVC_COLOR[slug]) + f"""
+                cta=primary_cta("service") + more_link(ask_href(slug), "Or ask in writing"),
+                art=svc_stack(slug, eager=True), cls=SVC_COLOR[slug]) + f"""
 <section class="sec" aria-labelledby="fit-h"><div class="wrap split">
   <div><h2 id="fit-h">A good fit when</h2>{ticks([e(i) for i in x['for']])}</div>
   <div><h2>What you have at the end</h2><ol class="nums">{''.join(f'<li>{e(i)}</li>' for i in x['after'])}</ol></div>
@@ -779,7 +780,7 @@ def page_pricing():
   <p>{e(SVC_EXTRA[s]['for'][0])}.</p>
   {facts([("You end with", e(SVC_EXTRA[s]['after'][0])), ("Typical timeline", e(PKG[s]['timeline'])), ("Payment", e(PKG[s]['payment'].split('. ')[0].rstrip('.'))),
           ("What moves the fee", e(drivers[s]))], "stack")}
-  {more_link(svc_href(s), "What's included")}
+  <p class="pr-links">{more_link(svc_href(s), "What's included")}<a class="quiet" href="{ask_href(s)}">Ask about this package</a></p>
 </div>""" for s in ORDER)
     sup = C.SUPPORT
     sup_opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><em>{e(v)}</em></div>' for h, k, v in sup["options"])
@@ -873,13 +874,24 @@ def page_book():
               ("Next 15 minutes", "What isn't working, what it costs you each week, and what has to be live by when."),
               ("Last 10 minutes", "Which service fits, a rough price range, or whether a Systems Roadmap should come first.")]
     cov = "".join(f'<li><b>{e(h)}.</b> {e(t)}</li>' for h, t in agenda)
+    ask_sec = f"""
+<section class="sec tint" id="ask" aria-labelledby="ask-h"><div class="wrap split ask-split">
+  <div><h2 id="ask-h">Send your question in writing</h2>
+  <p>Some problems are easier to type out at the end of the day than to explain on a call. Send it here and
+  {e(C.FOUNDER)} replies {e(C.PROMISES['first_reply'])}, {e(C.PROMISES['business_days'])}, with an answer or with
+  the questions a call would need to settle.</p>
+  <p class="small">What you send goes to our inbox and customer records and nowhere else. See the
+  <a href="/privacy#forms">privacy policy</a>.</p></div>
+  {ask_form()}
+</div></section>""" if ASK_ON else ""
     ready = ["Your Shopify plan and the apps you rely on", "Your Odoo plan and hosting, if you have Odoo",
              "Rough counts: products, orders a month, locations", "Who keeps the books, and in what software"]
     body = hero("Book a scoping call about your store and back office",
                 f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
                 f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", eyebrow="Book a call",
-                extra=f'<div class="cta-line">{cta}</div>{f"<p class=small>{sec}</p>" if sec else ""}',
-                art=hero_art("book")) + f"""
+                extra=f'<div class="cta-line">{cta}{more_link("#ask", "Or send your question in writing") if ASK_ON else ""}'
+                      f'</div>{f"<p class=small>{sec}</p>" if sec else ""}',
+                art=hero_art("book")) + ask_sec + f"""
 <section class="sec"><div class="wrap split">
   <div><h2>How the 30 minutes go</h2><ol class="nums">{cov}</ol>
   <h2>What to have ready</h2>{ticks([e(x) for x in ready])}</div>

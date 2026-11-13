@@ -1,14 +1,18 @@
-// First-party visit counter for the [DBA name] site, plus byte-range video delivery.
+// First-party visit counter for the [DBA name] site, the question form, and byte-range video delivery.
 // Runs only for /api/* and /media/* (wrangler.jsonc run_worker_first). Everything else is a static asset.
 // Writes one row per event to Workers Analytics Engine (binding EVENTS).
-// Stores no IP address, no name, no email, nothing typed into the page.
+// The counter stores no IP address, no name, no email, nothing typed into the page.
+// /api/ask emails a question to one verified inbox (send_email binding ASK_MAIL) and stores nothing itself.
+
+import { EmailMessage } from "cloudflare:email";
 
 const COOKIE = "v";
 const OPTOUT = "vo";
 const YEAR = 60 * 60 * 24 * 365;
 // view: page view. booking/email/phone: taps on contact links. depth: 25/50/75/100 percent scrolled.
 // section: a page section came into view. demo: a workflow tab was picked. finder: service finder start/result.
-const TYPES = new Set(["view", "booking", "email", "phone", "depth", "section", "demo", "finder"]);
+// form: question form start, submit or error (field name only, never what was typed).
+const TYPES = new Set(["view", "booking", "email", "phone", "depth", "section", "demo", "finder", "form"]);
 
 function cookies(req) {
   const out = {};
@@ -70,11 +74,94 @@ async function media(req, env) {
   return new Response(body.slice(start, end + 1), { status: 206, headers });
 }
 
+// ---- Question form -------------------------------------------------------------------------------
+const PACKAGES = new Set(["", "systems-roadmap", "store-move", "odoo-launch", "connection", "support"]);
+const SYSTEMS = new Set(["Shopify", "Shopify POS", "Odoo", "QuickBooks", "Spreadsheets", "Something else"]);
+const EMAIL_RE = /^[^\s@<>(),;:"\[\]]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,24}$/;
+const oneLine = (s, n) => String(s || "").replace(/[\r\n\t]+/g, " ").replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, "").trim().slice(0, n);
+
+// Header text outside plain ASCII goes in as an RFC 2047 encoded word.
+function hdr(s) {
+  if (/^[\x20-\x7E]*$/.test(s)) return s;
+  const bytes = new TextEncoder().encode(s);
+  let bin = "";
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return `=?UTF-8?B?${btoa(bin)}?=`;
+}
+
+async function readForm(req) {
+  const type = req.headers.get("Content-Type") || "";
+  if (type.includes("application/json")) return await req.json();
+  const f = await req.formData();
+  const out = {};
+  for (const [k, v] of f.entries()) {
+    if (k === "runs") (out.runs = out.runs || []).push(v);
+    else out[k] = v;
+  }
+  return out;
+}
+
+function answer(req, ok, error) {
+  const wantsJson = (req.headers.get("Accept") || "").includes("application/json");
+  if (wantsJson) {
+    return new Response(JSON.stringify({ ok, error: error || "" }), {
+      status: ok ? 200 : 400, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    });
+  }
+  // No-JS fallback: back to the form with a plain status.
+  const to = new URL("/book", req.url);
+  to.searchParams.set(ok ? "sent" : "error", error || "1");
+  to.hash = "ask";
+  return Response.redirect(to.toString(), 303);
+}
+
+async function ask(req, env) {
+  let d;
+  try { d = await readForm(req); } catch { return answer(req, false, "unreadable"); }
+  // Bots fill the hidden field or submit in under three seconds. Say "sent" so they learn nothing.
+  const elapsed = Date.now() - Number(d.t || 0);
+  if (String(d.website || "") !== "" || (d.t && elapsed < 3000)) return answer(req, true);
+
+  const name = oneLine(d.name, 100);
+  const email = oneLine(d.email, 200);
+  const pkg = PACKAGES.has(String(d.for || "")) ? String(d.for || "") : "";
+  const runs = [].concat(d.runs || []).map(String).filter((s) => SYSTEMS.has(s));
+  const msg = String(d.msg || "").replace(/\r\n?/g, "\n").slice(0, 4000).trim();
+  const src = oneLine(d.src, 300);
+  if (!name) return answer(req, false, "name");
+  if (!EMAIL_RE.test(email)) return answer(req, false, "email");
+  if (msg.length < 10) return answer(req, false, "msg");
+  if (!env.ASK_MAIL || !env.ASK_FROM || !env.ASK_TO) return answer(req, false, "offline");
+
+  const host = new URL(req.url).hostname;
+  const subject = `Website question${pkg ? ` (${pkg})` : ""} from ${name}`.slice(0, 150);
+  const body = [
+    `Name: ${name}`, `Email: ${email}`, `About: ${pkg || "not sure yet"}`, `Runs today: ${runs.join(", ") || "not given"}`,
+    `Sent from: ${src || "unknown"}`, "", msg, "",
+  ].join("\n");
+  const raw = [
+    `From: Website form <${env.ASK_FROM}>`, `To: <${env.ASK_TO}>`, `Reply-To: ${hdr(name.replace(/[<>"]/g, ""))} <${email}>`,
+    `Subject: ${hdr(subject)}`, `Date: ${new Date().toUTCString()}`, `Message-ID: <${crypto.randomUUID()}@${host}>`,
+    "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "Content-Transfer-Encoding: 8bit", "", body,
+  ].join("\r\n");
+  try {
+    await env.ASK_MAIL.send(new EmailMessage(env.ASK_FROM, env.ASK_TO, raw));
+  } catch {
+    return answer(req, false, "offline");
+  }
+  return answer(req, true);
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (url.pathname.startsWith("/media/")) return media(req, env);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(req);
+
+    if (url.pathname === "/api/ask") {
+      if (req.method !== "POST") return new Response("Not found", { status: 404 });
+      return ask(req, env);
+    }
 
     const secure = "; Path=/; Secure; HttpOnly; SameSite=Lax";
 

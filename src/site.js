@@ -347,6 +347,80 @@
     box.hidden = false;
   });
 
+  // ---- Question form: inline checks that keep what was typed, then a JSON post to /api/ask ----------
+  all("[data-ask]").forEach(function (form) {
+    var status = form.querySelector(".ask-status"), q = new URLSearchParams(location.search), started = false;
+    form.elements.t.value = String(Date.now());
+    form.elements.src.value = (location.pathname + " " + new URLSearchParams(utm()).toString()).trim().slice(0, 300);
+    var pick = q.get("for");
+    if (pick && form.elements["for"].querySelector('option[value="' + pick.replace(/[^a-z-]/g, "") + '"]')) {
+      form.elements["for"].value = pick;
+    }
+    if (q.get("sent")) status.textContent = "Thanks. Your question is in, and the reply comes by email.";
+    var MSG = {
+      name: "Please add your name.",
+      email: "Please check the email address. It needs an @ and a domain, like name@yourstore.com.",
+      msg: "Please write a line or two about what's going on.",
+      offline: "This form couldn't send just now. Please book a call instead, or try again later.",
+      unreadable: "This form couldn't send just now. Please try again."
+    };
+    function mark(field, on) {
+      var el = form.elements[field];
+      if (!el) return;
+      el.setAttribute("aria-invalid", on ? "true" : "false");
+      var lab = el.closest(".fld");
+      if (lab) lab.classList.toggle("bad", !!on);
+    }
+    form.addEventListener("input", function () {
+      if (!started) { started = true; track("form", "ask:start"); }
+    });
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var bad = "";
+      ["name", "email", "msg"].forEach(function (f) {
+        var el = form.elements[f], v = el.value.trim();
+        var off = f === "email" ? !/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(v) : (f === "msg" ? v.length < 10 : !v);
+        mark(f, off);
+        if (off && !bad) bad = f;
+      });
+      if (bad) {
+        status.textContent = MSG[bad];
+        form.elements[bad].focus();
+        track("form", "ask:error:" + bad);
+        return;
+      }
+      if (form.hasAttribute("data-preview")) {
+        status.textContent = "Preview build: this form isn't connected yet, so nothing was sent.";
+        return;
+      }
+      var data = { runs: [] };
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name || el.type === "submit") return;
+        if (el.type === "checkbox") { if (el.checked) data.runs.push(el.value); return; }
+        data[el.name] = el.value;
+      });
+      var send = form.querySelector('[type="submit"]');
+      send.disabled = true;
+      status.textContent = "Sending...";
+      fetch(form.action, { method: "POST", body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json", "Accept": "application/json" } })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res.ok) {
+            track("form", "ask:submit");
+            form.innerHTML = '<p class="ask-done"><b>Thanks, your question is in.</b> The reply comes by email. If you ' +
+              'would rather talk it through, you can still <a href="/book">book a call</a>.</p>';
+          } else {
+            send.disabled = false;
+            if (MSG[res.error] && form.elements[res.error]) { mark(res.error, true); form.elements[res.error].focus(); }
+            status.textContent = MSG[res.error] || MSG.unreadable;
+            track("form", "ask:error:" + res.error);
+          }
+        })
+        .catch(function () { send.disabled = false; status.textContent = MSG.offline; });
+    });
+  });
+
   var btn = document.getElementById("optout");
   if (btn) {
     var status = document.getElementById("optout-status");

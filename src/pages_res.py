@@ -269,6 +269,13 @@ def page_privacy():
     booking = ("<h3>Booking</h3><p>When you book a call, the booking tool records your name, email, "
                "company and the time you chose, and adds them to our customer records.</p>"
                if C.BOOKING_URL else "")
+    forms = ""
+    if C.ASK_INBOX or not RELEASE:
+        forms = ('<h3 id="forms">The question form</h3><p>The form on our Book a call page asks for your name, your '
+                 'work email, the package you are asking about, the systems you run and your question. It also '
+                 'records the page you sent it from and any campaign tags in the link. We use it to reply to you, and '
+                 'it is stored in our email and customer records like any other message. The form has no phone '
+                 'field, sets no extra cookies, and is not shared with anyone.</p>')
     body = f"""
 {legal_head("Privacy", "Privacy policy")}
 <div class="wrap prose legal">
@@ -286,8 +293,9 @@ cannot be read by scripts on the page, is not shared with anyone, and expires af
 does not store your IP address, name, email address or anything you type.</p>
 {cf}
 {booking}
+{forms}
 <h3>Messages you send</h3>
-<p>If you email us or book a call, we keep your message and contact details in our email and customer
+<p>If you email us, send a question or book a call, we keep your message and contact details in our email and customer
 records so we can reply and keep a record of the work. We do not sell or rent them, and we do not use
 them for advertising.</p>
 <h3>What this site does not use</h3>

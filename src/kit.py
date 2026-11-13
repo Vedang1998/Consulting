@@ -232,6 +232,44 @@ def primary_cta(where, label_="Book a scoping call"):
     return f'<a class="btn" href="/book" data-where="{where}">{e(label_)}</a>'
 
 
+ASK_ON = bool(C.ASK_INBOX) or not RELEASE
+
+
+def ask_href(pkg=""):
+    """Link to the written-question form on /book, with the package preselected."""
+    q = f"?for={pkg}" if pkg else ""
+    return f"/book{q}#ask" if ASK_ON else f"/book{q}"
+
+
+def ask_form():
+    """Name, work email, what they run, the question. No phone field. Honeypot plus a minimum fill time."""
+    if not ASK_ON:
+        return ""
+    opts = "".join(f'<option value="{e(p["slug"])}">{e(p["name"])}</option>' for p in C.PACKAGES)
+    opts += f'<option value="support">{e(C.SUPPORT["name"])}</option>'
+    boxes = "".join(f'<label class="chk"><input type="checkbox" name="runs" value="{e(s)}"><span>{e(s)}</span></label>'
+                    for s in C.ASK_SYSTEMS)
+    preview = "" if C.ASK_INBOX else " data-preview"
+    return f"""
+<form class="ask" action="/api/ask" method="post" data-ask{preview} novalidate>
+  <p class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></p>
+  <input type="hidden" name="t" value="">
+  <input type="hidden" name="src" value="">
+  <div class="ask-row">
+    <label class="fld"><span>Name</span><input name="name" autocomplete="name" required maxlength="100"></label>
+    <label class="fld"><span>Work email</span><input type="email" name="email" autocomplete="email" required
+      maxlength="200" spellcheck="false"></label>
+  </div>
+  <label class="fld"><span>About</span><select name="for"><option value="">Not sure yet</option>{opts}</select></label>
+  <fieldset class="fld"><legend>What do you run today?</legend><div class="chks">{boxes}</div></fieldset>
+  <label class="fld"><span>What's going wrong, or what are you planning?</span>
+    <textarea name="msg" rows="5" required minlength="10" maxlength="4000"></textarea>
+    <em class="hint">A few lines is plenty. Please leave out passwords, API keys and customer data.</em></label>
+  <div class="ask-send"><button type="submit" class="btn-ghost">Send your question</button>
+  <p class="ask-status" role="status" aria-live="polite"></p></div>
+</form>"""
+
+
 def secondary_contacts():
     bits = []
     if C.BOOKING_URL and C.EMAIL:
