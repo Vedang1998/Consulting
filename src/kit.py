@@ -16,7 +16,7 @@ SRC = Path(__file__).resolve().parent
 import config as C  # noqa: E402
 import mockups as M  # noqa: E402
 import spot as S  # noqa: E402
-import scenes as SC  # noqa: E402
+import art as A  # noqa: E402
 
 RELEASE = "--release" in sys.argv
 TODAY = _dt.date.today()
@@ -152,42 +152,34 @@ def icon(name):
     return M.icon(name)
 
 
-# Icon tiles (v6, Nov 13, 2026): a solid color tile with a white Lucide glyph, replacing the outline spot icons.
-# Keys are the spot names pages already pass; the color comes from spot.py so each service keeps its color.
-TILE_GLYPH = {"roadmap": "map", "store-move": "store", "back-office": "boxes", "sync": "refresh-cw",
-              "support": "life-buoy", "guides": "book-open", "videos": "clapperboard", "questions": "message-circle-question",
-              "tools": "calculator", "inventory": "package", "invoice": "receipt", "register": "credit-card",
-              "calendar": "calendar-check", "clock": "clock", "copy": "copy", "contract": "file-check-2",
-              "branch": "git-branch", "key": "key-round", "shield": "shield-check", "staging": "server",
-              "checklist": "list-checks", "go-live": "package-check", "cart": "shopping-cart", "people": "users",
-              "bank": "landmark", "theme": "layout-template", "truck": "truck"}
-IND_GLYPH = {"apparel": "shirt", "home-and-furniture": "sofa", "food-and-beverage": "coffee",
-             "health-and-beauty": "droplets", "wholesale": "forklift"}
+# Icon tiles (Nov 13, 2026, second pass): the custom spot icons (spot.py, the set Vee liked) on a soft tile in the
+# icon's color family, in place of the white Lucide glyphs of v6. Pages pass a spot name or the Lucide name it replaces.
+IND_SPOT = {"apparel": "shirt", "home-and-furniture": "sofa", "food-and-beverage": "jar", "health-and-beauty": "pump",
+            "wholesale": "pallet"}
+MISSING_SPOT = set()
 
 
-def tile(glyph, color="blue", cls=""):
-    """A solid icon tile: white glyph on a brand color (amber takes an ink glyph)."""
-    c = f"tile t-{color} {cls}".strip()
-    return f'<span class="{c}">{M.icon(glyph)}</span>'
+def tile(name, color="", cls=""):
+    """A custom spot icon on a soft tile. The tile and the icon's color block follow the icon's family unless a color
+    is given."""
+    n = name if name in S.ICONS else S.SPOT_FOR.get(name, "")
+    if not n:
+        MISSING_SPOT.add(name)
+        c = f"tile t-{color or 'blue'} {cls}".strip()
+        return f'<span class="{c}">{M.icon(name)}</span>'
+    col = color or S.ICONS[n][0]
+    c = f"tile t-{col} {cls}".strip()
+    return f'<span class="{c}">{S.icon(n)}</span>'
 
 
 def spot(name):
     """The icon tile for a spot name, or for a Lucide name the site passes."""
-    n = name if name in S.ICONS else S.SPOT_FOR.get(name)
-    if n:
-        return tile(TILE_GLYPH.get(n, name), S.ICONS[n][0])
     return tile(name)
 
 
 def ind_tile(x, cls=""):
     """The industry's icon tile, in the industry's color."""
-    return tile(IND_GLYPH[x["slug"]], x["color"].replace("c-", ""), cls)
-
-
-def scene(name, label=""):
-    """A drawn scene (scenes.py) in a figure that keeps its 3:2 shape."""
-    role = f' role="img" aria-label="{e(label)}"' if label else ""
-    return f'<div class="illo"{role}>{SC.SCENES[name]()}</div>'
+    return tile(IND_SPOT[x["slug"]], x["color"].replace("c-", ""), cls)
 
 
 # ---------------------------------------------------------------------------
@@ -200,8 +192,6 @@ SVC_SPOT = {"systems-roadmap": "roadmap", "store-move": "store-move", "odoo-laun
             "connection": "sync", "support": "support"}
 SVC_COLOR = {"systems-roadmap": "c-lilac", "store-move": "c-coral", "odoo-launch": "c-mint",
              "connection": "c-blue", "support": "c-yellow"}
-SVC_SCENE = {"systems-roadmap": "roadmap", "store-move": "storemove", "odoo-launch": "backoffice",
-             "connection": "sync", "support": "support"}
 # Hero art for each service: two real screens from config.SCREENS, (behind, in front).
 SVC_STACK = {"systems-roadmap": ("shop-products", "inventory-c"), "store-move": ("shop-products", "shop-order"),
              "odoo-launch": ("inventory-c", "hero-m"), "connection": ("shop-order", "delivery-c"),
@@ -449,19 +439,14 @@ def svc_stack(slug, cls="", eager=False):
     return stack(*SVC_STACK[slug], cls=cls, eager=eager)
 
 
-def scene(who, screen="", color="c-blue", paper=""):
-    """A person from src/media/people (Open Peeps by Pablo Stanley, CC0; drawn by tools/people/scenes.js) in front
-    of a real screen (a config.SCREENS key) or a sample document, on a solid brand-color panel. The person is
-    decorative, so the alt text is empty; the screen keeps its own alt text."""
-    f = SRC / "media" / "people" / f"{who}.svg"
-    if not f.exists():
-        ERRORS.append(f"people figure {who!r} is not in src/media/people")
-        return ""
-    inner = shot(screen, eager=True) if screen else paper
-    back = f'<div class="scene-screen">{inner}</div>' if inner else ""
-    cls = f"scene {color} is-{who}" + ("" if inner else " solo")
-    return (f'<div class="{cls}">{back}<img class="scene-who" src="/media/people/{e(who)}.svg" alt="" '
-            f'width="940" height="1131" decoding="async"></div>')
+def hero_art(name):
+    """A diagram drawn for this page (art.py): inline SVG built from the page's own content."""
+    return A.hero_art(name)
+
+
+def gap_art():
+    """The home page map of who covers which step of an order (art.py)."""
+    return A.gap_art()
 
 
 def json_attr(obj):

@@ -30,11 +30,13 @@
 .c-lilac { --c: #6a4fd8; --c-soft: #ece8ff; }
 .c-yellow { --c: #f5b521; --c-soft: #fff4d6; }
 
-/* Icon tiles: a solid color square with a white Lucide glyph (kit.tile). */
-.tile { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 12px; background: var(--tc, var(--action)); color: #fff; }
+/* Icon tiles (kit.tile): a custom spot icon (src/spot.py) on a soft tint of its color family. The icon's offset color
+   block takes the family's bright color through --c. */
+.tile { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 14px; background: var(--ts); --c: var(--tb); color: var(--ink); }
+.tile .spot { width: 76%; height: 76%; }
 .tile .ic { width: 50%; height: 50%; stroke-width: 1.9; }
-.t-blue { --tc: #2447d8; } .t-coral { --tc: #d9472b; } .t-mint { --tc: #0b7d62; } .t-lilac { --tc: #6a4fd8; }
-.t-yellow { --tc: #f5b521; color: var(--ink); }
+.t-blue { --ts: #e6ecff; --tb: #6d8bff; } .t-coral { --ts: #fde9e4; --tb: #ff8a6b; } .t-mint { --ts: #dcf3ea; --tb: #3ecf9e; }
+.t-lilac { --ts: #ece8ff; --tb: #a99bff; } .t-yellow { --ts: #fff1cc; --tb: #ffc53d; }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -150,27 +152,18 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .assure { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 30px 0 0; padding: 0; list-style: none; font-size: .93rem; color: var(--muted); }
 .assure li { display: inline-flex; align-items: center; gap: 8px; }
 .assure .ic { color: var(--marker); }
-.illo svg { display: block; width: 100%; height: auto; }
 .portrait { display: block; width: 100%; max-width: 360px; margin-left: auto; border-radius: var(--r); box-shadow: var(--pop-lg); }
 
-/* People scenes (kit.scene): a cut-out Open Peeps person in front of a real screen, on a solid brand panel.
-   The screen sits top right and runs off the bottom edge; the person stands on the bottom edge, left. */
-.scene { position: relative; isolation: isolate; aspect-ratio: 6 / 5; max-width: 580px; margin-left: auto;
-  overflow: hidden; border-radius: 28px; background: var(--c, var(--action)); }
-.scene::before { content: ""; position: absolute; z-index: -1; left: -14%; bottom: -34%; width: 76%; aspect-ratio: 1;
-  border-radius: 50%; background: rgba(255, 255, 255, .16); }
-.scene-screen { position: absolute; top: 8%; right: 5%; width: 70%; }
-.scene-screen .clip-frame { box-shadow: 0 18px 44px rgba(14, 26, 46, .28); }
-.scene-screen .paper { height: auto; color: var(--ink); box-shadow: 0 18px 44px rgba(14, 26, 46, .28); }
-.paper .agenda { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
-.paper .agenda li { display: grid; grid-template-columns: 7.2em minmax(0, 1fr); gap: 12px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-.paper .agenda li:last-child { padding-bottom: 0; border-bottom: 0; }
-.paper .agenda b { font-variant-numeric: tabular-nums; }
-.scene-who { position: absolute; z-index: 1; left: -1%; bottom: 0; display: block; width: 41%; height: auto; }
-.is-health-and-beauty .scene-who, .is-book .scene-who { left: -8%; }
-.is-how-it-works .scene-who { left: -5%; }
-.scene.solo .scene-who { left: 50%; width: 58%; transform: translateX(-50%); }
-.scene.solo::before { left: 50%; width: 84%; transform: translateX(-50%); bottom: -40%; }
+/* Hero diagrams (art.py): inline SVG drawn from each page's content, on a dark dot-grid canvas. */
+.art-wrap { max-width: 600px; margin-left: auto; }
+.art { display: block; width: 100%; height: auto; overflow: visible; }
+.art .ah { font-family: var(--f-head); }
+.art .ab { font-family: var(--f-body); }
+.art .am { font-family: var(--f-mono); }
+.art-note { margin: 10px 6px 0; color: var(--on-dark-muted); font: 600 .7rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; text-align: right; }
+/* Home: who covers which step of an order (art.gap_art). Wide on desktop, tall on phones. */
+.gap-fig { margin: 0 0 36px; padding: 28px 24px 20px; border: 1px solid var(--line); border-radius: var(--r, 16px); background: #fff; }
+.gap-fig .gap-tall { display: none; }
 
 /* Two real screens layered: one behind, the other in front and lower (kit.stack). */
 .stack { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
@@ -571,7 +564,7 @@ li[data-hide] { display: none; }
   .hero-grid, .split, .book-card, .svc-row, .pr-row, .phase, .picker { grid-template-columns: minmax(0, 1fr); }
   .hero-grid { gap: 36px; }
   .hero-art .stack { max-width: 560px; }
-  .hero-art .scene { max-width: 520px; margin: 0; }
+  .hero-art .art-wrap { max-width: 560px; margin: 0; }
   .svc-row { gap: 24px; }
   .svc-row.flip .svc-row-art, .pr-row.flip .pr-copy { order: 0; }
   .svc-row-art .stack { margin: 0; max-width: 520px; }
@@ -590,18 +583,10 @@ li[data-hide] { display: none; }
   .paper-grid > div:nth-child(n) { grid-column: 1 / -1; }
 }
 @media (max-width: 700px) {
+  .gap-fig { padding: 18px 10px 8px; }
+  .gap-fig .gap-wide { display: none; }
+  .gap-fig .gap-tall { display: block; max-width: 400px; margin: 0 auto; }
   :root { --gut: 16px; }
-  .scene { border-radius: 20px; }
-  .scene-screen { width: 74%; right: 4%; }
-  .scene-screen .paper { padding: 12px 14px; font-size: .64rem; border-radius: 8px; }
-  .scene-screen .paper-h { gap: 8px; margin-bottom: 8px; padding-bottom: 7px; }
-  .scene-screen .paper-h b { font-size: .8rem; }
-  .scene-screen .paper-h span:not(.tag) { font-size: .6rem; }
-  .scene-screen .paper .tag { padding: 1px 5px; font-size: .55rem; }
-  .scene-screen .toc li { grid-template-columns: 12px auto minmax(8px, 1fr) 14px; gap: 5px; padding: 2px 0; }
-  .scene-screen .paper .agenda { gap: 6px; margin-top: 8px; }
-  .scene-screen .paper .agenda li { gap: 8px; padding-bottom: 6px; }
-  body { font-size: 1rem; }
   .sec, .book { padding: 64px 0; }
   .hero, .hero.home { padding: 44px 0 56px; }
   .sec-head { margin-bottom: 30px; }
