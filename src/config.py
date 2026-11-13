@@ -255,6 +255,13 @@ SCREENS = {
     "sales-c": ("media/odoo/invoice-c.webp", "Odoo 20 customer invoice INV/2026/00011 for sales order S00027: 3 Large Cabinets at $320.00 with 15% tax. Sample data."),
     "inventory-c": ("media/odoo/stock-list-c.webp", "Odoo 20 product list with sales price, on hand and forecasted quantity for each product. Sample data."),
     "hero-m": ("media/odoo/hero-products-m.webp", "Odoo 20 Inventory product cards with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
+    # Stills for the people scenes (kit.scene), captured at 2x in our Odoo 20 demo. The yellow marks are a
+    # highlighter drawn over the rows each page talks about; the screen itself is unchanged.
+    "scene-locations": ("media/odoo/scene-locations.webp", "Odoo 20 stock by location for Cabinet with Doors: 18 in WH/Stock and 27 in SHOP/Stock, one count for each place. Sample data."),
+    "scene-landed": ("media/odoo/scene-landed.webp", "Odoo 20 landed cost LC/2026/0004, posted: ocean freight and import duty added to the value of Large Cabinets and Office Chairs, such as 10 Large Cabinets going from $2,400.00 to $3,250.00 with freight. Sample data."),
+    "scene-lots": ("media/odoo/scene-lots.webp", "Odoo 20 delivery details for Cold Brew Concentrate: the lot picked from WH/Stock expires Dec 1 and is due for removal Nov 29. Sample data."),
+    "scene-pricelist": ("media/odoo/scene-pricelist.webp", "Odoo 20 quotation for The Jackson Group on the Wholesale accounts price list with 30-day terms: 10 Large Cabinets at $320.00 less 15%. Sample data."),
+    "scene-purchase": ("media/odoo/scene-purchase.webp", "Odoo 20 purchase order P00019 from Wood Corner, with its expected arrival date. Sample data."),
     "shop-order": ("media/shopify/order.webp", "Shopify order #1001 for 3 Large Cabinets at $320.00, paid and waiting to be fulfilled, total $960.00. Sample data."),
     "shop-products": ("media/shopify/products.webp", "Shopify product list with photos, status and stock, such as Large Cabinet with 491 in stock and Office Lamp with 19. Sample data."),
     "shop-inventory": ("media/shopify/inventory.webp", "Shopify inventory list with SKU, committed, available and on-hand counts for eight furniture products. Sample data."),

@@ -96,7 +96,7 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; background: none; border: 0; cursor: pointer; color: var(--action); font: 600 .94rem var(--f-body); }
 .cta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 30px; }
 .cta-line .small { flex-basis: 100%; margin: 0; }
-.note-box { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--marker-tint); border: 1px solid #f0d58e; border-radius: 12px; font-size: .95rem; }
+.note-box { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--marker-tint); color: var(--ink); border: 1px solid #f0d58e; border-radius: 12px; font-size: .95rem; }
 .note-box .ic { margin-top: 3px; }
 
 /* ---- Top of page ---------------------------------------------------------------------------- */
@@ -152,6 +152,25 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .assure .ic { color: var(--marker); }
 .illo svg { display: block; width: 100%; height: auto; }
 .portrait { display: block; width: 100%; max-width: 360px; margin-left: auto; border-radius: var(--r); box-shadow: var(--pop-lg); }
+
+/* People scenes (kit.scene): a cut-out Open Peeps person in front of a real screen, on a solid brand panel.
+   The screen sits top right and runs off the bottom edge; the person stands on the bottom edge, left. */
+.scene { position: relative; isolation: isolate; aspect-ratio: 6 / 5; max-width: 580px; margin-left: auto;
+  overflow: hidden; border-radius: 28px; background: var(--c, var(--action)); }
+.scene::before { content: ""; position: absolute; z-index: -1; left: -14%; bottom: -34%; width: 76%; aspect-ratio: 1;
+  border-radius: 50%; background: rgba(255, 255, 255, .16); }
+.scene-screen { position: absolute; top: 8%; right: 5%; width: 70%; }
+.scene-screen .clip-frame { box-shadow: 0 18px 44px rgba(14, 26, 46, .28); }
+.scene-screen .paper { height: auto; color: var(--ink); box-shadow: 0 18px 44px rgba(14, 26, 46, .28); }
+.paper .agenda { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+.paper .agenda li { display: grid; grid-template-columns: 7.2em minmax(0, 1fr); gap: 12px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.paper .agenda li:last-child { padding-bottom: 0; border-bottom: 0; }
+.paper .agenda b { font-variant-numeric: tabular-nums; }
+.scene-who { position: absolute; z-index: 1; left: -1%; bottom: 0; display: block; width: 41%; height: auto; }
+.is-health-and-beauty .scene-who, .is-book .scene-who { left: -8%; }
+.is-how-it-works .scene-who { left: -5%; }
+.scene.solo .scene-who { left: 50%; width: 58%; transform: translateX(-50%); }
+.scene.solo::before { left: 50%; width: 84%; transform: translateX(-50%); bottom: -40%; }
 
 /* Two real screens layered: one behind, the other in front and lower (kit.stack). */
 .stack { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
@@ -552,6 +571,7 @@ li[data-hide] { display: none; }
   .hero-grid, .split, .book-card, .svc-row, .pr-row, .phase, .picker { grid-template-columns: minmax(0, 1fr); }
   .hero-grid { gap: 36px; }
   .hero-art .stack { max-width: 560px; }
+  .hero-art .scene { max-width: 520px; margin: 0; }
   .svc-row { gap: 24px; }
   .svc-row.flip .svc-row-art, .pr-row.flip .pr-copy { order: 0; }
   .svc-row-art .stack { margin: 0; max-width: 520px; }
@@ -571,6 +591,16 @@ li[data-hide] { display: none; }
 }
 @media (max-width: 700px) {
   :root { --gut: 16px; }
+  .scene { border-radius: 20px; }
+  .scene-screen { width: 74%; right: 4%; }
+  .scene-screen .paper { padding: 12px 14px; font-size: .64rem; border-radius: 8px; }
+  .scene-screen .paper-h { gap: 8px; margin-bottom: 8px; padding-bottom: 7px; }
+  .scene-screen .paper-h b { font-size: .8rem; }
+  .scene-screen .paper-h span:not(.tag) { font-size: .6rem; }
+  .scene-screen .paper .tag { padding: 1px 5px; font-size: .55rem; }
+  .scene-screen .toc li { grid-template-columns: 12px auto minmax(8px, 1fr) 14px; gap: 5px; padding: 2px 0; }
+  .scene-screen .paper .agenda { gap: 6px; margin-top: 8px; }
+  .scene-screen .paper .agenda li { gap: 8px; padding-bottom: 6px; }
   body { font-size: 1rem; }
   .sec, .book { padding: 64px 0; }
   .hero, .hero.home { padding: 44px 0 56px; }

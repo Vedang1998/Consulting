@@ -449,5 +449,20 @@ def svc_stack(slug, cls="", eager=False):
     return stack(*SVC_STACK[slug], cls=cls, eager=eager)
 
 
+def scene(who, screen="", color="c-blue", paper=""):
+    """A person from src/media/people (Open Peeps by Pablo Stanley, CC0; drawn by tools/people/scenes.js) in front
+    of a real screen (a config.SCREENS key) or a sample document, on a solid brand-color panel. The person is
+    decorative, so the alt text is empty; the screen keeps its own alt text."""
+    f = SRC / "media" / "people" / f"{who}.svg"
+    if not f.exists():
+        ERRORS.append(f"people figure {who!r} is not in src/media/people")
+        return ""
+    inner = shot(screen, eager=True) if screen else paper
+    back = f'<div class="scene-screen">{inner}</div>' if inner else ""
+    cls = f"scene {color} is-{who}" + ("" if inner else " solo")
+    return (f'<div class="{cls}">{back}<img class="scene-who" src="/media/people/{e(who)}.svg" alt="" '
+            f'width="940" height="1131" decoding="async"></div>')
+
+
 def json_attr(obj):
     return e(json.dumps(obj))

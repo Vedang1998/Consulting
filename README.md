@@ -24,6 +24,8 @@ Workers Builds from this repository.
 | `src/fonts/` | Self-hosted Archivo, IBM Plex Sans and IBM Plex Mono (OFL). |
 | `src/icons/` | Lucide icons (ISC), inlined at build. |
 | `src/og.png`, `src/apple-touch-icon.png` | Share image (1200x630) and phone home-screen icon. The share image is drawn by `tools/share_image.py` from the site's fonts, spot icons and shapes; run it, then `node tools/shot.js` to render a new `src/og.png`. No AI images. |
+| `src/media/people/*.svg` | One cut-out person per page (industries, how we work, book, 404). `kit.scene` stands them in front of a real screen on a solid brand panel. Art is Open Peeps by Pablo Stanley, CC0, recolored by `tools/people/scenes.js` (see `tools/people/render.js` for setup). Human-drawn, not AI. |
+| `src/media/odoo/scene-*.webp` | The screens behind those people: 2x stills from our Odoo 20 demo with sample data. The yellow marks are a highlighter drawn over the rows each page talks about; nothing else on the screen is changed. |
 | `worker/index.js` | The Worker on `/api/*` and `/media/*`. Media requests get byte ranges (206), which Safari needs to play video; Cloudflare's static assets ignore Range on their own. On `/api/*` it writes visit events to Workers Analytics Engine, sets one HttpOnly cookie, stores no IP or contact details, honors the opt-out cookie and Global Privacy Control. |
 | `wrangler.jsonc` | Workers config: assets from `dist/`, Worker first for `/api/*` and `/media/*`, 404 page, Analytics Engine binding. |
 | `dist/` | Build output, git-ignored. |
