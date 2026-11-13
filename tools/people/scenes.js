@@ -1,48 +1,53 @@
-// Compose brand-colored Open Peeps scenes (CC0 art by Pablo Stanley; MIT npm port by Emre Cakir) into src/media/people/*.svg.
-// Each scene is one or two busts standing on the bottom edge of a soft brand-color panel. See render.js for setup.
+// Draw the people for the page scenes from Open Peeps (CC0 art by Pablo Stanley; MIT npm port by Emre Cakir)
+// into src/media/people/*.svg. Each file is one person, cut out (transparent background), in brand colors.
+// The page puts the person in front of a real screen on a solid brand-color panel (kit.scene, .scene in site.css).
+// See render.js for setup.
 const { load } = require('./render');
 const fs = require('fs');
 const path = require('path');
 const OUT = path.join(__dirname, '..', '..', 'src', 'media', 'people');
 const E = load('Effigy').Effigy;
 const INK = '#0e1a2e';
-const SKIN = { a: '#F2C5A4', b: '#E0A779', c: '#D08B5B', d: '#AE6A3C', e: '#7A4A2E' };
-const TOP = { blue: '#7b95f4', coral: '#f39274', mint: '#5fcaa7', lilac: '#ad9bf3', yellow: '#ffc53d', white: '#ffffff', ink: INK };
-const PANEL = { blue: '#e6ecff', coral: '#fde4dc', mint: '#d9f3ea', lilac: '#ebe6ff', yellow: '#fff1cc' };
+const SKIN = { a: '#F2C5A4', b: '#E0A779', c: '#D08B5B', d: '#AE6A3C' };
+// Clothes in full brand colors, picked to stand out from the panel each person stands on.
+const TOP = { yellow: '#ffc53d', white: '#ffffff', blue: '#2447d8', coral: '#ef6a4c', mint: '#3fc29a', sky: '#9db4ff' };
+const VB = [184.2, 210.8, 940.3, 1130.6]; // Effigy bust bounds
 
-function bust(p) {
-  const o = { skinColor: SKIN[p.skin || 'c'], outlineColor: INK };
-  const body = { type: p.body, options: { ...o, topColor: TOP[p.top || 'blue'], computerColor: '#e8ebf2', paperColor: '#ffffff', ...(p.bodyOpts || {}) } };
-  let svg = E({ body, head: { type: p.head, options: { ...o, hairColor: p.hair || INK } }, face: { type: p.face || 'Smile', options: o },
-    beard: p.beard ? { type: p.beard, options: o } : undefined, accessory: p.acc ? { type: p.acc, options: o } : undefined });
-  const inner = svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
-  return inner.replace(/ id="[^"]*"/g, '');
+// The Computer body has a small mark on the laptop lid that reads as a logo; drop the subpaths inside this box
+// (body coordinates) so the laptop is plain.
+const PLAIN = { Computer: [790, 350, 890, 445] };
+function plain(svg, box) {
+  const at = svg.indexOf('<g id="Body"'), end = svg.indexOf('</g>', at);
+  if (at < 0) return svg;
+  const body = svg.slice(at, end).replace(/ d="([^"]+)"/g, (m, d) => ' d="' + d.split(/(?=M)/).filter(sp => {
+    const n = (sp.match(/-?\d+\.?\d*/g) || []).map(Number), xs = n.filter((_, j) => j % 2 === 0), ys = n.filter((_, j) => j % 2 === 1);
+    return !(Math.min(...xs) >= box[0] && Math.max(...xs) <= box[2] && Math.min(...ys) >= box[1] && Math.max(...ys) <= box[3]);
+  }).join('') + '"');
+  return svg.slice(0, at) + body + svg.slice(end);
 }
-// Effigy viewBox: x 184..1124, y 211..1341 (940 x 1130). Busts sit on the panel's bottom edge.
-function scene(name, panel, people, W = 1200, H = 900) {
-  const VB = [184.2, 210.8, 940.3, 1130.6];
-  let g = '';
-  for (const p of people) {
-    const s = p.scale || 0.64, w = VB[2] * s, h = VB[3] * s;
-    const x = p.x - w / 2, y = H - h + (p.drop || 0);
-    const flip = p.flip ? ` transform="translate(${(2 * p.x).toFixed(1)} 0) scale(-1 1)"` : '';
-    g += `<g${flip}><svg x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" viewBox="${VB.join(' ')}" overflow="visible">${bust(p)}</svg></g>`;
-  }
-  let out = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img"><defs><clipPath id="c"><rect width="${W}" height="${H}" rx="40"/></clipPath></defs>` +
-    `<g clip-path="url(#c)"><rect width="${W}" height="${H}" fill="${PANEL[panel]}"/>${g}</g></svg>`;
+
+function person(name, p) {
+  const o = { skinColor: SKIN[p.skin || 'c'], outlineColor: INK };
+  const body = { type: p.body, options: { ...o, topColor: TOP[p.top || 'yellow'], jacketColor: TOP[p.top || 'yellow'], computerColor: '#e8ebf2', paperColor: '#ffffff', cupColor: '#ef6a4c' } };
+  const svg = E({ body, head: { type: p.head, options: { ...o, hairColor: p.hair || INK } }, face: { type: p.face || 'Smile', options: o },
+    beard: p.beard ? { type: p.beard, options: o } : undefined, accessory: p.acc ? { type: p.acc, options: o } : undefined });
+  let inner = (PLAIN[p.body] ? plain(svg, PLAIN[p.body]) : svg).replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '').replace(/ id="[^"]*"/g, '');
+  if (p.flip) inner = `<g transform="translate(${(2 * VB[0] + VB[2]).toFixed(1)} 0) scale(-1 1)">${inner}</g>`;
+  let out = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VB.join(' ')}">${inner}</svg>`;
   out = out.replace(/(\d+\.\d)\d+/g, '$1').replace(/\s+/g, ' ');
   fs.writeFileSync(path.join(OUT, `${name}.svg`), out);
   return out.length;
 }
+
 fs.mkdirSync(OUT, { recursive: true });
-const S = {
-  'how-it-works': ['blue', [{ body: 'Explaining', head: 'MediumBangs', skin: 'b', top: 'yellow', x: 330 }, { body: 'Paper', head: 'ShortOne', skin: 'd', top: 'blue', x: 870, flip: true }]],
-  'book': ['yellow', [{ body: 'Computer', head: 'LongCurly', skin: 'c', top: 'blue', x: 600, scale: 0.7 }]],
-  'apparel': ['coral', [{ body: 'StripedTee', head: 'Bun', skin: 'a', top: 'coral', x: 330 }, { body: 'Jacket', head: 'FlatTop', skin: 'd', top: 'yellow', x: 870, flip: true }]],
-  'home-and-furniture': ['lilac', [{ body: 'ButtonShirt', head: 'GrayShort', skin: 'a', top: 'lilac', x: 330, beard: 'Chin' }, { body: 'Computer', head: 'Hijab', skin: 'c', top: 'mint', x: 870, flip: true }]],
-  'food-and-beverage': ['mint', [{ body: 'Coffee', head: 'Afro', skin: 'd', top: 'mint', x: 330 }, { body: 'Hoodie', head: 'Beanie', skin: 'b', top: 'coral', x: 870, flip: true }]],
-  'health-and-beauty': ['blue', [{ body: 'PolkadotJacket', head: 'LongHair', skin: 'b', top: 'lilac', x: 330 }, { body: 'Tee', head: 'ShortFour', skin: 'd', top: 'blue', acc: 'GlassesTwo', x: 870, flip: true }]],
-  'wholesale': ['yellow', [{ body: 'ShirtCoat', head: 'Pomp', skin: 'c', top: 'blue', x: 330, beard: 'Goatee' }, { body: 'Paper', head: 'Cornrows', skin: 'd', top: 'coral', x: 870, flip: true }]],
-  'notfound': ['lilac', [{ body: 'Whatever', head: 'ShortTwo', skin: 'b', top: 'yellow', x: 600, face: 'Calm', scale: 0.7 }]],
+const PEOPLE = {
+  'apparel': { body: 'PolkadotJacket', head: 'Bun', skin: 'a', top: 'yellow' },
+  'home-and-furniture': { body: 'Coffee', head: 'GrayShort', skin: 'a', top: 'yellow', beard: 'Chin' },
+  'food-and-beverage': { body: 'Explaining', head: 'Afro', skin: 'd', top: 'yellow' },
+  'health-and-beauty': { body: 'PointingUp', head: 'LongHair', skin: 'b', top: 'yellow' },
+  'wholesale': { body: 'Paper', head: 'Cornrows', skin: 'd', top: 'white' },
+  'how-it-works': { body: 'Explaining', head: 'MediumBangs', skin: 'b', top: 'coral' },
+  'book': { body: 'Computer', head: 'LongCurly', skin: 'c', top: 'yellow' },
+  'notfound': { body: 'Whatever', head: 'ShortTwo', skin: 'b', top: 'yellow', face: 'Calm' },
 };
-for (const [k, [panel, people]] of Object.entries(S)) console.log(k, scene(k, panel, people));
+for (const [k, p] of Object.entries(PEOPLE)) console.log(k, person(k, p));

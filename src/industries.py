@@ -7,7 +7,7 @@ Media keys point at config.ODOO_CLIPS / ODOO_REEL (clip) or config.SCREENS (scre
 
 INDUSTRIES = [
     {
-        "slug": "apparel", "short": "Apparel and footwear", "scene": "apparel", "color": "c-coral",
+        "slug": "apparel", "short": "Apparel and footwear", "scene": "apparel", "screen": "scene-locations", "color": "c-coral",
         "title": "Shopify and Odoo for apparel and footwear brands",
         "h1": "Shopify and Odoo for apparel and footwear brands",
         "desc": ("Size and color stock that stays right across your store, your shops and wholesale. Shopify and "
@@ -62,7 +62,7 @@ INDUSTRIES = [
         ],
     },
     {
-        "slug": "home-and-furniture", "short": "Home and furniture", "scene": "furniture", "color": "c-lilac",
+        "slug": "home-and-furniture", "short": "Home and furniture", "scene": "furniture", "screen": "scene-landed", "color": "c-lilac",
         "title": "Shopify and Odoo for furniture and home goods sellers",
         "h1": "Shopify and Odoo for furniture and home goods sellers",
         "desc": ("Landed costs, made-to-order pieces and long lead times handled in Odoo and shown in Shopify. "
@@ -113,7 +113,7 @@ INDUSTRIES = [
         "sources": [],
     },
     {
-        "slug": "food-and-beverage", "short": "Food and beverage", "scene": "food", "color": "c-mint",
+        "slug": "food-and-beverage", "short": "Food and beverage", "scene": "food", "screen": "scene-lots", "color": "c-mint",
         "title": "Shopify and Odoo for food and beverage brands",
         "h1": "Shopify and Odoo for food and beverage brands",
         "desc": ("Lot numbers, best-by dates and oldest-first picking in Odoo, with Shopify selling from the same "
@@ -161,7 +161,7 @@ INDUSTRIES = [
         "sources": [],
     },
     {
-        "slug": "health-and-beauty", "short": "Health and beauty", "scene": "beauty", "color": "c-blue",
+        "slug": "health-and-beauty", "short": "Health and beauty", "scene": "beauty", "screen": "scene-purchase", "color": "c-blue",
         "title": "Shopify and Odoo for health and beauty brands",
         "h1": "Shopify and Odoo for health and beauty brands",
         "desc": ("Batches, expiry dates, kits and packaging stock in Odoo, with one count behind Shopify and your "
@@ -211,7 +211,7 @@ INDUSTRIES = [
         "sources": [],
     },
     {
-        "slug": "wholesale", "short": "Wholesale and distribution", "scene": "wholesale", "color": "c-yellow",
+        "slug": "wholesale", "short": "Wholesale and distribution", "scene": "wholesale", "screen": "scene-pricelist", "color": "c-yellow",
         "title": "Shopify and Odoo for wholesalers and distributors",
         "h1": "Shopify and Odoo for wholesalers and distributors",
         "desc": ("Account price lists, payment terms and orders entered once. Shopify B2B and Odoo set up and "
