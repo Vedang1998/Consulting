@@ -9,7 +9,7 @@ import json
 import industries as I
 from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SPOT, clip, crumbs, e,  # noqa: F401
                  faq_schema, facts, icon, ind_tile, more_link, price, primary_cta, qa_list,
-                 scene, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
+                 deco_cluster, deco_pair, gap_art, hero_art, hl, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
                  svc_stack, svc_time, ticks)
 import content as R
 
@@ -153,10 +153,10 @@ def svc_mini(slug, i=0):
 def hero(h1, lead, *, eyebrow="", trail="", art="", cta="", extra="", cls=""):
     """Inner page hero: copy on the left, a drawn scene or a screen on the right."""
     return f"""
-<section class="hero {cls}"><div class="wrap hero-grid{' no-art' if not art else ''}">
+<section class="hero {cls}"><div class="wrap hero-grid{' no-art' if not art else ''}">{'' if art else deco_cluster()}
   <div class="hero-copy">{trail}{f'<p class="eyebrow">{eyebrow}</p>' if eyebrow else ''}
-    <h1>{e(h1)}</h1><p class="lead">{lead}</p>{extra}{f'<div class="cta-line">{cta}</div>' if cta else ''}</div>
-  {f'<div class="hero-art">{art}</div>' if art else ''}
+    <h1>{hl(h1)}</h1><p class="lead">{lead}</p>{extra}{f'<div class="cta-line">{cta}</div>' if cta else ''}</div>
+  {f'<div class="hero-art deco-host">{deco_pair(h1)}{art}</div>' if art else ''}
 </div></section>"""
 
 
@@ -211,25 +211,28 @@ def page_home():
 <section class="hero home"><div class="wrap hero-grid">
   <div class="hero-copy">
     <p class="eyebrow">Ecommerce and ERP consulting</p>
-    <h1 class="display">Shopify and Odoo, planned, set up and connected for product businesses</h1>
+    <h1 class="display">{hl("Shopify and Odoo, planned, set up and connected for product businesses")}</h1>
     <p class="lead">We decide which systems you need, move your store, set up the back office and connect the two, so
     orders, stock and the books agree. Every project has a written scope and a fixed fee, from
     {price('roadmap_min')} for a roadmap.</p>
     <div class="cta-line">{cta}</div>
     <ul class="assure">{assure}</ul>
   </div>
-  <div class="hero-art">{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
+  <div class="hero-art deco-host">{deco_pair("home")}{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
 </div></section>
 
 <section class="sec" aria-labelledby="gap-h"><div class="wrap">
   {sec_head("The work between the storefront and the warehouse", "Most product businesses hire two kinds of help. "
-            "Orders, stock and refunds go missing in the handoff between them.", "gap-h")}
+            "Orders, stock and refunds go missing in the handoff between them.", "gap-h",
+            mark="the storefront and the warehouse")}
+  {gap_art()}
   <div class="gap">{gap_html}</div>
 </div></section>
 
 <section class="sec tint" aria-labelledby="prob-h"><div class="wrap">
   {sec_head("Four problems we're asked to fix, and what each costs", "Each one maps to a service with a price range "
-            "and a typical timeline. Your exact fee is fixed in writing after a call.", "prob-h")}
+            "and a typical timeline. Your exact fee is fixed in writing after a call.", "prob-h",
+            mark="what each costs")}
   <div class="probs">{probs}</div>
   <p class="after-grid">After go-live, a <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a> gives you prepaid hours
   for questions and small changes, from {price('support_10h')}.</p>
@@ -615,7 +618,7 @@ def page_industries():
     body = hero("Shopify and Odoo for product businesses, by industry",
                 "Each kind of business loses money in its own places: sizes that oversell, freight left out of costs, "
                 "lots nobody can trace, price lists kept in a spreadsheet. These pages name the problem, what it "
-                "costs and how it gets fixed.", eyebrow="Industries") + f"""
+                "costs and how it gets fixed.", eyebrow="Industries", art=hero_art("industries")) + f"""
 <section class="sec"><div class="wrap"><div class="ind-cards">{cards}</div>
 <p class="after-grid">Selling something else? The same problems show up in most product businesses.
 {more_link("/services", "See the services")}</p></div></section>"""
@@ -650,7 +653,7 @@ def page_industry(x):
                      for o in I.INDUSTRIES if o["slug"] != x["slug"])
     body = hero(x["h1"], e(x["lead"]), trail=trail, eyebrow="Industry",
                 cta=primary_cta("hero") + more_link("#start", "Where to start"),
-                art=scene(x["slug"], x["screen"], x["color"]), cls=x["color"]) + f"""
+                art=hero_art(x["slug"]), cls=x["color"]) + f"""
 <section class="sec" aria-labelledby="pr-h"><div class="wrap">
   {sec_head(f"What costs {x['short'].lower()} businesses the most", "The problems owners in this trade raise most "
             "often, what each one costs, and how it gets fixed. Recordings are from our own demo database with "
@@ -720,7 +723,7 @@ def page_how():
                       f'<p>{e(sub)}</p></div><ol class="timeline" start="{a + 1}">{items}</ol></div>')
     body = hero("How a Shopify or Odoo project runs, from first call to handover",
                 "The same steps for every project, whatever its size. Each one ends with something written that "
-                "you can check before the next begins.", eyebrow="How we work", art=scene("how-it-works", color="c-blue", paper=M.sample_roadmap())) + f"""
+                "you can check before the next begins.", eyebrow="How we work", art=hero_art("how-it-works")) + f"""
 <section class="sec"><div class="wrap">{''.join(groups)}</div></section>
 <section class="sec tint" aria-labelledby="docs-h"><div class="wrap">
   {sec_head("What each stage produces", "Samples of the documents you get. Every project's are written for it.",
@@ -781,7 +784,7 @@ def page_pricing():
                        for h, k, v in sup["options"])
     body = hero("What a project costs, before you call us",
                 "Every project is a fixed fee written into a statement of work. Under each range you'll see what "
-                "moves a project toward the low or the high end.", eyebrow="Pricing") + f"""
+                "moves a project toward the low or the high end.", eyebrow="Pricing", art=hero_art("pricing")) + f"""
 <section class="sec"><div class="wrap">
   <h2 class="vh">Fixed fees by service</h2>
   <div class="pr-cards">{cards}</div>
@@ -822,7 +825,7 @@ def page_about():
                "Scope, price, field maps, test cases and handover are all on paper you can check."),
               ("key-round", "Your accounts, your data",
                "Everything stays in your name and on your billing. We leave with nothing."),
-              ("people", "One contact from call to handover",
+              ("person", "One contact from call to handover",
                f"{C.FOUNDER} scopes the project, writes the statement of work and runs it."),
               ("clock", "US business hours",
                f"{C.PROMISES['business_days']}, {C.TIMEZONE_LABEL} time, with a reply {C.PROMISES['first_reply']}.")]
@@ -863,18 +866,13 @@ def page_book():
               ("Next 15 minutes", "What isn't working, what it costs you each week, and what has to be live by when."),
               ("Last 10 minutes", "Which service fits, a rough price range, or whether a Systems Roadmap should come first.")]
     cov = "".join(f'<li><b>{e(h)}.</b> {e(t)}</li>' for h, t in agenda)
-    # The hero picture: a person on a call, with the call's three parts as a card (short forms of the agenda below).
-    parts = [("First 5 min", "What you sell, and where"), ("Next 15 min", "What isn't working, and what it costs"),
-             ("Last 10 min", "Which service fits, and a rough price")]
-    call_card = (f'<div class="paper"><div class="paper-h"><b>Scoping call</b><span>Video call</span></div><ol class="agenda">'
-                 + "".join(f"<li><b>{e(a)}</b><span>{e(b)}</span></li>" for a, b in parts) + "</ol></div>")
     ready = ["Your Shopify plan and the apps you rely on", "Your Odoo plan and hosting, if you have Odoo",
              "Rough counts: products, orders a month, locations", "Who keeps the books, and in what software"]
     body = hero("Book a scoping call about your store and back office",
                 f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
                 f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", eyebrow="Book a call",
                 extra=f'<div class="cta-line">{cta}</div>{f"<p class=small>{sec}</p>" if sec else ""}',
-                art=scene("book", color="c-lilac", paper=call_card)) + f"""
+                art=hero_art("book")) + f"""
 <section class="sec"><div class="wrap split">
   <div><h2>How the 30 minutes go</h2><ol class="nums">{cov}</ol>
   <h2>What to have ready</h2>{ticks([e(x) for x in ready])}</div>

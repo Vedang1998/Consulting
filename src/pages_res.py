@@ -5,7 +5,7 @@ Plus the legal pages and the 404. Text lives in content.py; shared parts in kit.
 import re
 
 from kit import (C, moved, NAME, ERRORS, RELEASE, SITE, SVC_COLOR, SVC_SPOT, anchor, clip, clip_info, crumbs, e,  # noqa: F401
-                 faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, scene, qa_list,
+                 faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, hero_art, qa_list,
                  sec_head, spot, svc_href, svc_name, svc_price)
 import content as R
 from pages import hero
@@ -59,7 +59,7 @@ def page_resources():
     n_clip = sum(1 for k in C.CLIPS if clip_info(k))
     doors = [("/videos", "videos", "Recordings", f"{n_clip} short recordings of real screens with sample data."),
              ("/faq", "questions", "Questions", f"{n_faq} short answers on Shopify, Odoo and working with us."),
-             ("/glossary", "key", "Glossary", f"{len(R.GLOSSARY)} Shopify and Odoo terms in plain words.")]
+             ("/glossary", "glossary", "Glossary", f"{len(R.GLOSSARY)} Shopify and Odoo terms in plain words.")]
     door_html = "".join(f'<a class="door" href="{h}"><span class="ic-block">{spot(ic)}</span><span><b>{e(t)}</b>'
                         f'<span>{e(x)}</span></span>{icon("arrow-right")}</a>' for h, ic, t, x in doors)
     body = hero("Guides and answers on Shopify, Odoo and running both",
@@ -242,7 +242,7 @@ def page_404():
     body = hero("This page doesn't exist",
                 'The link may be old or mistyped. Try the <a href="/services">services</a>, the '
                 '<a href="/industries">industry pages</a> or the <a href="/resources">guides</a>.',
-                eyebrow="Page not found", art=scene("notfound", color="c-coral"))
+                eyebrow="Page not found", art=hero_art("notfound"))
     return {"path": "/404", "file": "404.html", "title": f"Page not found | {NAME}",
             "desc": "The page you asked for does not exist on this site.", "body": body,
             "index": False, "no_band": True}

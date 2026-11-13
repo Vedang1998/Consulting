@@ -26,7 +26,7 @@ SRC = Path(__file__).resolve().parent
 ROOT = SRC.parent
 DIST = ROOT / "dist"
 sys.path.insert(0, str(SRC))
-from kit import (C, ERRORS, NAME, NOTES, RELEASE, SITE, TODAY, book_block, clean_url, e, meta_desc,  # noqa: E402
+from kit import (C, ERRORS, MISSING_SPOT, NAME, NOTES, RELEASE, SITE, TODAY, book_block, clean_url, e, meta_desc,  # noqa: E402
                  price, svc_href)
 import industries as I  # noqa: E402
 import pages as P  # noqa: E402
@@ -271,7 +271,7 @@ def layout(page, assets):
     <div class="foot-legal">
       <p>{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p>
       <p>Shopify is a trademark of Shopify Inc. Odoo is a trademark of Odoo S.A. We are not affiliated with or endorsed
-      by either unless stated. People illustrations are from Open Peeps by Pablo Stanley (CC0).</p>
+      by either unless stated.</p>
       <p>&copy; {TODAY.year} {e(NAME)} · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
     </div>
   </div>
@@ -534,6 +534,8 @@ def main():
     indexable = [p for p in pages if p.get("index", True)]
     write_site_files(indexable)
     link_check({p["path"] for p in pages})
+    for n in sorted(MISSING_SPOT):
+        ERRORS.append(f"icon '{n}' has no custom spot icon (add it to spot.ICONS or spot.SPOT_FOR)")
 
     for n in dict.fromkeys(NOTES):
         print("NOTE:", n)
