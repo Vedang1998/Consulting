@@ -239,12 +239,6 @@ CF_WEB_ANALYTICS_TOKEN = ""  # CONFIRM: Cloudflare Web Analytics site token (coo
 FIRST_PARTY_COUNTER = True  # the /api/e Worker (worker/index.js); needs the Analytics Engine binding in wrangler.jsonc
 INDEXNOW_KEY = "fb31ef10d63c118be35bdd53e0d6fb4b"  # public by design; served at /<key>.txt
 
-# Real screen recordings for the home page demo. Blank = the drawn demo shows.
-# Keys: "pos-sale", "online-order", "purchase-receipt", "refund". Value: a file under src/,
-# e.g. "media/pos-sale.mp4". Record only in our own demo store and demo database (04, shot list),
-# never in a client system, and only once Shopify's and Odoo's screenshot terms are confirmed.
-DEMO_VIDEOS = {}  # CONFIRM
-
 # Pages last changed on (ISO date). Shown as "Updated" only on guides; the sitemap
 # omits lastmod unless a real date is set here.
 LAST_CHANGED = {}
@@ -259,62 +253,33 @@ SCREENS = {
     "delivery": ("media/odoo/delivery.webp", "Odoo 20 delivery order WH/OUT/00074 for sales order S00027, done, with 3 Large Cabinets shipped. Sample data."),
 }
 
-# Screen recordings made in our own Odoo 20 Community demo database (Odoo's sample data).
-# (key, tab label, icon, one-line description, video file under src/, poster file under src/)
-ODOO_REEL = [
-    ("sale", "Quote to delivery", "receipt",
-     "A quotation is confirmed as a sales order, then the warehouse validates the delivery.",
-     "media/odoo/sale.mp4", "media/odoo/sale-poster.jpg"),
-    ("purchase", "Purchase to stock", "boxes",
-     "A purchase order for 20 chairs is confirmed, then received into stock.",
-     "media/odoo/purchase.mp4", "media/odoo/purchase-poster.jpg"),
-    ("pos", "A sale at the register", "store",
-     "Three items rung up in Odoo Point of Sale and paid in cash.",
-     "media/odoo/pos.mp4", "media/odoo/pos-poster.jpg"),
-    ("invoice", "Invoice to paid", "file-check-2",
-     "The delivered order is invoiced, posted and registered as paid.",
-     "media/odoo/invoice.mp4", "media/odoo/invoice-poster.jpg"),
-]
-
-# More recordings from the same database, same row shape. They get their own video pages and are linked
-# under the reel, but stay out of the tabbed reel so it doesn't run long.
-ODOO_CLIPS = [
-    ("locations", "Stock in two locations", "warehouse",
-     "One product is stocked in the warehouse and the shop, and 5 units move from one to the other.",
-     "media/odoo/locations.mp4", "media/odoo/locations-poster.jpg"),
-    ("count", "Fix a stock count", "scan-barcode",
-     "A recount finds 78 chairs where Odoo expected 80, and the count is applied.",
-     "media/odoo/count.mp4", "media/odoo/count-poster.jpg"),
-    ("return", "Return and refund", "undo-2",
-     "One cabinet comes back from a customer, goes back into stock and is refunded.",
-     "media/odoo/return.mp4", "media/odoo/return-poster.jpg"),
-    ("reports", "Weekly reports", "chart-column",
-     "Sales by product, sorted by revenue, then the products that will run short against open orders.",
-     "media/odoo/reports.mp4", "media/odoo/reports-poster.jpg"),
-]
-
-# Guided tours on /odoo: real Odoo 20 screens from our demo database (Odoo's sample data), captured at
-# 960x600 CSS px at 2x. box = the next click target as left, top, width, height in percent of the screen.
-# (key, tab label, app shown in the window bar, [(image, box, target label, caption), ...])
-ODOO_TOURS = [
-    ("sale", "A web order to a delivery", "Sales", [
-        ("media/odoo/tour/sale-1.webp", (17.65, 19.54, 7.92, 5.5), "Confirm",
-         "This is a quotation for 3 Large Cabinets. Orders from your Shopify store land on this same screen. Confirm turns the quote into a sales order."),
-        ("media/odoo/tour/sale-2.webp", (1.67, 16.71, 10.94, 5.5), "Delivery",
-         "The order is confirmed and Odoo sets aside 3 cabinets in the warehouse. The Delivery button opens the warehouse's list of what to ship."),
-        ("media/odoo/tour/sale-3.webp", (1.67, 25.04, 7.88, 5.5), "Validate",
-         "The warehouse sees what to ship and that all 3 are in stock. Validate once the boxes leave the building."),
-        ("media/odoo/tour/sale-4.webp", (88.81, 25.54, 9.21, 4.5), "Done",
-         "Done. On hand for the Large Cabinet drops by 3. With a connector in place, this is the count your Shopify store shows next."),
-    ]),
-    ("buy", "A purchase order to stock", "Purchase", [
-        ("media/odoo/tour/buy-1.webp", (11.27, 25.04, 12.29, 5.5), "Confirm Order",
-         "A request for quotation to Wood Corner for 20 Office Chairs. Confirm Order turns it into a purchase order."),
-        ("media/odoo/tour/buy-2.webp", (17.13, 16.71, 10.94, 5.5), "Receipt",
-         "The order is confirmed and Odoo expects the chairs on the arrival date. The Receipt button opens what the warehouse should receive."),
-        ("media/odoo/tour/buy-3.webp", (1.67, 25.04, 7.88, 5.5), "Validate",
-         "The chairs arrive. The receipt shows 20 ordered and 20 counted. Validate puts them on the shelf in Odoo."),
-        ("media/odoo/tour/buy-4.webp", (88.81, 25.54, 9.21, 4.5), "Done",
-         "Done. On hand for Office Chair Black goes up by 20, and the vendor's bill can be matched against this receipt."),
-    ]),
-]
+# Silent screen recordings, made in our own demo systems with sample data, never in a client's.
+# Each one starts on the task it names and ends when the task is done (Vee, Nov 12, 2026: short, no app opening).
+# key: (platform "shopify" or "odoo", app shown in the window bar, title, what happens, file stem under src/
+# (stem.mp4, stem.webm and stem-poster.jpg), date recorded). A key used on a page but missing here is left out.
+CLIPS = {
+    "sale": ("odoo", "Sales", "Quote to delivery",
+             "A quotation for 3 Large Cabinets is confirmed, and the warehouse validates the delivery.",
+             "media/odoo/sale", "2026-11-13"),
+    "purchase": ("odoo", "Purchase", "Purchase order to stock",
+                 "A purchase order for 20 office chairs is confirmed, then received into stock.",
+                 "media/odoo/purchase", "2026-11-13"),
+    "pos": ("odoo", "Point of Sale", "A sale at the register",
+            "Three items are rung up and paid in cash at the register.",
+            "media/odoo/pos", "2026-11-13"),
+    "invoice": ("odoo", "Invoicing", "Invoice to paid",
+                "A posted invoice for two desks is paid, and Odoo marks it paid.",
+                "media/odoo/invoice", "2026-11-13"),
+    "locations": ("odoo", "Inventory", "Stock moved between two locations",
+                  "One product is stocked in the warehouse and the shop. Five units move across, and both counts change.",
+                  "media/odoo/locations", "2026-11-13"),
+    "count": ("odoo", "Inventory", "A stock count corrected",
+              "A recount finds one fewer desk organizer than Odoo expected, and the count is applied.",
+              "media/odoo/count", "2026-11-13"),
+    "return": ("odoo", "Inventory and Invoicing", "A return and its refund",
+               "A delivered lamp comes back into stock, then the credit note is posted and refunded.",
+               "media/odoo/return", "2026-11-13"),
+    "reports": ("odoo", "Sales and Inventory", "What sold, and what will run short",
+                "Sales by product, sorted by revenue, then the products whose forecast goes below zero.",
+                "media/odoo/reports", "2026-11-13"),
+}
