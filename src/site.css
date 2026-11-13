@@ -96,7 +96,7 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; background: none; border: 0; cursor: pointer; color: var(--action); font: 600 .94rem var(--f-body); }
 .cta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 30px; }
 .cta-line .small { flex-basis: 100%; margin: 0; }
-.note-box { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--marker-tint); border: 1px solid #f0d58e; border-radius: 12px; font-size: .95rem; }
+.note-box { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--marker-tint); color: var(--ink); border: 1px solid #f0d58e; border-radius: 12px; font-size: .95rem; }
 .note-box .ic { margin-top: 3px; }
 
 /* ---- Top of page ---------------------------------------------------------------------------- */
@@ -152,6 +152,11 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .assure .ic { color: var(--marker); }
 .illo svg { display: block; width: 100%; height: auto; }
 .portrait { display: block; width: 100%; max-width: 360px; margin-left: auto; border-radius: var(--r); box-shadow: var(--pop-lg); }
+
+/* People scenes (kit.people): Open Peeps on a soft brand panel; the panel and its rounded corners are in the SVG. */
+.people { margin: 0; }
+.people img { display: block; width: 100%; height: auto; }
+.hero-art .people { max-width: 540px; margin-left: auto; }
 
 /* Two real screens layered: one behind, the other in front and lower (kit.stack). */
 .stack { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
@@ -552,6 +557,7 @@ li[data-hide] { display: none; }
   .hero-grid, .split, .book-card, .svc-row, .pr-row, .phase, .picker { grid-template-columns: minmax(0, 1fr); }
   .hero-grid { gap: 36px; }
   .hero-art .stack { max-width: 560px; }
+  .hero-art .people { max-width: 460px; margin: 0; }
   .svc-row { gap: 24px; }
   .svc-row.flip .svc-row-art, .pr-row.flip .pr-copy { order: 0; }
   .svc-row-art .stack { margin: 0; max-width: 520px; }

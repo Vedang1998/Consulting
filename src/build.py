@@ -271,7 +271,7 @@ def layout(page, assets):
     <div class="foot-legal">
       <p>{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p>
       <p>Shopify is a trademark of Shopify Inc. Odoo is a trademark of Odoo S.A. We are not affiliated with or endorsed
-      by either unless stated.</p>
+      by either unless stated. People illustrations are from Open Peeps by Pablo Stanley (CC0).</p>
       <p>&copy; {TODAY.year} {e(NAME)} · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
     </div>
   </div>

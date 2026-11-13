@@ -449,5 +449,16 @@ def svc_stack(slug, cls="", eager=False):
     return stack(*SVC_STACK[slug], cls=cls, eager=eager)
 
 
+def people(name):
+    """A people scene from src/media/people (Open Peeps by Pablo Stanley, CC0; built by tools/people/scenes.js).
+    Decorative, so the alt text is empty."""
+    f = SRC / "media" / "people" / f"{name}.svg"
+    if not f.exists():
+        ERRORS.append(f"people scene {name!r} is not in src/media/people")
+        return ""
+    return (f'<figure class="people"><img src="/media/people/{e(name)}.svg" alt="" width="1200" height="900" '
+            f'fetchpriority="high" decoding="async"></figure>')
+
+
 def json_attr(obj):
     return e(json.dumps(obj))

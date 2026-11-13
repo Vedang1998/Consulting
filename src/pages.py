@@ -9,8 +9,8 @@ import json
 import industries as I
 from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SPOT, clip, crumbs, e,  # noqa: F401
                  faq_schema, facts, icon, ind_tile, more_link, price, primary_cta, qa_list,
-                 sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price, svc_stack,
-                 svc_time, ticks)
+                 people, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
+                 svc_stack, svc_time, ticks)
 import content as R
 
 GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
@@ -650,7 +650,7 @@ def page_industry(x):
                      for o in I.INDUSTRIES if o["slug"] != x["slug"])
     body = hero(x["h1"], e(x["lead"]), trail=trail, eyebrow="Industry",
                 cta=primary_cta("hero") + more_link("#start", "Where to start"),
-                cls=x["color"]) + f"""
+                art=people(x["slug"]), cls=x["color"]) + f"""
 <section class="sec" aria-labelledby="pr-h"><div class="wrap">
   {sec_head(f"What costs {x['short'].lower()} businesses the most", "The problems owners in this trade raise most "
             "often, what each one costs, and how it gets fixed. Recordings are from our own demo database with "
@@ -720,7 +720,7 @@ def page_how():
                       f'<p>{e(sub)}</p></div><ol class="timeline" start="{a + 1}">{items}</ol></div>')
     body = hero("How a Shopify or Odoo project runs, from first call to handover",
                 "The same steps for every project, whatever its size. Each one ends with something written that "
-                "you can check before the next begins.", eyebrow="How we work") + f"""
+                "you can check before the next begins.", eyebrow="How we work", art=people("how-it-works")) + f"""
 <section class="sec"><div class="wrap">{''.join(groups)}</div></section>
 <section class="sec tint" aria-labelledby="docs-h"><div class="wrap">
   {sec_head("What each stage produces", "Samples of the documents you get. Every project's are written for it.",
@@ -868,7 +868,8 @@ def page_book():
     body = hero("Book a scoping call about your store and back office",
                 f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
                 f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", eyebrow="Book a call",
-                extra=f'<div class="cta-line">{cta}</div>{f"<p class=small>{sec}</p>" if sec else ""}') + f"""
+                extra=f'<div class="cta-line">{cta}</div>{f"<p class=small>{sec}</p>" if sec else ""}',
+                art=people("book")) + f"""
 <section class="sec"><div class="wrap split">
   <div><h2>How the 30 minutes go</h2><ol class="nums">{cov}</ol>
   <h2>What to have ready</h2>{ticks([e(x) for x in ready])}</div>

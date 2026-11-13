@@ -5,7 +5,7 @@ Plus the legal pages and the 404. Text lives in content.py; shared parts in kit.
 import re
 
 from kit import (C, moved, NAME, ERRORS, RELEASE, SITE, SVC_COLOR, SVC_SPOT, anchor, clip, clip_info, crumbs, e,  # noqa: F401
-                 faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, qa_list,
+                 faq_schema, fill, first_sentence, icon, inline, md, nice_date, people, primary_cta, qa_list,
                  sec_head, spot, svc_href, svc_name, svc_price)
 import content as R
 from pages import hero
@@ -242,7 +242,7 @@ def page_404():
     body = hero("This page doesn't exist",
                 'The link may be old or mistyped. Try the <a href="/services">services</a>, the '
                 '<a href="/industries">industry pages</a> or the <a href="/resources">guides</a>.',
-                eyebrow="Page not found")
+                eyebrow="Page not found", art=people("notfound"))
     return {"path": "/404", "file": "404.html", "title": f"Page not found | {NAME}",
             "desc": "The page you asked for does not exist on this site.", "body": body,
             "index": False, "no_band": True}
