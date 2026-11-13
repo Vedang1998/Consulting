@@ -486,7 +486,7 @@ def shot(key, cls="", eager=False):
     w, h = webp_size(f)
     app = "Shopify" if "/shopify/" in f else "Odoo 20"
     load = 'fetchpriority="high"' if eager else 'loading="lazy"'
-    return (f'<figure class="clip shot {cls}"><div class="win-bar"><i></i><i></i><i></i><span>{app}</span>'
+    return (f'<figure class="clip shot {cls}" data-zoom><div class="win-bar"><i></i><i></i><i></i><span>{app}</span>'
             f'<em class="tag">Sample data</em></div><div class="clip-frame"><img src="/{e(f)}" alt="{e(alt)}" '
             f'{load} decoding="async" width="{w}" height="{h}"></div></figure>')
 

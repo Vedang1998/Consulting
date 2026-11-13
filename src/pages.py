@@ -744,7 +744,8 @@ def page_how():
                       f'<p>{e(sub)}</p></div><ol class="timeline" start="{a + 1}">{items}</ol></div>')
     body = hero("How a Shopify or Odoo project runs, from first call to handover",
                 "The same steps for every project, whatever its size. Each one ends with something written that "
-                "you can check before the next begins.", eyebrow="How we work", art=hero_art("how-it-works")) + f"""
+                "you can check before the next begins.", eyebrow="How we work", cta=primary_cta("how"),
+                art=hero_art("how-it-works")) + f"""
 <section class="sec"><div class="wrap">{''.join(groups)}</div></section>
 <section class="sec tint" aria-labelledby="docs-h"><div class="wrap">
   {sec_head("What each stage produces", "Samples of the documents you get. Every project's are written for it.",

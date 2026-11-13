@@ -113,7 +113,7 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .menu-btn { display: none; margin-left: auto; min-height: 42px; padding: 8px 14px; background: var(--surface); border: 1px solid var(--edge); border-radius: 10px; font: 600 .95rem var(--f-body); color: var(--ink); cursor: pointer; }
 
 /* ---- Heroes --------------------------------------------------------------------------------- */
-.hero { padding: 72px 0 80px; background: var(--dark); color: var(--on-dark); }
+.hero { padding: 56px 0 60px; background: var(--dark); color: var(--on-dark); }
 .hero h1 { color: #fff; }
 .hero .lead, .hero .small, .hero .crumbs, .hero .crumbs a, .hero .eyebrow { color: var(--on-dark-muted); }
 .hero .crumbs a:hover { color: #fff; }
@@ -131,12 +131,14 @@ ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 .hero .opt-card em { color: var(--on-dark-muted); }
 .hero .jump a, .hero .chip-link { background: var(--dark-2); border-color: var(--dark-line); color: #fff; }
 .hero .jump a:hover, .hero .chip-link:hover { background: var(--dark-line); color: #fff; }
-.hero.home { padding: 80px 0 88px; }
+.hero.home { padding: 64px 0 68px; }
+.hero + .sec, .ghero + .wrap { padding-top: 64px; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 52px; align-items: center; }
 .hero-grid.no-art { grid-template-columns: minmax(0, 1fr); }
 .no-art .hero-copy { max-width: 840px; }
 .no-art h1 { max-width: 24ch; }
-.hero h1 { max-width: 20ch; }
+.hero h1 { max-width: 22ch; }
+.hero h1:not(.display) { font-size: clamp(2.05rem, 3.6vw, 2.8rem); }
 .hero .lead { margin-top: 18px; }
 .hero-art { min-width: 0; }
 .hero.slim { padding: 56px 0 40px; }
@@ -173,6 +175,14 @@ mark.hl { color: inherit; padding: 0 .05em; -webkit-box-decoration-break: clone;
 .hero-shapes .h1s { top: 18%; right: 14%; } .hero-shapes .h2s { top: 48%; right: 40%; width: 80px; height: 80px; }
 .hero-shapes .h3s { bottom: 14%; right: 10%; }
 .hero-grid { position: relative; }
+/* Full-size screenshot viewer (site.js) */
+.zoomable { cursor: zoom-in; }
+.zoom { width: min(1400px, 96vw); max-width: none; max-height: 94vh; padding: 0; border: 0; border-radius: var(--r); background: var(--paper); color: var(--ink); box-shadow: var(--pop-lg); }
+.zoom::backdrop { background: rgba(14, 26, 46, .72); }
+.zoom-bar { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 16px; background: var(--paper); border-bottom: 1px solid var(--line); }
+.zoom-cap { font-size: .93rem; color: var(--muted); }
+.zoom-body { overflow: auto; max-height: calc(94vh - 64px); }
+.zoom-body img { display: block; width: auto; max-width: none; height: auto; margin: 0 auto; }
 /* Cost of manual work calculator */
 .calc { display: grid; gap: 16px; margin: 8px 0 16px; }
 .calc-in { display: grid; gap: 0; padding: 6px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
@@ -699,3 +709,6 @@ li[data-hide] { display: none; }
 .sp-c { fill: var(--c, var(--sp)); }
 .sd-blue { --sp: #2f55d4; } .sd-coral { --sp: #ff7a59; } .sd-mint { --sp: #3ecf9e; } .sd-lilac { --sp: #a99bff; } .sd-yellow { --sp: #ffc53d; }
 .spot { display: block; flex: none; width: 100%; height: 100%; overflow: visible; }
+
+/* Tap targets of at least 24px (WCAG 2.2, 2.5.8) */
+.pr-card h3 a, .g-toc a, .crumbs a { display: inline-block; padding: 3px 0; }
