@@ -5,7 +5,7 @@ Plus the legal pages and the 404. Text lives in content.py; shared parts in kit.
 import re
 
 from kit import (C, moved, NAME, ERRORS, RELEASE, SITE, SVC_COLOR, SVC_SPOT, anchor, clip, clip_info, crumbs, e,  # noqa: F401
-                 faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, qa_list, scene,
+                 faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, qa_list,
                  sec_head, spot, svc_href, svc_name, svc_price)
 import content as R
 from pages import hero
@@ -163,17 +163,21 @@ def page_videos():
         for k in keys:
             c = clip_info(k)
             objs.append({"@context": "https://schema.org", "@type": "VideoObject", "@id": f"{SITE}/videos#{k}",
-                         "name": c["title"], "description": c["desc"] + " Silent recording with sample data.",
+                         "name": c["title"], "description": c["desc"] + (" Real Shopify admin screens shown step by step, with sample data."
+                                                          if c["platform"] == "shopify" else
+                                                          " Silent recording with sample data."),
                          "thumbnailUrl": [f"{SITE}/{c['stem']}-poster.jpg"], "uploadDate": c["recorded"],
                          "duration": f"PT{max(1, round(c['seconds']))}S", "contentUrl": f"{SITE}/{c['stem']}.mp4",
                          "publisher": {"@id": SITE + "/#org"}})
-    body = hero("Short recordings of real Shopify and Odoo screens",
-                "Each recording starts on the task it names and stops when the task is done. They are silent, made "
-                "in our own demo systems with sample data, never a client's.", eyebrow="Recordings") + "".join(secs)
+    body = hero("Short clips of real Shopify and Odoo screens",
+                "Each clip starts on the task it names and stops when the task is done. The Odoo clips are screen "
+                "recordings. The Shopify clips are real admin screens shown one step at a time, with a drawn pointer "
+                "on each click. All are silent and made in our own demo systems with sample data, never a client's.",
+                eyebrow="Recordings") + "".join(secs)
     return {"path": "/videos", "file": "videos.html", "h": "Recordings",
             "title": f"Shopify and Odoo screen recordings | {NAME}",
-            "desc": ("Short, silent screen recordings with sample data. A sale to delivery, a purchase to stock, "
-                     "a register sale, a paid invoice, stock moves, a count, a return and reports."),
+            "desc": ("Short, silent clips of real Shopify and Odoo screens with sample data. Orders, returns, stock "
+                     "counts, purchase orders, a register sale, a paid invoice and reports."),
             "body": body, "schema": [crs] + objs}
 
 
@@ -238,7 +242,7 @@ def page_404():
     body = hero("This page doesn't exist",
                 'The link may be old or mistyped. Try the <a href="/services">services</a>, the '
                 '<a href="/industries">industry pages</a> or the <a href="/resources">guides</a>.',
-                eyebrow="Page not found", art=scene("notfound"))
+                eyebrow="Page not found")
     return {"path": "/404", "file": "404.html", "title": f"Page not found | {NAME}",
             "desc": "The page you asked for does not exist on this site.", "body": body,
             "index": False, "no_band": True}

@@ -7,9 +7,10 @@ card heading), no_band and index. Shared parts live in kit.py. Resource and lega
 import json
 
 import industries as I
-from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SCENE, SVC_SPOT, clip, crumbs, e,  # noqa: F401
-                 faq_schema, facts, icon, more_link, price, primary_cta, qa_list, scene,
-                 sec_head, secondary_contacts, service_schema, spot, svc_href, svc_name, svc_price, svc_time, ticks)
+from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SPOT, clip, crumbs, e,  # noqa: F401
+                 faq_schema, facts, icon, ind_tile, more_link, price, primary_cta, qa_list,
+                 sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price, svc_stack,
+                 svc_time, ticks)
 import content as R
 
 GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
@@ -169,7 +170,7 @@ def page_home():
         ("file-check-2", "A fixed fee, agreed in writing"), ("key-round", "Your accounts stay in your name"),
         ("clock", f"{C.TIMEZONE_LABEL} business hours")])
     shop_clip = next((k for k in C.CLIPS if C.CLIPS[k][0] == "shopify"), None)
-    pair = [shop_clip or "sale", "locations"]
+    pair = [shop_clip, "sale"] if shop_clip else ["sale", "locations"]
     gap = [("Storefront agencies", "theme", "Build the theme, the apps and the checkout. Their work usually ends once the "
                                             "order is placed."),
            ("ERP resellers", "back-office", "Sell the licenses and set up the warehouse and accounting. Their work starts "
@@ -186,7 +187,7 @@ def page_home():
 </a>""" for s, h, t in PROBLEMS)
     inds = "".join(f"""
 <a class="ind-tile" href="/industries/{x['slug']}">
-  {scene(x['scene'])}<b>{e(x['short'])}</b><span>{e(x['card'])}</span>
+  {ind_tile(x)}<b>{e(x['short'])}</b><span>{e(x['card'])}</span>
 </a>""" for x in I.INDUSTRIES)
     steps = [("calendar-check", "Scoping call", f"{C.PROMISES['call_length'].capitalize()}, no charge. You get a proposal "
               f"or a Roadmap quote {C.PROMISES['proposal_after_call']}."),
@@ -217,7 +218,7 @@ def page_home():
     <div class="cta-line">{cta}</div>
     <ul class="assure">{assure}</ul>
   </div>
-  <div class="hero-art">{scene("sync", "Drawing: a shop counter and a warehouse shelf joined by one line of boxes")}</div>
+  <div class="hero-art">{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
 </div></section>
 
 <section class="sec" aria-labelledby="gap-h"><div class="wrap">
@@ -241,8 +242,8 @@ def page_home():
 </div></section>
 
 <section class="sec tint" aria-labelledby="rec-h"><div class="wrap">
-  {sec_head("Recorded in our own demo systems", "Short, silent recordings of real screens with sample data. Each one "
-            "starts on the task and stops when it is done.", "rec-h")}
+  {sec_head("The same work in Shopify and in Odoo", "Real screens from our own demo store and Odoo database, with "
+            "sample data. Each clip starts on the task and stops when it is done.", "rec-h")}
   <div class="clips2">{''.join(clip(k) for k in pair)}</div>
   <p class="after-grid">{more_link("/videos", "See all recordings")}</p>
 </div></section>
@@ -307,7 +308,7 @@ def page_services():
             fit, summary = SVC_EXTRA[s]["for"][:2], PKG[s]["summary"]
         rows.append(f"""
 <article class="svc-row {SVC_COLOR[s]}{' flip' if n % 2 else ''}">
-  <div class="svc-row-art">{scene(SVC_SCENE[s])}</div>
+  <div class="svc-row-art">{svc_stack(s)}</div>
   <div class="svc-row-copy">
     <p class="eyebrow">{e(PKG[s]['kind'] if s != 'support' else 'Prepaid hours')}</p>
     <h2><a href="{svc_href(s)}">{e(svc_name(s))}</a></h2>
@@ -494,7 +495,10 @@ def svc_feature(slug):
   {plan_picker()}
 </div></section>{f'''
 <section class="sec" aria-labelledby="shrec-h"><div class="wrap">
-  {sec_head("Recorded in our Shopify demo store", "Silent recordings with sample data.", "shrec-h")}{clips}
+  {sec_head("Everyday Shopify tasks, on real screens", "Admin screens from our own Shopify demo store, with sample "
+            "data, shown one step at a time. The pointer is drawn in to mark each click.", "shrec-h")}{clips}
+  <p class="after-grid">For selling in person, Shopify shows its point of sale app on
+  <a href="https://www.shopify.com/pos" rel="noopener">its own POS page</a>.</p>
 </div></section>''' if clips else ''}
 <section class="sec" aria-labelledby="mv-h"><div class="wrap split">
   <div>{sec_head("What moves, and how it is checked", "Counts are taken on the old platform before anything moves, "
@@ -541,7 +545,7 @@ def page_service(p):
     body = hero(x["h1"], e(p["summary"]), trail=trail, eyebrow=e(p["kind"]),
                 extra=facts([("Fixed fee", f'<span class="price">{price(*p["price"])}</span>'),
                              ("Typical timeline", e(p["timeline"]))], "hero-facts"),
-                cta=primary_cta("service"), art=scene(SVC_SCENE[slug]), cls=SVC_COLOR[slug]) + f"""
+                cta=primary_cta("service"), art=svc_stack(slug, eager=True), cls=SVC_COLOR[slug]) + f"""
 <section class="sec" aria-labelledby="fit-h"><div class="wrap split">
   <div><h2 id="fit-h">A good fit when</h2>{ticks([e(i) for i in x['for']])}</div>
   <div><h2>What you have at the end</h2><ol class="nums">{''.join(f'<li>{e(i)}</li>' for i in x['after'])}</ol></div>
@@ -580,7 +584,7 @@ def page_support():
     body = hero("Prepaid hours for the questions and small changes after go-live",
                 f"{e(s['summary'])} We reply {e(C.PROMISES['support_reply'])}, {e(C.PROMISES['business_days'])}, "
                 f"{e(C.TIMEZONE_LABEL)} time.", trail=trail, eyebrow="Prepaid hours",
-                extra=f'<div class="opt-cards">{opts}</div>', cta=primary_cta("service"), art=scene("support"),
+                extra=f'<div class="opt-cards">{opts}</div>', cta=primary_cta("service"), art=svc_stack("support", eager=True),
                 cls="c-yellow") + f"""
 <section class="sec" aria-labelledby="hw-h"><div class="wrap split">
   <div><h2 id="hw-h">How the hours work</h2><p>{e(s['terms'])}</p>
@@ -603,7 +607,7 @@ def page_support():
 def page_industries():
     cards = "".join(f"""
 <a class="ind-card {x['color']}" href="/industries/{x['slug']}">
-  <span class="ind-art">{scene(x['scene'])}</span>
+  <span class="ind-art">{ind_tile(x)}</span>
   <span class="ind-body"><b>{e(x['short'])}</b><span>{e(x['lead'])}</span>
   <ul>{''.join(f'<li>{e(p[0])}</li>' for p in x['problems'])}</ul>
   <em>See the fixes{icon('arrow-right')}</em></span>
@@ -645,7 +649,7 @@ def page_industry(x):
     others = "".join(f'<a class="chip-link" href="/industries/{o["slug"]}">{e(o["short"])}</a>'
                      for o in I.INDUSTRIES if o["slug"] != x["slug"])
     body = hero(x["h1"], e(x["lead"]), trail=trail, eyebrow="Industry",
-                cta=primary_cta("hero") + more_link("#start", "Where to start"), art=scene(x["scene"]),
+                cta=primary_cta("hero") + more_link("#start", "Where to start"),
                 cls=x["color"]) + f"""
 <section class="sec" aria-labelledby="pr-h"><div class="wrap">
   {sec_head(f"What costs {x['short'].lower()} businesses the most", "The problems owners in this trade raise most "
@@ -716,7 +720,7 @@ def page_how():
                       f'<p>{e(sub)}</p></div><ol class="timeline" start="{a + 1}">{items}</ol></div>')
     body = hero("How a Shopify or Odoo project runs, from first call to handover",
                 "The same steps for every project, whatever its size. Each one ends with something written that "
-                "you can check before the next begins.", eyebrow="How we work", art=scene("packing")) + f"""
+                "you can check before the next begins.", eyebrow="How we work") + f"""
 <section class="sec"><div class="wrap">{''.join(groups)}</div></section>
 <section class="sec tint" aria-labelledby="docs-h"><div class="wrap">
   {sec_head("What each stage produces", "Samples of the documents you get. Every project's are written for it.",
@@ -864,8 +868,7 @@ def page_book():
     body = hero("Book a scoping call about your store and back office",
                 f"A {e(C.PROMISES['call_length'])} video call, {e(C.PROMISES['business_days'])}, "
                 f"{e(C.TIMEZONE_LABEL)} time. There is no charge for the call.", eyebrow="Book a call",
-                extra=f'<div class="cta-line">{cta}</div>{f"<p class=small>{sec}</p>" if sec else ""}',
-                art=scene("call")) + f"""
+                extra=f'<div class="cta-line">{cta}</div>{f"<p class=small>{sec}</p>" if sec else ""}') + f"""
 <section class="sec"><div class="wrap split">
   <div><h2>How the 30 minutes go</h2><ol class="nums">{cov}</ol>
   <h2>What to have ready</h2>{ticks([e(x) for x in ready])}</div>

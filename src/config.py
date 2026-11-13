@@ -247,17 +247,40 @@ LAST_CHANGED = {}
 # captures of sample data; empty keys fall back to the drawn screens.
 SCREENS = {
     "hero": ("media/odoo/hero-products.webp", "Odoo 20 Inventory products with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
-    "hero-m": ("media/odoo/hero-products-m.webp", ""),
     "inventory": ("media/odoo/stock-list.webp", "Odoo 20 product list with sales price, on hand and forecasted quantities. Sample data."),
     "sales": ("media/odoo/invoice.webp", "Odoo 20 customer invoice INV/2026/00011 for sales order S00027, posted and marked paid. Sample data."),
     "delivery": ("media/odoo/delivery.webp", "Odoo 20 delivery order WH/OUT/00074 for sales order S00027, done, with 3 Large Cabinets shipped. Sample data."),
+    # Tighter crops of the same captures, for the layered screens in heroes (text stays readable when small).
+    "delivery-c": ("media/odoo/delivery-c.webp", "Odoo 20 delivery order WH/OUT/00074 from sales order S00027, with 3 Large Cabinets to ship and 3 shipped. Sample data."),
+    "sales-c": ("media/odoo/invoice-c.webp", "Odoo 20 customer invoice INV/2026/00011 for sales order S00027: 3 Large Cabinets at $320.00 with 15% tax. Sample data."),
+    "inventory-c": ("media/odoo/stock-list-c.webp", "Odoo 20 product list with sales price, on hand and forecasted quantity for each product. Sample data."),
+    "hero-m": ("media/odoo/hero-products-m.webp", "Odoo 20 Inventory product cards with price and stock on hand, such as Cabinet with Doors with 33 on hand. Sample data."),
+    "shop-order": ("media/shopify/order.webp", "Shopify order #1001 for 3 Large Cabinets at $320.00, paid and waiting to be fulfilled, total $960.00. Sample data."),
+    "shop-products": ("media/shopify/products.webp", "Shopify product list with photos, status and stock, such as Large Cabinet with 491 in stock and Office Lamp with 19. Sample data."),
+    "shop-inventory": ("media/shopify/inventory.webp", "Shopify inventory list with SKU, committed, available and on-hand counts for eight furniture products. Sample data."),
+    "shop-transfer": ("media/shopify/transfer.webp", "Shopify transfer #T0001 from supplier Wood Corner to the shop location, 20 Office Chair Black received. Sample data."),
+    "shop-return": ("media/shopify/return.webp", "Shopify order #1001 with a closed return: one Large Cabinet returned as damaged, restocked at the shop location and refunded. Sample data."),
 }
 
-# Silent screen recordings, made in our own demo systems with sample data, never in a client's.
+# Silent screen recordings, made in our own demo systems with sample data, never in a client's. Shopify clips
+# are real admin screenshots shown one step at a time with a drawn pointer (dev store "Sample Furniture Demo").
 # Each one starts on the task it names and ends when the task is done (Vee, Nov 12, 2026: short, no app opening).
 # key: (platform "shopify" or "odoo", app shown in the window bar, title, what happens, file stem under src/
 # (stem.mp4, stem.webm and stem-poster.jpg), date recorded). A key used on a page but missing here is left out.
 CLIPS = {
+    "shop-order": ("shopify", "Orders", "Phone order to fulfilled",
+                   "A draft order for 3 Large Cabinets is made for a customer, marked as paid, then fulfilled.",
+                   "media/shopify/order", "2026-11-13"),
+    "shop-return": ("shopify", "Orders", "A return, restocked and refunded",
+                    "One damaged cabinet comes back, is restocked at the shop and refunded. Stock goes from 488 to 489.",
+                    "media/shopify/return", "2026-11-13"),
+    "shop-count": ("shopify", "Products", "A stock count corrected",
+                   "A count finds 17 office lamps where Shopify expected 19, and the new count is saved.",
+                   "media/shopify/count", "2026-11-13"),
+    "shop-po": ("shopify", "Products", "Purchase order to stock",
+                "A purchase order for 20 office chairs at $55 goes to the supplier, and receiving it takes stock "
+                "from 80 to 100.",
+                "media/shopify/purchase", "2026-11-13"),
     "sale": ("odoo", "Sales", "Quote to delivery",
              "A quotation for 3 Large Cabinets is confirmed, and the warehouse validates the delivery.",
              "media/odoo/sale", "2026-11-13"),

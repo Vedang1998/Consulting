@@ -152,10 +152,36 @@ def icon(name):
     return M.icon(name)
 
 
+# Icon tiles (v6, Nov 13, 2026): a solid color tile with a white Lucide glyph, replacing the outline spot icons.
+# Keys are the spot names pages already pass; the color comes from spot.py so each service keeps its color.
+TILE_GLYPH = {"roadmap": "map", "store-move": "store", "back-office": "boxes", "sync": "refresh-cw",
+              "support": "life-buoy", "guides": "book-open", "videos": "clapperboard", "questions": "message-circle-question",
+              "tools": "calculator", "inventory": "package", "invoice": "receipt", "register": "credit-card",
+              "calendar": "calendar-check", "clock": "clock", "copy": "copy", "contract": "file-check-2",
+              "branch": "git-branch", "key": "key-round", "shield": "shield-check", "staging": "server",
+              "checklist": "list-checks", "go-live": "package-check", "cart": "shopping-cart", "people": "users",
+              "bank": "landmark", "theme": "layout-template", "truck": "truck"}
+IND_GLYPH = {"apparel": "shirt", "home-and-furniture": "sofa", "food-and-beverage": "coffee",
+             "health-and-beauty": "droplets", "wholesale": "forklift"}
+
+
+def tile(glyph, color="blue", cls=""):
+    """A solid icon tile: white glyph on a brand color (amber takes an ink glyph)."""
+    c = f"tile t-{color} {cls}".strip()
+    return f'<span class="{c}">{M.icon(glyph)}</span>'
+
+
 def spot(name):
-    """A custom spot icon (spot.py), by its own name or a Lucide alias."""
+    """The icon tile for a spot name, or for a Lucide name the site passes."""
     n = name if name in S.ICONS else S.SPOT_FOR.get(name)
-    return S.icon(n) if n else M.icon(name)
+    if n:
+        return tile(TILE_GLYPH.get(n, name), S.ICONS[n][0])
+    return tile(name)
+
+
+def ind_tile(x, cls=""):
+    """The industry's icon tile, in the industry's color."""
+    return tile(IND_GLYPH[x["slug"]], x["color"].replace("c-", ""), cls)
 
 
 def scene(name, label=""):
@@ -176,6 +202,10 @@ SVC_COLOR = {"systems-roadmap": "c-lilac", "store-move": "c-coral", "odoo-launch
              "connection": "c-blue", "support": "c-yellow"}
 SVC_SCENE = {"systems-roadmap": "roadmap", "store-move": "storemove", "odoo-launch": "backoffice",
              "connection": "sync", "support": "support"}
+# Hero art for each service: two real screens from config.SCREENS, (behind, in front).
+SVC_STACK = {"systems-roadmap": ("shop-products", "inventory-c"), "store-move": ("shop-products", "shop-order"),
+             "odoo-launch": ("inventory-c", "hero-m"), "connection": ("shop-order", "delivery-c"),
+             "support": ("shop-inventory", "sales-c")}
 PKG = {p["slug"]: p for p in C.PACKAGES}
 ORDER = ["systems-roadmap", "store-move", "odoo-launch", "connection"]
 
@@ -241,7 +271,6 @@ def book_block(heading=None):
     <ol class="steps3">{lis}</ol>
     <div class="cta-line">{primary_cta("band")}{f'<p class="small">{sec}</p>' if sec else ''}</div>
   </div>
-  <div class="book-art">{scene("call")}</div>
 </div></div></section><!--/reuse-->"""
 
 
@@ -385,16 +414,17 @@ def clip(key, title=True, lazy=True):
     w, h = jpeg_size(SRC / f"{c['stem']}-poster.jpg")
     head = (f'<figcaption><b>{e(c["title"])}</b><span>{e(c["desc"])}</span></figcaption>' if title else
             f'<figcaption class="vh">{e(c["desc"])}</figcaption>')
-    return f"""<figure class="clip" data-clip>
+    kind = "Real Shopify screens, shown step by step" if c["platform"] == "shopify" else "Silent screen recording"
+    return f"""<figure class="clip clip-{c['platform']}" data-clip>
   <div class="win-bar"><i></i><i></i><i></i><span>{e(PLATFORM[c['platform']])} · {e(c['app'])}</span><em class="tag">Sample data</em></div>
   <div class="clip-frame"><video muted playsinline loop preload="{'none' if lazy else 'metadata'}" controls width="{w}" height="{h}"
-  poster="/{e(c['stem'])}-poster.jpg" aria-label="Silent screen recording: {e(c['desc'])}">
+  poster="/{e(c['stem'])}-poster.jpg" aria-label="{kind}: {e(c['desc'])}">
   <source src="/{e(c['stem'])}.webm" type="video/webm"><source src="/{e(c['stem'])}.mp4" type="video/mp4"></video></div>
   {head}
 </figure>"""
 
 
-def shot(key, cls=""):
+def shot(key, cls="", eager=False):
     """A real screenshot from config.SCREENS in an app window."""
     s = C.SCREENS.get(key)
     if not s:
@@ -402,9 +432,21 @@ def shot(key, cls=""):
     f, alt = s
     w, h = webp_size(f)
     app = "Shopify" if "/shopify/" in f else "Odoo 20"
+    load = 'fetchpriority="high"' if eager else 'loading="lazy"'
     return (f'<figure class="clip shot {cls}"><div class="win-bar"><i></i><i></i><i></i><span>{app}</span>'
             f'<em class="tag">Sample data</em></div><div class="clip-frame"><img src="/{e(f)}" alt="{e(alt)}" '
-            f'loading="lazy" decoding="async" width="{w}" height="{h}"></div></figure>')
+            f'{load} decoding="async" width="{w}" height="{h}"></div></figure>')
+
+
+def stack(back, front, cls="", eager=False):
+    """Two real screens from config.SCREENS, layered: one behind, one in front and lower."""
+    c = f"stack {cls}".strip()
+    return (f'<div class="{c}"><div class="stack-back">{shot(back, eager=eager)}</div>'
+            f'<div class="stack-front">{shot(front, eager=eager)}</div></div>')
+
+
+def svc_stack(slug, cls="", eager=False):
+    return stack(*SVC_STACK[slug], cls=cls, eager=eager)
 
 
 def json_attr(obj):
