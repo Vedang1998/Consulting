@@ -59,7 +59,7 @@ def page_resources():
     n_clip = sum(1 for k in C.CLIPS if clip_info(k))
     doors = [("/videos", "videos", "Recordings", f"{n_clip} short recordings of real screens with sample data."),
              ("/faq", "questions", "Questions", f"{n_faq} short answers on Shopify, Odoo and working with us."),
-             ("/glossary", "key", "Glossary", f"{len(R.GLOSSARY)} Shopify and Odoo terms in plain words.")]
+             ("/glossary", "glossary", "Glossary", f"{len(R.GLOSSARY)} Shopify and Odoo terms in plain words.")]
     door_html = "".join(f'<a class="door" href="{h}"><span class="ic-block">{spot(ic)}</span><span><b>{e(t)}</b>'
                         f'<span>{e(x)}</span></span>{icon("arrow-right")}</a>' for h, ic, t, x in doors)
     body = hero("Guides and answers on Shopify, Odoo and running both",

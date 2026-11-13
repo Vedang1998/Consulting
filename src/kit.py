@@ -310,8 +310,42 @@ def qa_list(faqs, more=None):
     return '<div class="qa-list">' + "".join(out) + "</div>"
 
 
-def sec_head(h2, lead="", hid=None, center=False):
-    return (f'<div class="sec-head{" center" if center else ""}"><h2{f" id={chr(34)}{hid}{chr(34)}" if hid else ""}>{e(h2)}</h2>'
+# The yellow half highlight: one phrase per page heading, drawn in with the reveal (site.css .hl). Kept to the hero
+# heading and a few home section heads so it stays a signature, not decoration.
+HL = ["planned, set up and connected", "with fixed fees", "by industry", "before you call us", "from first call to handover",
+      "scoping call", "running both", "real Shopify and Odoo screens", "working with us", "plain words", "intact",
+      "a fixed quote", "a team of 5 to 15", "stay in step", "after go-live", "apparel and footwear", "wholesalers and distributors",
+      "food and beverage", "health and beauty", "furniture and home goods", "doesn't exist"]
+
+
+def hl(text, phrases=None):
+    """Escape a heading and wrap the first listed phrase it contains in the yellow highlight."""
+    out = e(text)
+    for p in (HL if phrases is None else phrases):
+        ep = e(p)
+        if ep in out:
+            return out.replace(ep, f'<mark class="hl">{ep}</mark>', 1)
+    return out
+
+
+DECO_SETS = [(("dots", "tl"), ("ring", "br")), (("squiggle", "tr"), ("dots", "bl")), (("half", "tr"), ("plus", "bl")),
+             (("tri", "tr"), ("dots", "bl")), (("zig", "tl"), ("ring", "br")), (("ring", "tr"), ("squiggle", "bl"))]
+
+
+def deco_pair(seed):
+    """Two brand shapes behind opposite corners of the hero art, picked from the heading so each page differs."""
+    pair = DECO_SETS[sum(map(ord, seed)) % len(DECO_SETS)]
+    return "".join(S.deco(n, f"d-{pos}") for n, pos in pair)
+
+
+def deco_cluster():
+    """Three shapes for the empty right side of a hero without art (wide screens only)."""
+    return f'<div class="hero-shapes" aria-hidden="true">{S.deco("ring", "h1s")}{S.deco("dots", "h2s")}{S.deco("squiggle", "h3s")}</div>'
+
+
+def sec_head(h2, lead="", hid=None, center=False, mark=""):
+    h = hl(h2, [mark]) if mark else e(h2)
+    return (f'<div class="sec-head{" center" if center else ""}"><h2{f" id={chr(34)}{hid}{chr(34)}" if hid else ""}>{h}</h2>'
             f'{f"<p class={chr(34)}lead{chr(34)}>{lead}</p>" if lead else ""}</div>')
 
 

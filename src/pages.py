@@ -9,7 +9,7 @@ import json
 import industries as I
 from kit import (C, M, NAME, NOTES, ORDER, PKG, SVC_COLOR, SVC_SPOT, clip, crumbs, e,  # noqa: F401
                  faq_schema, facts, icon, ind_tile, more_link, price, primary_cta, qa_list,
-                 gap_art, hero_art, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
+                 deco_cluster, deco_pair, gap_art, hero_art, hl, sec_head, secondary_contacts, service_schema, spot, stack, svc_href, svc_name, svc_price,
                  svc_stack, svc_time, ticks)
 import content as R
 
@@ -153,10 +153,10 @@ def svc_mini(slug, i=0):
 def hero(h1, lead, *, eyebrow="", trail="", art="", cta="", extra="", cls=""):
     """Inner page hero: copy on the left, a drawn scene or a screen on the right."""
     return f"""
-<section class="hero {cls}"><div class="wrap hero-grid{' no-art' if not art else ''}">
+<section class="hero {cls}"><div class="wrap hero-grid{' no-art' if not art else ''}">{'' if art else deco_cluster()}
   <div class="hero-copy">{trail}{f'<p class="eyebrow">{eyebrow}</p>' if eyebrow else ''}
-    <h1>{e(h1)}</h1><p class="lead">{lead}</p>{extra}{f'<div class="cta-line">{cta}</div>' if cta else ''}</div>
-  {f'<div class="hero-art">{art}</div>' if art else ''}
+    <h1>{hl(h1)}</h1><p class="lead">{lead}</p>{extra}{f'<div class="cta-line">{cta}</div>' if cta else ''}</div>
+  {f'<div class="hero-art deco-host">{deco_pair(h1)}{art}</div>' if art else ''}
 </div></section>"""
 
 
@@ -211,26 +211,28 @@ def page_home():
 <section class="hero home"><div class="wrap hero-grid">
   <div class="hero-copy">
     <p class="eyebrow">Ecommerce and ERP consulting</p>
-    <h1 class="display">Shopify and Odoo, planned, set up and connected for product businesses</h1>
+    <h1 class="display">{hl("Shopify and Odoo, planned, set up and connected for product businesses")}</h1>
     <p class="lead">We decide which systems you need, move your store, set up the back office and connect the two, so
     orders, stock and the books agree. Every project has a written scope and a fixed fee, from
     {price('roadmap_min')} for a roadmap.</p>
     <div class="cta-line">{cta}</div>
     <ul class="assure">{assure}</ul>
   </div>
-  <div class="hero-art">{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
+  <div class="hero-art deco-host">{deco_pair("home")}{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
 </div></section>
 
 <section class="sec" aria-labelledby="gap-h"><div class="wrap">
   {sec_head("The work between the storefront and the warehouse", "Most product businesses hire two kinds of help. "
-            "Orders, stock and refunds go missing in the handoff between them.", "gap-h")}
+            "Orders, stock and refunds go missing in the handoff between them.", "gap-h",
+            mark="the storefront and the warehouse")}
   {gap_art()}
   <div class="gap">{gap_html}</div>
 </div></section>
 
 <section class="sec tint" aria-labelledby="prob-h"><div class="wrap">
   {sec_head("Four problems we're asked to fix, and what each costs", "Each one maps to a service with a price range "
-            "and a typical timeline. Your exact fee is fixed in writing after a call.", "prob-h")}
+            "and a typical timeline. Your exact fee is fixed in writing after a call.", "prob-h",
+            mark="what each costs")}
   <div class="probs">{probs}</div>
   <p class="after-grid">After go-live, a <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a> gives you prepaid hours
   for questions and small changes, from {price('support_10h')}.</p>
@@ -823,7 +825,7 @@ def page_about():
                "Scope, price, field maps, test cases and handover are all on paper you can check."),
               ("key-round", "Your accounts, your data",
                "Everything stays in your name and on your billing. We leave with nothing."),
-              ("people", "One contact from call to handover",
+              ("person", "One contact from call to handover",
                f"{C.FOUNDER} scopes the project, writes the statement of work and runs it."),
               ("clock", "US business hours",
                f"{C.PROMISES['business_days']}, {C.TIMEZONE_LABEL} time, with a reply {C.PROMISES['first_reply']}.")]

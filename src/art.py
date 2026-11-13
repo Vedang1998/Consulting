@@ -328,7 +328,7 @@ def how():
              ("contract", "Agreement", "Before any work"), ("key", "Access", "Week 1"),
              ("staging", "Build in staging", "Most of the project"), ("checklist", "Testing", "1–2 weeks"),
              ("go-live", "Go-live", "A planned date"), ("support", "After go-live", "2–4 weeks"),
-             ("shield", "Handover", "Project close")]
+             ("lock", "Handover", "Project close")]
     order = [(0, 0), (0, 1), (0, 2), (1, 2), (1, 1), (1, 0), (2, 0), (2, 1), (2, 2)]
     for (row, col), (ic, name, meta) in zip(order, stops):
         x, y = xs[col], ys[row]
@@ -486,7 +486,7 @@ def pricing():
 # ---------------------------------------------------------------------------
 
 GAP_STOPS = [("theme", "Product page"), ("cart", "Checkout"), ("sync", "Handoff"), ("inventory", "Stock"),
-             ("truck", "Pick and ship"), ("invoice", "Invoice and refunds"), ("bank", "Books")]
+             ("truck", "Pick and ship"), ("invoice", "Invoice and refunds"), ("books", "Books")]
 GAP_LABEL = ("Diagram of an order's path: product page, checkout, the handoff, stock, pick and ship, invoice and "
              "refunds, books. Storefront agencies cover the product page and checkout. ERP resellers cover stock "
              "through the books. Orders, stock and refunds go missing in the handoff between them. We work across "
