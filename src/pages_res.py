@@ -13,8 +13,8 @@ from pages import hero
 PLATFORMS = {"shopify": "Shopify", "odoo": "Odoo", "both": "Shopify and Odoo"}
 GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
 HUB_PATHS = ("/resources", "/guides", "/videos", "/faq", "/glossary")
-VIDEO_GROUPS = [("Orders and payments", ["sale", "pos", "invoice", "return"]),
-                ("Stock and purchasing", ["purchase", "locations", "count", "reports"])]
+VIDEO_GROUPS = [("Orders and payments", ["sale", "pricelist", "pos", "invoice", "return"]),
+                ("Stock and purchasing", ["purchase", "landed", "lots", "locations", "count", "reports"])]
 
 
 def guides_live():

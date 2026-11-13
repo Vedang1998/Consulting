@@ -270,6 +270,18 @@ CLIPS = {
     "invoice": ("odoo", "Invoicing", "Invoice to paid",
                 "A posted invoice for two desks is paid, and Odoo marks it paid.",
                 "media/odoo/invoice", "2026-11-13"),
+    "pricelist": ("odoo", "Sales", "An account's own prices and terms",
+                  "A wholesale customer is picked, their price list and 30-day terms fill in, and 10 cabinets take "
+                  "their 15% discount.",
+                  "media/odoo/pricelist", "2026-11-13"),
+    "landed": ("odoo", "Inventory", "Freight and duty added to product cost",
+               "Ocean freight is split by volume and duty by value across 10 cabinets and 24 chairs, then posted "
+               "to their cost.",
+               "media/odoo/landed", "2026-11-13"),
+    "lots": ("odoo", "Inventory", "Lots and best-by dates",
+             "A lot of cold brew cases is received with its expiration date, and the next delivery takes the lot "
+             "that expires first.",
+             "media/odoo/lots", "2026-11-13"),
     "locations": ("odoo", "Inventory", "Stock moved between two locations",
                   "One product is stocked in the warehouse and the shop. Five units move across, and both counts change.",
                   "media/odoo/locations", "2026-11-13"),
