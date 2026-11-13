@@ -1427,6 +1427,176 @@ Starting fresh tends to win when the database is several versions old, when key 
         "related": ["odoo-online-vs-odoo-sh", "odoo-implementation-timeline", "odoo-20-changes"],
         "notes": ["Practice-based. No claims about who worked on the database before, per the FAQ answer on the site."],
     },
+    {
+        "slug": "who-to-hire-for-shopify-and-odoo",
+        "platform": "both",
+        "status": "draft",
+        "title": "Agency, freelancer, Odoo's own team or a consultant: who to hire",
+        "seo_title": "Who to hire for a Shopify and Odoo setup",
+        "desc": ("Shopify agency, Odoo partner, Odoo's Success Packs, freelancer or independent consultant. What each "
+                 "covers for a small product business."),
+        "checked": "2026-11-06",
+        "short": ("Each kind of help covers a different part of the job. Shopify agencies build storefronts, Odoo "
+                  "partners and Odoo's own Success Packs set up the back office, freelancers take defined tasks, and "
+                  "an independent consultant can own the link between them. Pick by who answers for the whole "
+                  "result, then by price."),
+        "body": """
+## The question to ask first
+
+A store that runs Shopify in front and Odoo behind it needs three things done: the storefront, the back office, and the link between them, meaning which system owns which record and how orders, stock, refunds and payouts move. Most problems after go-live live in that link. So before comparing prices, ask each option who answers for it.
+
+## The options side by side
+
+| Option | Usually covers | Usually leaves to you | How it's priced |
+| Shopify agency | Theme, apps, checkout, store moves | Stock rules, purchasing, accounting | Project quote, often with a minimum |
+| Odoo partner | Odoo setup, data, training | The Shopify side and the storefront | Project quote or hour blocks |
+| Odoo Success Pack | Odoo setup run by Odoo's own team | Shopify, the connector, your store move | Prepaid hours on a public list |
+| Freelancer | A defined task: an import, a report, a module | Planning, testing, the parts around the task | Hourly or per task |
+| Independent consultant | Planning, both systems and the link, within a set scope | Custom development beyond that scope | Usually a fixed fee after discovery |
+
+These are typical shapes, and plenty of firms cross the lines. Ask each one to say in writing what they won't do.
+
+## Odoo's Success Packs, in numbers
+
+Odoo publishes its pack prices, which makes them a useful reference for any quote. From odoo.com/pricing-packs, checked Nov 6, 2026, they run from 4 hours for $580 to 200 hours for $25,000, which works out to about $125 to $145 an hour at list, with 15% off a new customer's first pack. Odoo points companies under 50 employees to these packs. They cover Odoo work, so the Shopify side and the connector still need an owner.
+
+## What to ask anyone you're considering
+
+1. Who answers for orders, stock and refunds agreeing across both systems?
+2. Is the fee fixed, and what happens when scope changes?
+3. Will we be able to test everything in a copy before it touches the live store?
+4. Whose name are the accounts, the subscription and any code in?
+5. What do we get at handover, and who removes your access?
+
+The answers matter more than the label on the firm.
+
+## When a single specialist is the better hire
+
+If you only need one side, hire for that side. A store moving platforms with no back office change needs a good Shopify agency or freelancer. A wholesaler with no online store can work straight with Odoo or a partner. A narrow task with a clear spec, such as one import or one report, suits a freelancer. Someone who owns both systems and the link earns their fee when the trouble sits between them.
+""",
+        "faqs": [
+            ("Is a certified Odoo partner always the safer choice?",
+             "Partner status tells you a firm sells and implements Odoo at volume. It doesn't tell you whether they "
+             "work on the Shopify side, who you'll deal with day to day, or whether the fee is fixed. Ask the same "
+             "questions of everyone."),
+            ("Can we do the setup ourselves?",
+             "Some teams can, especially with standard apps and clean data. The parts that usually need outside help "
+             "are the connector decision, the data load and testing before go-live. A short paid review before you "
+             "start can tell you which parts to keep in-house."),
+            ("Why do agencies have minimum project sizes?",
+             "Their teams and processes are built for larger projects, and smaller ones cost them nearly as much to "
+             "run. That's reasonable, but it means a 10-person store may be paying for more process than it needs."),
+        ],
+        "sources": [("Odoo Success Packs", "https://www.odoo.com/pricing-packs", "2026-11-06")],
+        "services": ["systems-roadmap", "connection"],
+        "related": ["shopify-odoo-project-cost", "stalled-odoo-project", "odoo-implementation-timeline"],
+        "notes": ["No named agencies, partners or freelancers, per the competitor rule. The table is our summary of "
+                  "typical scopes, not a survey."],
+    },
+    {
+        "slug": "retyping-shopify-orders-into-quickbooks",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Retyping Shopify orders into QuickBooks: when it stops being worth it",
+        "seo_title": "Retyping Shopify orders into QuickBooks: when to stop",
+        "desc": ("What retyping Shopify orders into QuickBooks really costs, the cheaper ways to stop, and the point "
+                 "where a back office pays for itself."),
+        "checked": "2026-11-13",
+        "short": ("Retyping is cheap at ten orders a week and expensive at a hundred, mostly because of the mistakes "
+                  "it adds. Start by syncing daily summaries or payouts instead of each order. Move to a back office "
+                  "when stock, purchasing or wholesale also live in spreadsheets, because then the typing is only part "
+                  "of the cost."),
+        "body": """
+## What the typing costs
+
+Count it for one normal week: how many orders get entered by hand, how long each takes with checking, and who does it. Then add the time spent finding and fixing the ones that went in wrong. The second number is often larger than the first, and it lands at month-end, when the books don't tie out.
+
+Put your own figures into the calculator in [What a Shopify and Odoo setup costs](/guides/shopify-odoo-project-cost). It turns weekly minutes into hours and dollars a year.
+
+## Cheaper ways to stop
+
+1. Stop entering orders one by one. For many stores, the books need daily or per-payout totals of sales, tax, fees and refunds, not every order. Ask your bookkeeper what level of detail they actually use.
+2. Use an accounting app built for Shopify. Several bring payouts or daily summaries into QuickBooks with the fees and refunds split out. Test one on a past month and compare the totals with your bank.
+3. Clean up product and tax settings in Shopify first. Whatever you automate copies whatever is there, including mistakes.
+
+## When retyping is a symptom
+
+If the same person also updates stock in a spreadsheet, builds purchase orders from memory and invoices wholesale accounts by hand, the typing is one sign of a bigger gap: sales, stock and money live in different places. An app that syncs orders to QuickBooks won't touch the rest. That's the point where a back office that holds products, stock, purchasing and accounting together starts to pay.
+
+## When to keep things as they are
+
+A store with a few dozen orders a week, finished goods, and a bookkeeper happy with summary entries can keep QuickBooks and add an accounting app. Changing systems costs time and attention, and it's worth it only when the work it removes is bigger than the work it takes. [When you don't need an ERP yet](/guides/when-you-dont-need-an-erp) has the signs.
+""",
+        "faqs": [
+            ("Do we need every Shopify order in QuickBooks?",
+             "Often not. Many bookkeepers work from daily or per-payout totals, with the order detail staying in "
+             "Shopify. If you invoice wholesale accounts or need customer balances, those orders do need to be in the "
+             "books individually."),
+            ("Will moving to Odoo mean leaving QuickBooks?",
+             "Usually, because Odoo includes accounting. You can keep QuickBooks read-only for past years. Moving "
+             "only the open items and opening balances keeps the switch small; years of history is a separate job."),
+            ("What's the first step if we want to stop retyping next month?",
+             "Ask your bookkeeper which totals they need, then test an accounting app on last month's data. If the "
+             "totals match the bank, switch. If they don't, the mismatch tells you what needs cleaning first."),
+        ],
+        "sources": [],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["quickbooks-to-odoo-data", "shopify-payouts-dont-match-bank", "when-you-dont-need-an-erp"],
+        "notes": ["No app names or QuickBooks prices; neither was checked on a live page."],
+    },
+    {
+        "slug": "opening-a-second-location",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Opening a second shop: registers, transfers and counts",
+        "seo_title": "Opening a second shop on Shopify POS: what to set up",
+        "desc": ("What changes in Shopify when you open a second shop: locations, POS Pro, staff logins, stock "
+                 "transfers and counts. Shopify limits and prices checked on shopify.com."),
+        "checked": CHECKED,
+        "short": ("A second shop is a new stock location, a new register and new staff logins. Set it up in Shopify "
+                  "before opening day, move stock with transfers you receive, and count both shops in the first "
+                  "month. Basic, Grow and Advanced each allow up to 10 locations, so the plan rarely has to change."),
+        "body": """
+## What a second shop changes
+
+With one shop, the stock in Shopify and the stock in the building are close to the same thing. With two, every unit has to be in the right place on paper as well as on the shelf. Sales at each counter take from that shop's count, online orders take from whichever locations you let fulfill them, and moving stock between the two needs a record every time.
+
+## Set up before opening day
+
+1. Add the shop as a location in Shopify, with its own address. Basic, Grow and Advanced each allow up to 10 inventory locations (shopify.com/pricing, checked Nov 11, 2026).
+2. Decide whether the new shop fills online orders. Many stores keep online fulfillment at one location at first.
+3. Set up the register and card reader for the new shop and run a test sale and a test refund.
+4. Give staff their own logins. Grow includes 5 staff accounts and Advanced 15, while Basic has none beyond the owner. If staff at the counter need different permissions, that's POS Pro, at $89 a month per location (checked Nov 11, 2026).
+5. Move the opening stock with a transfer, and receive it at the new shop when it arrives.
+
+## Running two shops
+
+- Every move between shops is a transfer, created when it leaves and received when it arrives. A transfer that's never received leaves stock counted nowhere useful.
+- Returns go back into the shop that takes them, so each shop's count reflects what's really there.
+- Count the fast sellers at both shops weekly for the first month. Early counts catch setup mistakes before they spread.
+- Check sales by location each week. It's the quickest way to see whether stock sits in the wrong shop.
+
+## When two shops need more than Shopify
+
+Shopify handles two shops well when you sell finished goods and reorder from a handful of vendors. Purchasing for both shops from sales history, landed costs, wholesale accounts and accounting by location are where stores add a back office. If your second shop also brings a stockroom or a warehouse, read [Shopify POS or Odoo POS for a two-location retailer](/guides/shopify-pos-vs-odoo-pos) before choosing registers.
+""",
+        "faqs": [
+            ("Do we need a higher Shopify plan for a second shop?",
+             "Usually not for the shop itself, since Basic, Grow and Advanced each allow up to 10 locations "
+             "(checked Nov 11, 2026). The usual reasons to move up are staff accounts and card rates, so count how "
+             "many people need their own login."),
+            ("Should the new shop fill online orders?",
+             "Not at first, for most stores. Keep online orders shipping from one place until both shops' counts "
+             "have been accurate for a month, then add the second location if it shortens delivery."),
+            ("How do we move stock between shops?",
+             "Create a transfer in Shopify when the stock leaves, and receive it at the other shop when it arrives. "
+             "Until it's received, the units are in transit and neither shop can sell them."),
+        ],
+        "sources": [("Shopify pricing", "https://www.shopify.com/pricing", CHECKED)],
+        "services": ["store-move", "connection"],
+        "related": ["shopify-pos-vs-odoo-pos", "shopify-plan-for-pos-pro", "shopify-stock-doesnt-match-shelf"],
+        "notes": ["Transfer 'in transit' wording should be checked in the demo store before approval."],
+    },
 ]
 
 # ---------------------------------------------------------------------------
