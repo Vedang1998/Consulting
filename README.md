@@ -8,15 +8,19 @@ Workers Builds from this repository.
 
 | Path | What it holds |
 | --- | --- |
-| `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, demo videos. Most changes happen here. `# CONFIRM` marks values Vee must supply. |
-| `src/build.py` | Page templates and copy, site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
-| `src/content.py` | Resources copy: the FAQ answers (`FAQ_SHOPIFY`, `FAQ_ODOO`, `FAQ_US`), the guides (`GUIDES`) and the video chapters and transcripts (`VIDEOS`). Prices and limits carry the date they were checked. |
-| `src/spot.py` | Custom spot icons (27, drawn for this site, no third-party license) and Memphis shapes. `SPOT_FOR` maps the Lucide names the pages pass to the custom icon that replaces them in tiles, doors, cards and service links. |
-| `src/mockups.py` | The drawn workflow demos, sample documents, small illustrations and the icon helper. |
-| `src/art/`, `src/art.py` | People illustrations from unDraw (undraw.co, free for commercial use, no attribution needed under the unDraw license), recoloured to the brand palette at build and set on CSS Memphis backdrops. Don't repackage them as an illustration set. |
-| `src/media/odoo/` | Real Odoo 20 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with Odoo's sample data. Listed in `ODOO_REEL` and `SCREENS` in config. `tour/` holds the guided tour steps listed in `ODOO_TOURS`. |
+| `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, and the screen recordings (`CLIPS`) and screenshots (`SCREENS`). Most changes happen here. `# CONFIRM` marks values Vee must supply. |
+| `src/build.py` | The build engine: page layout (header, nav, footer, booking block), site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
+| `src/kit.py` | Shared helpers every page uses: text and Markdown helpers, old-URL remapping (`MOVED`), the call-to-action, the booking block, FAQ lists, schema, and the `clip()` and `shot()` media helpers. |
+| `src/pages.py` | Home, Services and each service page (with the tools built into them: ERP readiness check, Shopify plan picker, stock sync model), Industries, How we work, Pricing, About and Book. |
+| `src/industries.py` | The five industry pages: each industry's most costly problems, how we fix them, and sources. |
+| `src/pages_res.py` | Resources, the guides, Recordings, Questions, Glossary, 404, Privacy and Terms. |
+| `src/content.py` | Resources copy: the FAQ answers, the guides (`GUIDES`), the glossary and the ERP check questions. Prices and limits carry the date they were checked. |
+| `src/scenes.py`, `src/art/shop-sync.svg` | Scenes drawn for this site in the spot-icon style (no third-party art). |
+| `src/spot.py` | Custom spot icons (drawn for this site, no third-party license) and the shapes used on the share image. `SPOT_FOR` maps the Lucide names the pages pass to the custom icon that replaces them. |
+| `src/mockups.py` | The Lucide icon helper and the drawn sample documents (roadmap, field map, test log, handover pack). |
+| `src/media/odoo/` | Real Odoo 20 Community screen recordings (MP4 and WebM, with posters) and screenshots, made in our own demo database with sample data. Each recording starts on the workflow it names. Listed in `CLIPS` and `SCREENS` in config. Shopify recordings go in `src/media/shopify/` with platform `"shopify"` in `CLIPS`, and the pages pick them up. |
 | `src/site.css` | Design system, light only. No inline style attributes anywhere (the CSP is `style-src 'self'`); scripts set positions through `el.style`, which the CSP allows. |
-| `src/site.js` | Demo tabs, service finder, guided Odoo tours, the stock sync model, resource filters, video chapters, the Shopify plan picker, scroll reveals, the first-party visit counter and the privacy opt-out. |
+| `src/site.js` | Phone menu, clip autoplay with a play/pause button, the stock sync model, the Shopify plan picker, the ERP check, resource filters, scroll reveals, the first-party visit counter and the privacy opt-out. |
 | `src/fonts/` | Self-hosted Archivo, IBM Plex Sans and IBM Plex Mono (OFL). |
 | `src/icons/` | Lucide icons (ISC), inlined at build. |
 | `src/og.png`, `src/apple-touch-icon.png` | Share image (1200x630) and phone home-screen icon. The share image is drawn by `tools/share_image.py` from the site's fonts, spot icons and shapes; run it, then `node tools/shot.js` to render a new `src/og.png`. No AI images. |
@@ -62,33 +66,32 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
 
 - Prices: change 08-Service-Catalog first, then 05's math, then `PRICES` in config, in one PR.
 - Promises (reply time, call length, proposal time): change `PROMISES` once; every page follows.
-- A real screen recording replaces a drawn demo when its file is set in `DEMO_VIDEOS`.
-- Real Odoo recordings live in `ODOO_REEL`, real screenshots in `SCREENS`. Record only in a demo database with
-  sample data, never in a client system. Real Shopify footage needs a Shopify development store, recorded by Vee.
-  Capture screens at 900 CSS px wide (2x pixels) and record videos at 960 by 600, so Odoo's text stays readable
-  on the page. The home hero's highlight boxes are measured on `hero-products.webp`; re-measure them in
-  `site.css` (`.hero-stage` variables) if that screenshot changes, and keep the card numbers equal to the screen.
-- Guided tours (`ODOO_TOURS` on /odoo): each step is a 960 by 600 screenshot at 2x plus the clickable box in
-  percent of the image (left, top, width, height) and a caption. The captions double as the text version for
-  readers without JavaScript. Re-measure a box whenever its screenshot changes.
-- The sync model on /shopify is a teaching model with one product and sample numbers, not a live connector.
-  Its wording lives in `site.js`; keep it in step with how real connectors behave.
-- Odoo 20 facts on /odoo come from Odoo's release notes, checked Nov 11, 2026
-  (`research/R-Odoo-20-checked.md` in project files). Re-check before changing that section.
+- Recordings: add a clip to `CLIPS` in config (platform, app, title, one-line description, file stem, date) and
+  put the MP4, WebM and poster JPEG under `src/media/<platform>/`. Each clip starts on the workflow it names, runs
+  7 to 20 seconds, has no sound and shows "Sample data". Record only in a demo database or development store,
+  never in a client system. Record at 960 by 600 so the text stays readable.
+- Screenshots live in `SCREENS`, captured at 900 CSS px wide (2x pixels). Crop personal names and emails out of
+  admin screens.
+- The sync model on the Shopify and Odoo connection page is a teaching model with one product and sample numbers,
+  not a live connector. Its wording lives in `site.js`; keep it in step with how real connectors behave.
+- Odoo 20 facts come from Odoo's release notes, checked Nov 11, 2026 (`research/R-Odoo-20-checked.md` in project
+  files). Re-check before changing them.
 - Guides start with `status: "draft"`. Staging builds show them with a draft note; the release build leaves them
-  out, and links to them drop away, until Vee sets `status: "approved"`. Every guide needs a 40 to 60 word short
-  answer, a "When the other option wins" section and a date on every price; the build stops if one is missing.
-- Resource pages (/resources, /guides, /faq, /videos, /tools) must stay original. The build stops when one shares
+  out, and links to them drop away, until Vee sets `status: "approved"`. Every guide needs a 40 to 60 word
+  summary, a "When the other option wins" section and a date on every price; the build stops if one is missing.
+- Resource pages (/resources, /guides, /faq, /videos, /glossary) must stay original. The build stops when one shares
   two or more 12-word runs with any other page. Wrap text that is meant to repeat, such as a shared widget, in
   `<!--reuse-->` and `<!--/reuse-->`. Every internal link must point to a built page or file.
-- Shopify plan prices for the plan picker live in `SHOPIFY_PLANS` in build.py, from
+- Shopify plan prices for the plan picker live in `SHOPIFY_PLANS` in pages.py, from
   `research/R-Shopify-plans-checked.md`. Connector facts for guide 1 come from
   `research/R-Shopify-Odoo-connectors-checked.md`. Re-check both before changing them.
-- Icons: tiles, doors, cards and service links call `ico(name)`, which uses the custom icon from `spot.py` when one
+- Icons: tiles, doors, cards and service links call `spot(name)` in kit.py, which uses the custom icon from `spot.py` when one
   exists and Lucide otherwise. Small inline icons (arrows, checks, chevrons, 16px labels) stay Lucide. A new concept
   icon gets drawn in `spot.py` in the same style (ink outline, 48-unit grid, offset color block) and added to
-  `SPOT_FOR`, so no list mixes the two sets. Hero shapes come from `hero_shapes()` on pages without an illustration.
-- A renamed URL gets a 301 line in `REDIRECTS` in build.py.
+  `SPOT_FOR`, so no list mixes the two sets.
+  Scenes (`scenes.py`) are for the home hero, service and industry pages only; hub pages have no hero art.
+- A renamed URL gets a 301 line in `REDIRECTS` in build.py and an entry in `MOVED` in kit.py, so old links in
+  guide text point at the new page.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
 
 ## Launch blockers (the release build checks 1 to 4)

@@ -1,7 +1,7 @@
-// [DBA name] site behavior: the first-party visit counter, the privacy opt-out, the workflow demo,
-// the service finder, scroll reveals, resource filters, video chapters, the Shopify plan picker and the ERP readiness check.
+// [DBA name] site behavior (v5): the first-party visit counter and its opt-out, the phone menu, recordings that play
+// while on screen, scroll reveals, the guide filter, the ERP readiness check, the Shopify plan picker and the sync model.
 // Sends to /api/e on our own domain only. No third-party scripts, no IP logging, no contact details,
-// and nothing typed or picked on the page except which demo tab and which finder result were shown.
+// and nothing typed or picked on the page except which tool result was shown.
 (function () {
   "use strict";
   var ENDPOINT = "/api/e";
@@ -56,159 +56,45 @@
   var hasIO = "IntersectionObserver" in window;
   root.classList.add("js");
 
-  // ---- Workflow stages: a list of times, and elements that switch on at each step ----------------
-  function countTo(el, to) {
-    var from = parseInt(el.textContent, 10) || 0;
-    if (reduce || from === to) { el.textContent = to; return; }
-    var t0 = null, dur = 650;
-    function f(t) {
-      if (!t0) t0 = t;
-      var k = Math.min(1, (t - t0) / dur);
-      el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
-      if (k < 1) requestAnimationFrame(f);
-    }
-    requestAnimationFrame(f);
-  }
 
-  function stepOf(el) {
-    if (el.hasAttribute("data-at")) return +el.getAttribute("data-at");
-    var p = el.closest("[data-step]");
-    return p ? +p.getAttribute("data-step") : 0;
-  }
-
-  function setStep(stage, n) {
-    all("[data-step]", stage).forEach(function (el) {
-      el.classList.toggle("on", +el.getAttribute("data-step") <= n);
+  // ---- Phone menu ---------------------------------------------------------------------------------
+  var head = document.querySelector(".site-head"), menuBtn = document.querySelector(".menu-btn");
+  if (head && menuBtn) {
+    menuBtn.hidden = false;
+    menuBtn.addEventListener("click", function () {
+      var open = !head.classList.contains("open");
+      head.classList.toggle("open", open);
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      menuBtn.textContent = open ? "Close" : "Menu";
     });
-    all(".flip", stage).forEach(function (el) {
-      var target = stepOf(el) <= n ? +el.getAttribute("data-to") : +el.getAttribute("data-from");
-      if (n === 0) el.textContent = target; else if (+el.textContent !== target) countTo(el, target);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && head.classList.contains("open")) { menuBtn.click(); menuBtn.focus(); }
     });
   }
 
-  function settle(stage, on) {
-    all("tr.hit, .hitrow", stage).forEach(function (r) { r.classList.toggle("settled", on); });
-  }
-
-  function makeStage(stage) {
-    var times = (stage.getAttribute("data-times") || "").split(",").map(Number);
-    var end = times[times.length - 1], timers = [];
-    function clear() { timers.forEach(clearTimeout); timers = []; }
-    return {
-      total: end + 4200,
-      play: function (done) {
-        clear();
-        stage.classList.remove("run");
-        settle(stage, false);
-        setStep(stage, 0);
-        void stage.offsetWidth;
-        stage.classList.add("run");
-        times.forEach(function (t, i) { timers.push(setTimeout(function () { setStep(stage, i + 1); }, t)); });
-        timers.push(setTimeout(function () { settle(stage, true); stage.classList.remove("run"); }, end + 1200));
-        timers.push(setTimeout(done, end + 4200));
-      },
-      stop: function () { clear(); stage.classList.remove("run"); },
-      finish: function () { clear(); setStep(stage, times.length); settle(stage, true); }
-    };
-  }
-
-  // ---- Tabbed demo: plays each workflow in turn until the visitor picks one ----------------------
-  function demo(el) {
-    var tabs = all('[role="tab"]', el);
-    var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute("aria-controls")); });
-    var stages = panels.map(function (p) { var s = p.querySelector("[data-stage]"); return s ? makeStage(s) : null; });
-    var cur = 0, visible = false, auto = true, playing = false;
-    // The tabs drive playback, so native controls are only kept for reduced-motion visitors.
-    if (!reduce) panels.forEach(function (p) { var v = p.querySelector("video"); if (v) v.controls = false; });
-
-    function prog(i, ms) {
-      var bar = tabs[i].querySelector(".tab-prog");
-      if (!bar) return;
-      bar.style.animation = "none";
-      if (ms) { void bar.offsetWidth; bar.style.animation = "tabprog " + ms + "ms linear forwards"; }
-    }
-
-    function stop() {
-      if (stages[cur]) stages[cur].stop();
-      var v = panels[cur].querySelector("video");
-      if (v) v.pause();
-      prog(cur, 0);
-      playing = false;
-    }
-
-    function play() {
-      var st = stages[cur], v = panels[cur].querySelector("video");
-      if (v) {
-        if (reduce) return;
-        playing = true;
-        v.currentTime = 0;
-        var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
-        var go = function () { if (v.duration) prog(cur, (v.duration - v.currentTime) * 1000); };
-        if (v.readyState >= 1) go(); else v.addEventListener("loadedmetadata", go, { once: true });
-        v.onended = function () {
-          playing = false;
-          if (!visible) return;
-          if (auto) select((cur + 1) % tabs.length, false); else play();
-        };
-        return;
-      }
-      if (!st) return;
-      if (reduce) { st.finish(); return; }
-      playing = true;
-      prog(cur, st.total);
-      st.play(function () {
-        playing = false;
-        if (!visible) return;
-        if (auto) select((cur + 1) % tabs.length, false); else play();
-      });
-    }
-
-    function select(i, byUser) {
-      stop();
-      cur = i;
-      tabs.forEach(function (t, k) {
-        t.setAttribute("aria-selected", k === i ? "true" : "false");
-        if (k === i) t.removeAttribute("tabindex"); else t.setAttribute("tabindex", "-1");
-        panels[k].hidden = k !== i;
-      });
-      if (byUser) { auto = false; track("demo", tabs[i].getAttribute("data-demo")); }
-      if (visible || reduce) play();
-    }
-
-    tabs.forEach(function (t, i) {
-      t.addEventListener("click", function () { select(i, true); });
-      t.addEventListener("keydown", function (ev) {
-        var n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[ev.key];
-        if (n === undefined) return;
-        ev.preventDefault();
-        n = (n + tabs.length) % tabs.length;
-        select(n, true);
-        tabs[n].focus();
-      });
+  // ---- Recordings: silent, play while on screen, one pause button each -------------------------
+  all("[data-clip]").forEach(function (fig) {
+    var v = fig.querySelector("video"), frame = fig.querySelector(".clip-frame");
+    if (!v || !frame) return;
+    v.controls = false;
+    var btn = document.createElement("button"), paused = reduce, seen = false;
+    btn.type = "button"; btn.className = "clip-btn";
+    function label() { btn.textContent = v.paused ? "Play" : "Pause"; btn.setAttribute("aria-label", (v.paused ? "Play " : "Pause ") + "recording"); }
+    btn.addEventListener("click", function () {
+      if (v.paused) { paused = false; var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); track("demo", "play"); }
+      else { paused = true; v.pause(); }
     });
-
-    if (reduce || !hasIO) { stages.forEach(function (s) { if (s) s.finish(); }); return; }
+    v.addEventListener("play", label); v.addEventListener("pause", label);
+    frame.appendChild(btn); label();
+    if (!hasIO) return;
     new IntersectionObserver(function (es) {
       es.forEach(function (en) {
-        visible = en.isIntersecting;
-        if (visible && !playing) play();
-        if (!visible && playing) stop();
+        if (en.isIntersecting && !paused) {
+          if (!seen) { seen = true; v.preload = "auto"; }
+          var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+        } else if (!en.isIntersecting && !v.paused) { v.pause(); }
       });
-    }, { threshold: 0.2 }).observe(el);
-  }
-
-  all("[data-demo-root]").forEach(demo);
-
-  // Stages outside a tabbed demo loop on their own while in view.
-  all("[data-stage]").forEach(function (el) {
-    if (el.closest("[data-demo-root]")) return;
-    var st = makeStage(el);
-    if (reduce || !hasIO) { st.finish(); return; }
-    var vis = false, run = false;
-    function loop() { run = true; st.play(function () { if (vis) loop(); else run = false; }); }
-    new IntersectionObserver(function (es) {
-      es.forEach(function (en) { vis = en.isIntersecting; if (vis && !run) loop(); });
-    }, { threshold: 0.35 }).observe(el);
+    }, { threshold: 0.45 }).observe(v);
   });
 
   // ---- Scroll reveals ----------------------------------------------------------------------------
@@ -224,81 +110,19 @@
     revealed.forEach(function (el) { el.classList.add("in"); });
   }
 
-  // ---- Service finder ----------------------------------------------------------------------------
-  all("[data-finder]").forEach(function (f) {
-    var ans = {}, started = false, shown = "";
-    var empty = f.querySelector("[data-empty]"), reset = f.querySelector("[data-reset]");
-    var fbar = f.querySelector(".fq-bar i");
-    f.hidden = false;
 
-    function pick() {
-      if (ans[2] === "l") return "nofit";
-      if (ans[1] === "explore") return ans[2] === "s" ? "notyet" : "systems-roadmap";
-      if (ans[1] === "move") return "store-move";
-      if (ans[1] === "odoo") return ans[2] === "m" ? "systems-roadmap" : "odoo-launch";
-      if (ans[1] === "connect") return "connection";
-      if (ans[1] === "support") return "support";
-      return "systems-roadmap";
-    }
-
-    function show() {
-      var key = pick();
-      all("[data-result]", f).forEach(function (r) { r.hidden = r.getAttribute("data-result") !== key; });
-      all("[data-when]", f).forEach(function (n) { n.hidden = n.getAttribute("data-when") !== ans[3]; });
-      empty.hidden = true;
-      reset.hidden = false;
-      if (key !== shown) { shown = key; track("finder", "done:" + key); }
-    }
-
-    f.addEventListener("click", function (ev) {
-      var b = ev.target.closest(".opt");
-      if (b) {
-        var fs = b.closest("[data-q]"), n = +fs.getAttribute("data-q");
-        all(".opt", fs).forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
-        ans[n] = b.getAttribute("data-v");
-        if (!started) { started = true; track("finder", "start"); }
-        if (fbar) fbar.style.transform = "scaleX(" + Object.keys(ans).length / 3 + ")";
-        var next = f.querySelector('[data-q="' + (n + 1) + '"]');
-        if (next) next.hidden = false;
-        if (ans[1] && ans[2] && ans[3]) show();
-        return;
-      }
-      if (ev.target.closest("[data-reset]")) {
-        ans = {}; shown = "";
-        if (fbar) fbar.style.transform = "scaleX(0)";
-        all(".opt", f).forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
-        all("[data-q]", f).forEach(function (q) { q.hidden = q.getAttribute("data-q") !== "1"; });
-        all("[data-result]", f).forEach(function (r) { r.hidden = true; });
-        empty.hidden = false;
-        reset.hidden = true;
-      }
-    });
-  });
-
-  // ---- Scroll progress, depth and sections seen --------------------------------------------------
-  var bar = document.querySelector(".progress i"), marks = [25, 50, 75, 100], ticking = false;
+  // ---- Scroll depth -----------------------------------------------------------------------------
+  var marks = [25, 50, 75, 100], ticking = false;
   function onScroll() {
     ticking = false;
     var max = root.scrollHeight - window.innerHeight;
     var k = max > 0 ? Math.min(1, window.scrollY / max) : 1;
-    if (bar) bar.style.transform = "scaleX(" + k + ")";
     while (marks.length && k * 100 >= marks[0] - 0.5) track("depth", marks.shift());
     updateBar();
   }
   window.addEventListener("scroll", function () {
     if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
   }, { passive: true });
-
-  if (hasIO) {
-    var seen = new IntersectionObserver(function (es) {
-      es.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        track("section", en.target.getAttribute("data-sec"));
-        seen.unobserve(en.target);
-      });
-    }, { threshold: 0.3 });
-    all("[data-sec]").forEach(function (el) { seen.observe(el); });
-  }
 
   // ---- Phone bar: shows once no other booking button is on screen --------------------------------
   var ctaBar = document.querySelector("[data-cta-bar]"), onScreen = 0;
@@ -321,51 +145,6 @@
     if (a) track(a.getAttribute("data-track"), a.getAttribute("data-where"));
   });
 
-  // ---- Guided Odoo tours: real screens, one outlined click target per step -----------------------
-  all("[data-tour]").forEach(function (tour) {
-    tour.classList.add("live");
-    all("[data-tour-panel]", tour).forEach(function (panel) {
-      var imgs = all("img[data-step]", panel), items = all(".tour-steps li", panel);
-      var hot = panel.querySelector("[data-hot]"), nav = panel.querySelector("[data-tour-nav]");
-      var count = panel.querySelector("[data-count]"), next = panel.querySelector("[data-next]");
-      var prev = panel.querySelector("[data-prev]"), cur = 1, total = imgs.length, key = panel.getAttribute("data-tour-panel");
-      function go(n) {
-        cur = Math.max(1, Math.min(total, n));
-        imgs.forEach(function (im, i) { im.hidden = i !== cur - 1; });
-        items.forEach(function (li, i) { li.classList.toggle("on", i === cur - 1); });
-        var im = imgs[cur - 1], box = (im.getAttribute("data-box") || "").split(",").map(Number);
-        var last = cur === total;
-        hot.hidden = last || box.length !== 4;
-        if (!hot.hidden) {
-          hot.style.left = box[0] + "%"; hot.style.top = box[1] + "%";
-          hot.style.width = box[2] + "%"; hot.style.height = box[3] + "%";
-          hot.querySelector(".vh").textContent = "Next step: " + im.getAttribute("data-target");
-        }
-        count.textContent = "Step " + cur + " of " + total;
-        next.textContent = last ? "Start again" : "Next step";
-        prev.disabled = cur === 1;
-        if (last) track("demo", "tour:" + key + ":done");
-      }
-      nav.hidden = false;
-      hot.addEventListener("click", function () { go(cur + 1); });
-      next.addEventListener("click", function () { go(cur === total ? 1 : cur + 1); });
-      prev.addEventListener("click", function () { go(cur - 1); });
-      items.forEach(function (li) {
-        li.querySelector("[data-go]").addEventListener("click", function () { go(+li.getAttribute("data-step")); });
-      });
-      go(1);
-    });
-    var tabs = all("[data-tour-tab]", tour);
-    tabs.forEach(function (t) {
-      t.addEventListener("click", function () {
-        tabs.forEach(function (o) { o.setAttribute("aria-selected", o === t ? "true" : "false"); });
-        all("[data-tour-panel]", tour).forEach(function (p) {
-          p.hidden = p.getAttribute("data-tour-panel") !== t.getAttribute("data-tour-tab");
-        });
-        track("demo", "tour:" + t.getAttribute("data-tour-tab"));
-      });
-    });
-  });
 
   // ---- Sync model: Odoo holds the count; Shopify sells and gets the count back ---------------------
   all("[data-sim]").forEach(function (sim) {
@@ -471,32 +250,6 @@
     box.hidden = false;
   });
 
-  // ---- Video chapters: jump to a chapter, and mark the one playing -------------------------------
-  all("video[data-chapter-video]").forEach(function (vid) {
-    var btns = all(".ch-btn[data-t]");
-    var starts = btns.map(function (b) { return +b.getAttribute("data-t"); });
-    function mark() {
-      var at = vid.currentTime, on = 0;
-      starts.forEach(function (s, i) { if (at + 0.25 >= s) on = i; });
-      btns.forEach(function (b, i) {
-        b.classList.toggle("on", i === on);
-        if (i === on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
-      });
-    }
-    function seek(t, play) {
-      function go() { vid.currentTime = t; mark(); if (play) { var p = vid.play(); if (p && p.catch) p.catch(function () {}); } }
-      if (vid.readyState >= 1) go(); else vid.addEventListener("loadedmetadata", go, { once: true });
-    }
-    btns.forEach(function (b, i) {
-      b.addEventListener("click", function () { seek(starts[i], true); track("demo", "video:chapter" + i); });
-    });
-    vid.addEventListener("timeupdate", mark);
-    vid.addEventListener("seeked", mark);
-    vid.addEventListener("play", function () { track("demo", "video:play"); }, { once: true });
-    var m = /^#t=(\d+(?:\.\d+)?)$/.exec(location.hash);
-    if (m) { if (vid.preload === "none") vid.preload = "metadata"; seek(+m[1], false); }
-    mark();
-  });
 
   // ---- Shopify plan picker: five answers, one plan, the reason and the monthly cost ---------------
   all("[data-picker]").forEach(function (box) {
@@ -605,3 +358,4 @@
     });
   }
 })();
+
