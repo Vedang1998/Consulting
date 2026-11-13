@@ -90,7 +90,7 @@ def guide_side(g):
     return f"""<!--reuse-->
 <aside class="g-side">
   <div class="g-box"><p class="g-label">In this guide</p><ol class="g-toc">{toc}<li><a href="#questions">Questions</a></li>
-  <li><a href="#sources">Sources</a></li></ol></div>
+  {'<li><a href="#sources">Sources</a></li>' if g["sources"] else ""}</ol></div>
   <div class="g-box"><p class="g-label">Where we can help</p><div class="svc-minis">{svc}</div>
   <div class="g-cta">{primary_cta("guide")}</div></div>
 </aside><!--/reuse-->"""
@@ -133,9 +133,8 @@ def page_guide(g):
     {body_html}
     <h2 id="questions">Questions</h2>
     {qa_list(faqs)}
-    <h2 id="sources">Sources</h2>
-    <!--reuse--><ul class="sources">{srcs}</ul>
-    <p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p><!--/reuse-->
+    {f'<h2 id="sources">Sources</h2><!--reuse--><ul class="sources">{srcs}</ul><!--/reuse-->' if srcs else ''}
+    <!--reuse--><p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p><!--/reuse-->
   </article>
   {guide_side(g)}
 </div>

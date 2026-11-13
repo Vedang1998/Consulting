@@ -1190,6 +1190,242 @@ You may not need both systems yet. A store with one or two locations, finished g
         "tool": "manual-cost",
         "notes": ["Market numbers are vendor list prices only. The Octura cost report and Clutch agency rates were left "
                   "out until someone re-checks them on the live pages."],
+    },    {
+        "slug": "shopify-payouts-dont-match-bank",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Shopify payouts don't match the bank deposit",
+        "seo_title": "Why Shopify payouts don't match your sales or bank",
+        "desc": ("Why a Shopify Payments deposit is smaller than your sales report. How to match one payout to the "
+                 "cent, and book it so fees and refunds stay visible."),
+        "checked": "2026-11-13",
+        "short": ("A payout is one bank transfer covering many orders, after Shopify has taken out card fees, refunds, "
+                  "chargebacks and any held amounts. Sales paid by other methods never pass through it. Match each "
+                  "payout from its own transaction export, and book it in parts so the fees and refunds show."),
+        "body": """
+## Why the deposit is smaller than the sales
+
+Your sales report counts orders. Your bank shows money. Between the two, Shopify Payments groups card payments into one transfer and takes out what it's owed: processing fees on each charge, refunds you issued, chargebacks and their dispute fees, and anything held back as a reserve. Orders paid through PayPal, gift cards, cash at the counter or a manual method never pass through a Shopify Payments payout at all. Both numbers can be right and still disagree.
+
+## What to check, in this order
+
+1. Timing. A payout covers the charges in its own window, which rarely lines up with your calendar month. An order placed late on the 31st can land in next month's deposit.
+2. Card fees. Each charge loses its processing fee before it's paid out.
+3. Refunds. A refund comes out of the next payout, even when the order was months ago.
+4. Chargebacks. A disputed payment is taken back, with a fee, while the dispute is open, and returned if you win.
+5. Other payment methods. Sort the orders for the period by how they were paid. Anything outside Shopify Payments settles somewhere else.
+6. Holds and adjustments. Reserves and corrections show as their own lines on the payout.
+
+## How to match one payout
+
+Open the payout in Shopify Payments and export its transactions. Add up the charges, then take away refunds, fees, chargebacks and adjustments. The result should equal the deposit to the cent. If it doesn't, the gap is almost always a transaction you've counted in the wrong period, so check the dates on the first and last lines.
+
+Do this once by hand for a busy week. It shows you which of the six causes drive most of your gap, and it's the same check any app or connector will be doing for you later.
+
+## Booking payouts so the books stay honest
+
+When a bookkeeper enters a payout as one deposit labeled sales, the fees vanish into a smaller sales figure and refunds disappear with them. A cleaner pattern uses a clearing account for each payment provider. Orders post sales into it, refunds and fees post against it, and the bank deposit empties it. If the clearing account isn't back to zero after a payout, something hasn't been recorded.
+
+That pattern works in QuickBooks with a payout app and in Odoo with a journal per provider. Your bookkeeper picks the accounts. The setup work is making sure the data arrives split, so nobody has to type the pieces in.
+
+## When matching by hand is enough
+
+A store with a few payouts a week, one currency and only online sales can match each one from the export in a few minutes. Automating it pays when payouts carry hundreds of orders, when counter and online card sales arrive together, when you sell in more than one currency, or when month-end takes your bookkeeper more than an hour or two of matching.
+""",
+        "faqs": [
+            ("Why did a refund for an old order come out of this week's payout?",
+             "Refunds are taken from the payout that's open when you issue them, whatever the order date. A March "
+             "order refunded in June reduces June's deposit, so June sales and June cash won't line up without that "
+             "refund on the list."),
+            ("Do cash sales at the counter show up in payouts?",
+             "No. Cash goes into the drawer and from there to your own bank deposit. Card sales taken on Shopify POS "
+             "through Shopify Payments do show up, mixed in with online card sales, which is why a store with shops "
+             "needs a location on each sale to reconcile cleanly."),
+            ("Should we record the orders or the payout in the books?",
+             "Both, as different events. The orders are sales. The payout is cash moving from Shopify to your bank, "
+             "less fees and refunds. Recording only one of them loses either the fees or the timing. Your bookkeeper "
+             "decides how each line is coded."),
+        ],
+        "sources": [],
+        "services": ["connection", "odoo-launch"],
+        "related": ["quickbooks-to-odoo-data", "shopify-odoo-inventory-sync", "shopify-odoo-project-cost"],
+        "notes": ["Written from practice; no vendor numbers. Vee should check the Payouts screen wording in the demo "
+                  "store before approving, and add a screenshot if it helps."],
+    },
+    {
+        "slug": "shopify-stock-doesnt-match-shelf",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Shopify stock doesn't match what's on the shelf",
+        "seo_title": "Shopify inventory doesn't match the shelf",
+        "desc": ("The usual reasons Shopify's counts drift from the stockroom once you sell in person, how to find "
+                 "the one causing yours, and the habits that keep counts true."),
+        "checked": "2026-11-13",
+        "short": ("Counts drift when stock moves without the system hearing about it: deliveries not received, "
+                  "returns put back by hand, transfers never marked arrived, or two systems editing the same number. "
+                  "Find which one by reading the adjustment history on a few problem items, then fix the habit "
+                  "before you buy anything."),
+        "body": """
+## Where the gap usually comes from
+
+Shopify only knows what someone tells it. Every unit that moves without a matching entry opens a gap, and the gaps add up quietly until a customer orders something that isn't there. The common leaks:
+
+- A delivery is unpacked and shelved, but nobody receives it in Shopify, so the count stays low and the item looks sold out online.
+- A return goes back on the shelf, but the refund didn't restock it, or it did restock it and the item was actually damaged.
+- Stock moves from the stockroom to the shop floor or a second shop, and the transfer is created but never marked received.
+- The counter sells from one location while the item is recorded at another.
+- An app, a marketplace or another system also writes stock numbers, and each one overwrites the other.
+- Kits and bundles sell as one item while the parts are counted separately.
+
+Shrinkage and miscounts happen too, but they're rarely the main cause in a small store.
+
+## Find your cause before you fix anything
+
+Pick three items that were wrong at the last count. Open each one's inventory history in Shopify and read every change since that count: who changed it, from where, and why. Then walk the item's real path, from delivery to shelf to sale. The place where the real path has a step the history doesn't is your leak.
+
+Three items are usually enough. The same gap tends to show up in all of them.
+
+## Habits that keep counts true
+
+1. One owner per number. Decide which system holds the count for each location, and make every other system read from it.
+2. Receive what arrives, the day it arrives, against a purchase order or transfer.
+3. Count a little often. Ten fast sellers a week catches drift long before a full stocktake would.
+4. Give every adjustment a reason. A pile of unexplained corrections is the clearest sign of a leak.
+5. One location per physical place. A shop, a stockroom and a warehouse each get their own.
+
+## When the fix is a back office
+
+If counts drift because two systems both write stock, or because purchasing, kits and wholesale orders live outside Shopify, better habits won't close the gap on their own. That's when a back office such as Odoo owns the count and Shopify shows what's available from it. If the leak is a skipped step at the counter or the loading door, fix the step first. It's cheaper, and you'll need the habit either way.
+""",
+        "faqs": [
+            ("How often should a small store count stock?",
+             "Count your fastest sellers every week or two and everything else once a quarter. Short, frequent "
+             "counts find drift while it's still easy to trace. A once-a-year stocktake tells you there's a gap "
+             "but not where it came from."),
+            ("Should returns go straight back into stock?",
+             "Only once someone has checked the item. Restock it if it's sellable, and record it as damaged or "
+             "written off if it isn't. Restocking everything automatically puts damaged items back on sale and "
+             "shows stock you can't ship."),
+            ("Can two systems both update the same stock count?",
+             "They can, but they shouldn't. When both write the number, each overwrites the other and the count "
+             "drifts within days. Choose one owner and have the other follow it on a schedule you can check."),
+        ],
+        "sources": [],
+        "services": ["connection", "odoo-launch"],
+        "related": ["shopify-odoo-inventory-sync", "when-you-dont-need-an-erp", "shopify-pos-vs-odoo-pos"],
+        "notes": ["Practice-based. Check the inventory history wording against the demo store before approving."],
+    },
+    {
+        "slug": "retail-and-wholesale-one-stock-count",
+        "platform": "both",
+        "status": "draft",
+        "title": "Selling retail and wholesale from one stock count",
+        "seo_title": "Stop overselling across Shopify and wholesale",
+        "desc": ("Why wholesale orders taken by email or phone oversell your online store. Three ways to share one "
+                 "stock count between retail and wholesale."),
+        "checked": "2026-11-11",
+        "short": ("Overselling starts when a wholesale order is agreed outside the system that feeds your store, so "
+                  "the units still look free online. Fix it by entering wholesale orders where stock is counted, "
+                  "keeping a small buffer on fast sellers, or holding a separate wholesale stock location for large "
+                  "seasonal orders."),
+        "body": """
+## Why it happens
+
+A buyer emails an order for 200 units. Someone confirms it, adds it to a spreadsheet and plans to pick it next week. Until that order exists in the system your store reads, those 200 units still show as available online. A busy weekend later, retail customers have bought some of them, and either the wholesale order ships short or online orders get refunded.
+
+Prepacks, case quantities and pre-booked seasonal orders make it worse, because large amounts are promised weeks before they leave the building.
+
+## Three ways to share one count
+
+1. Enter every wholesale order where stock lives, the day it's agreed. In Shopify, that means a B2B order or a completed draft order. A draft that's still open doesn't hold stock unless you reserve the items on it. In Odoo, a confirmed sales order reserves the units on its delivery, and a connector sends Shopify only what's still free.
+2. Keep a buffer on fast sellers. Show online a little less than you have, so a late wholesale order doesn't take the last units a customer already bought.
+3. Give wholesale its own stock for big seasonal orders. Move the pre-booked quantity to a separate location as soon as it's confirmed, so retail never sees it.
+
+Most businesses use the first everywhere and the third for their largest orders.
+
+## What Shopify covers on its own
+
+Shopify's B2B features let wholesale customers order from their own catalogs with their own prices, and those orders take stock like any other. Plans below Plus allow up to 3 catalogs (shopify.com/pricing, checked Nov 11, 2026). Where Shopify gets stretched is many price lists, credit limits, payment terms and statements, and wholesale orders that arrive by phone and need a person to enter them.
+
+## When separate stock is the better choice
+
+If wholesale is most of your volume, ships from a different building, or is sold months ahead against stock you haven't received yet, a shared count adds risk without much benefit. Keep wholesale in its own location or warehouse, move stock to retail on purpose, and let each channel sell only what's been given to it.
+""",
+        "faqs": [
+            ("How big should a stock buffer be?",
+             "Start with what one busy day of online sales takes from that item, and adjust after a month. A buffer "
+             "that's too large hides stock you could have sold, so keep it on fast sellers only and review it when "
+             "sales change."),
+            ("Can wholesale customers order straight from our Shopify store?",
+             "Yes, through Shopify's B2B features, with company accounts and their own catalogs and prices. The "
+             "orders take stock like retail orders. Customers who order by phone or email still need someone to "
+             "enter the order the same day."),
+            ("What does Odoo add for wholesale?",
+             "Price lists per customer, payment terms, credit limits, statements and backorders, all reserving "
+             "stock from the same count your store reads. Shopify keeps the storefront and checkout, and the "
+             "connector sends it the free quantity."),
+        ],
+        "sources": [("Shopify pricing", "https://www.shopify.com/pricing", "2026-11-11")],
+        "services": ["connection", "odoo-launch"],
+        "related": ["shopify-odoo-inventory-sync", "shopify-stock-doesnt-match-shelf", "shopify-plan-for-pos-pro"],
+        "notes": ["The draft order reserve behavior should be tried in the demo store before approval."],
+    },
+    {
+        "slug": "stalled-odoo-project",
+        "platform": "odoo",
+        "status": "draft",
+        "title": "A stalled Odoo project: how to tell if it can be saved",
+        "seo_title": "Stalled Odoo implementation: rescue it or start over",
+        "desc": ("What to collect when an Odoo project has stalled, the checks that show whether it can be finished, "
+                 "and the signs that starting over will cost less."),
+        "checked": "2026-11-13",
+        "short": ("Before deciding anything, get admin access, the subscription in your name and the source code for "
+                  "any custom modules. Then check the version, the custom work and the state of the data. Standard "
+                  "apps with fixable data are usually worth finishing. Undocumented custom code on an old version "
+                  "often isn't."),
+        "body": """
+## Secure what you own first
+
+A stalled project often ends with the person who built it out of reach. Before anyone judges the setup, make sure you hold these:
+
+- An administrator login to the database, in your company's name.
+- The Odoo subscription billed to you, so it can't lapse with someone else's card.
+- For Odoo.sh, owner access to the project and to the code repository behind it.
+- The source code of every custom or purchased module, plus any license keys for paid ones.
+- Whatever was written down: scope, field maps, test notes, emails with decisions.
+
+Ask for credentials to be handed over in a password manager or reset by you, not pasted into email.
+
+## Four checks that decide it
+
+1. Version. A database a version or two behind can be upgraded. One several versions behind turns finishing into an upgrade project as well.
+2. Custom code. List every module that isn't Odoo's own. For each, find out what it does, whether you have the code, and whether a standard feature now does the same job.
+3. Data. Open products, customers, vendors and stock. Check whether the counts, costs and opening balances are believable. Duplicates and half-finished imports can be cleaned. Data nobody trusts usually gets loaded again.
+4. What already works. A sale, a delivery, a purchase and an invoice, run end to end in a copy. Each one that works is work you keep.
+
+## What a rescue looks like
+
+Once the review is written, finishing usually means fixing configuration, removing or replacing custom modules that aren't needed, cleaning and reloading data where needed, and testing in a staging copy before anything changes in the live database. A good review also lists what was done well. You paid for that work, and keeping it is part of the case for finishing.
+
+## When starting over costs less
+
+Starting fresh tends to win when the database is several versions old, when key behavior depends on custom code you don't have or nobody can explain, or when the data has been edited so often that no one trusts a single number. A new database on the current version, with the useful configuration copied across by hand, can come in under the cost of untangling the old one. The written review should price both paths so you can compare them.
+""",
+        "faqs": [
+            ("Who owns the database if a contractor set it up?",
+             "Normally you do, if the subscription and the hosting are in your company's name. If they were opened "
+             "under the contractor's account, ask for them to be moved to your company before any other work starts."),
+            ("Can a stalled project be finished without the original developer?",
+             "Usually, if you have the source code and admin access. Standard Odoo apps don't depend on who set them "
+             "up. Custom modules without code are the main exception, because they can't be fixed or upgraded."),
+            ("How long does a review of a stalled project take?",
+             "We do it as a Systems Roadmap, which typically takes 2–3 weeks. Most of that depends on how quickly "
+             "access is handed over and how much custom code there is to read."),
+        ],
+        "sources": [],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["odoo-online-vs-odoo-sh", "odoo-implementation-timeline", "odoo-20-changes"],
+        "notes": ["Practice-based. No claims about who worked on the database before, per the FAQ answer on the site."],
     },
 ]
 
