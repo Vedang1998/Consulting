@@ -46,8 +46,6 @@ FONT_FILES = [
     ("IBM Plex Sans", 400, "ibm-plex-sans-latin-400-normal.woff2"),
     ("IBM Plex Sans", 500, "ibm-plex-sans-latin-500-normal.woff2"),
     ("IBM Plex Sans", 600, "ibm-plex-sans-latin-600-normal.woff2"),
-    ("IBM Plex Mono", 400, "ibm-plex-mono-latin-400-normal.woff2"),
-    ("IBM Plex Mono", 500, "ibm-plex-mono-latin-500-normal.woff2"),
 ]
 STATIC_FILES = ["og.png", "apple-touch-icon.png"]  # share image (1200x630) and phone home-screen icon
 PRELOAD = ["archivo-latin-wght-normal.woff2", "ibm-plex-sans-latin-400-normal.woff2"]
@@ -444,6 +442,7 @@ def write_site_files(indexable):
 """ + "\n".join(f"- [{p['h']}]({clean_url(p['path'])})" for p in indexable) + "\n"
     if contact:
         llms += "\n## Contact\n" + "\n".join(contact) + "\n"
+    check_fees("llms.txt", llms)
     (DIST / "llms.txt").write_text(llms)
     key = C.INDEXNOW_KEY
     if not re.fullmatch(r"[A-Za-z0-9-]{8,128}", key or ""):
@@ -466,7 +465,15 @@ BANNED = ["transform", "elevate", "seamless", "unlock", "leverage", "empower", "
           "digital transformation", "synergy", "robust", "cutting-edge", "curated", "effortless"]
 
 
+def check_fees(path, text):
+    """Our package fees are internal (Vee, Nov 13). Fail if any of them reaches a public file, source included."""
+    for k, v in C.PRICES.items():
+        if re.search(r"\$\s?" + f"{v:,}".replace(",", ",?") + r"(?!\d)", text):
+            ERRORS.append(f"our fee {k} (${v:,}) appears in {path}; fees are quoted after a call only")
+
+
 def check_output(path, text):
+    check_fees(path, text)
     visible = re.sub(r"<script.*?</script>|<style.*?</style>", "", text, flags=re.S)
     visible = re.sub(r"<[^>]+>", " ", visible)
     if "—" in text:

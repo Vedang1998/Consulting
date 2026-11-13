@@ -95,8 +95,8 @@ def guide_side(g):
 def page_guide(g):
     path = f"/guides/{g['slug']}"
     trail, crs = crumbs([("Resources", "/resources"), (g["seo_title"], path)])
-    if not re.search(r"^## When the other option wins", g["body"], re.M):
-        ERRORS.append(f"guide {g['slug']} has no 'When the other option wins' section")
+    if not re.search(r"^## When ", g["body"], re.M):
+        ERRORS.append(f"guide {g['slug']} has no 'When ...' section on when the other option is better")
     words = len(fill(g["short"]).split())
     if not 40 <= words <= 60:
         ERRORS.append(f"guide {g['slug']}: summary is {words} words, needs 40 to 60")

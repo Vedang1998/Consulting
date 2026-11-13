@@ -307,7 +307,7 @@ If you do move to Odoo.sh, Odoo's connector is the cheapest of the Odoo-side opt
 
 The third-party modules go further in places, such as products flowing both ways or Shopify payouts imported for bank reconciliation. A store with variants, two warehouses and a bookkeeper reconciling payouts is the kind of business where that extra cost tends to make sense.
 
-## When the other option wins: no connector yet
+## When you're better off without a connector
 
 If you take a handful of orders a day, keep stock in Shopify and use Odoo mainly for invoices and accounting, a connector can wait. Exporting Shopify orders and importing them into Odoo once a week costs nothing and is easy to undo. Add a connector when someone is retyping orders, the two systems disagree about stock, or a second sales channel opens.
 
@@ -407,7 +407,7 @@ Your staff won't notice much. They use the same Odoo apps in the same browser.
 
 Odoo's hosting page describes how a database moves between hosting types. Odoo Online can run Odoo's in-between versions, such as 16.3, and those can't move to Odoo.sh. The database first has to be upgraded to the next major version, which can mean waiting for that version's release.
 
-## When the other option wins: staying on Odoo Online
+## When staying on Odoo Online is the right call
 
 For a business with 5 to 15 users on Odoo's standard apps, Online is the lower-effort choice: no hosting bill, no repository, and no module updates to wait for before each upgrade. If the link to Shopify can be an app on the Shopify side, on the Custom plan, or a weekly import, you can stay. Move when a specific module you need won't run on Online, not before.
 """,
@@ -479,7 +479,7 @@ Load everything into a staging copy of Odoo first and compare totals. Open recei
 
 Closed invoices, paid bills, old bank transactions and past years' reports. Keep QuickBooks access for lookups as long as your accountant wants it, or export the reports they ask for before you cancel. Moving full transaction history is possible, but it's a separate project with its own mapping and checks, and you can decide on it later.
 
-## When the other option wins: bringing history over
+## When bringing the history over is worth it
 
 Some businesses do need their history in Odoo. A lender or auditor may want several years in one system, sales reports by customer may need to reach back years, or QuickBooks access may be ending. Then history is worth moving, scoped on its own with a fixed price. A Back Office Launch covers the opening data above; full history is one of our larger Odoo projects, quoted after a Systems Roadmap.
 """,
@@ -553,7 +553,7 @@ Odoo 20 added a few register features worth knowing about. Point of Sale can run
 
 Some retailers keep Shopify POS at the counter and Odoo behind it. That works if your connector brings register sales into Odoo as well as online orders. Ask the vendor how POS sales arrive, test a few in a trial, and check that stock at each shop matches afterward.
 
-## When the other option wins
+## When the other register is the better choice
 
 An Odoo business that sells mostly online may still be better off with Shopify POS at the counter, connected to Odoo, so the website and the registers share one checkout and one price list. A Shopify-first store with purchasing trouble rarely needs Odoo POS to fix it. It needs a back office behind Shopify, and the registers can stay as they are.
 """,
@@ -634,7 +634,7 @@ To score your own setup, try the [ERP readiness check](/tools/erp-readiness). It
 3. Write down the weekly jobs that eat the most hours. Price an app for the worst one before pricing a whole system.
 4. Try an ERP screen with your own products. Odoo's One App Free plan runs one app, plus the apps it depends on, for any number of users at no charge (odoo.com/pricing, checked Nov 11, 2026). It won't connect to Shopify on that plan, but it shows how purchasing or inventory would look.
 
-## When the other option wins: start the ERP now
+## When starting the ERP now makes sense
 
 Some changes are easier to make with the ERP already in place. Opening a warehouse, adding wholesale at volume, starting to make products, or replacing an accounting system that's being retired are all good moments to set it up. Moving in the middle of one of those means doing the big change twice.
 """,
@@ -711,7 +711,7 @@ On Basic, Grow and Advanced, Shopify lets you track stock in up to 10 locations 
 
 Apps installed in Shopify, rather than in Odoo, reach your database through Odoo's External API. On Odoo Online that needs the Custom plan. They also set their own sync schedules, which can be faster or slower than Odoo's 10 minutes. Ask the vendor three things in writing: how often stock moves, whether it moves per location, and what happens to orders placed while the app is down.
 
-## When the other option wins: no live sync
+## When you don't need a live sync
 
 A store with a few orders a day may not need a sync at all. Keep stock in Shopify, use Odoo for invoices and books, and bring orders across with a weekly export and import. It's slower, but nothing can overwrite anything, and it costs no connector fees. Add a sync when retyping takes hours or the counts start to drift.
 
@@ -809,7 +809,7 @@ The release notes add marketplace links for TikTok and Lazada, and none for Shop
 - On Odoo.sh, check that every third-party module has a 20.0 version. Without one, the upgrade stops or the module's features go.
 - Run the upgrade on a copy of your database first, and do a few days of normal work in it: sales, receipts, a register session, a bank reconciliation.
 
-## When the other option wins: wait on 19
+## When staying on 19 a while longer is fine
 
 If a module you rely on has no 20.0 version yet, or you're in the middle of a busy season, waiting is the safer call. Nothing in Odoo 20 forces an urgent move for a small store. Plan the upgrade for a quiet month.
 """,
@@ -900,7 +900,7 @@ Answer these before you sign:
 
 If every answer is no, Standard fits. If any answer is yes, price Custom before you sign.
 
-## When the other option wins: Custom from day one
+## When to start on Custom from day one
 
 If you already know you'll connect Shopify through an outside app, or you need an Apps store module, start on Custom. Switching partway through a project changes the budget for every user, and it tends to happen right after go-live, when nobody planned for it.
 """,
@@ -982,7 +982,7 @@ Say two shops, six staff who need their own logins, and roles at both counters. 
 
 To try your own numbers, use the [Shopify plan picker](/tools/shopify-plan-picker).
 
-## When the other option wins: Shopify Plus
+## When Shopify Plus earns its price
 
 More than 10 selling locations, more than 15 staff accounts, or more than 3 B2B catalogs all point past Advanced. Plus costs $2,300 a month or more, includes POS Pro for 20 locations, and goes up to 200 locations with Shopify Payments. It's a different budget, so price it only when one of those limits is real.
 """,
@@ -1071,7 +1071,7 @@ Odoo's documentation warns that imports are permanent and can't be undone. That'
 
 Treat it as a sample. Your own plan depends on your data and how quickly decisions get made.
 
-## When the other option wins: a smaller first phase
+## When a smaller first phase is the better plan
 
 If 6 weeks is more than you can spare, start smaller. Sales, inventory and purchasing can go live first, with accounting moving over at the start of the next quarter. You get the stock benefits sooner, and the books move at a clean cut-off date. The trade-off is a few weeks of running accounting in your old system alongside.
 """,
