@@ -112,8 +112,7 @@ PACKAGES = [
         "price": ("store_move_min", "store_move_max"),
         "timeline": "3–8 weeks",
         "summary": (
-            "Moving your store to Shopify from WooCommerce, Wix, Square Online or BigCommerce, "
-            "with products, customers, order history, redirects and test orders done before launch. "
+            "From WooCommerce, Wix, Square Online or BigCommerce, with test orders run before launch. "
             "The fee depends mostly on how many products and how much history you bring over."
         ),
         "includes": [

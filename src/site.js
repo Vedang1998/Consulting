@@ -347,6 +347,37 @@
     box.hidden = false;
   });
 
+  // ---- Screens open full size: people try to zoom admin screenshots, so let them ----------------------
+  var shots = all("[data-zoom]");
+  if (shots.length && typeof HTMLDialogElement === "function") {
+    var dlg = document.createElement("dialog");
+    dlg.className = "zoom";
+    dlg.innerHTML = '<form method="dialog" class="zoom-bar"><span class="zoom-cap"></span>' +
+      '<button class="btn-sm" value="close">Close</button></form><div class="zoom-body"><img alt=""></div>';
+    document.body.appendChild(dlg);
+    var zimg = dlg.querySelector("img"), zcap = dlg.querySelector(".zoom-cap");
+    dlg.addEventListener("click", function (ev) { if (ev.target === dlg) dlg.close(); });
+    shots.forEach(function (fig) {
+      var frame = fig.querySelector(".clip-frame"), img = fig.querySelector("img");
+      if (!frame || !img) return;
+      frame.setAttribute("role", "button");
+      frame.setAttribute("tabindex", "0");
+      frame.setAttribute("aria-label", "Open full size: " + img.alt);
+      frame.classList.add("zoomable");
+      function open() {
+        zimg.src = img.currentSrc || img.src;
+        zimg.alt = img.alt;
+        zcap.textContent = img.alt;
+        dlg.showModal();
+        track("demo", "zoom");
+      }
+      frame.addEventListener("click", open);
+      frame.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); open(); }
+      });
+    });
+  }
+
   // ---- Cost of manual work: the visitor's own figures, worked out in the browser ---------------------
   all("[data-calc]").forEach(function (box) {
     var form = box.querySelector("form"), used = false;
