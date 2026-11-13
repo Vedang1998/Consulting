@@ -2,8 +2,7 @@
 
 Text only. Pages are built in build.py. Tokens filled at build time:
   {NAME}            the business name from config
-  [[key]]           a price from config.PRICES, e.g. [[support_10h]]
-  [[min|max]]       a price range, e.g. [[store_move_min|store_move_max]]
+  [[...]]           no longer allowed: the site shows no prices of ours (Vee, Nov 13, 2026); the build fails
 
 Rules for anything added here (00 project instructions, 13 Skills Map):
 - Every answer and guide is written fresh. Don't copy text from another page of the site;
@@ -215,8 +214,7 @@ FAQ_US = [
     ("What happens after launch?",
      "Every project includes time after go-live: two weeks of launch support after a Store Move, four weeks of fixes "
      "after a Back Office Launch, and two weeks of monitoring after a Sync. After that, a Support block covers "
-     "questions and small changes: 10 hours for [[support_10h]] within 90 days, or 20 hours for [[support_20h]] "
-     "within 180 days.",
+     "questions and small changes, in blocks of 10 hours used within 90 days or 20 hours within 180 days.",
      "/services/support-block", "Support block terms"),
     ("What hours do you work, and in which time zone?",
      "Monday to Friday, US Eastern time. Messages get a reply by the end of the next business day, and calls are "
@@ -483,7 +481,7 @@ Closed invoices, paid bills, old bank transactions and past years' reports. Keep
 
 ## When the other option wins: bringing history over
 
-Some businesses do need their history in Odoo. A lender or auditor may want several years in one system, sales reports by customer may need to reach back years, or QuickBooks access may be ending. Then history is worth moving, scoped on its own with a fixed price. A Back Office Launch covers the opening data above; full history is one of our larger Odoo projects, from [[larger_odoo_from]], quoted after a Systems Roadmap.
+Some businesses do need their history in Odoo. A lender or auditor may want several years in one system, sales reports by customer may need to reach back years, or QuickBooks access may be ending. Then history is worth moving, scoped on its own with a fixed price. A Back Office Launch covers the opening data above; full history is one of our larger Odoo projects, quoted after a Systems Roadmap.
 """,
         "faqs": [
             ("Can Odoo import QuickBooks files directly?",

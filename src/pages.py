@@ -22,11 +22,10 @@ GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
 
 HOME_FAQS = [
     ("How much does a Shopify and Odoo project cost?",
-     lambda: (f"A Systems Roadmap is {price('roadmap_min', 'roadmap_max')}. A Store Move is "
-              f"{price('store_move_min', 'store_move_max')}, a Back Office Launch is "
-              f"{price('odoo_launch_min', 'odoo_launch_max')} and a Store to Back Office Sync is "
-              f"{price('connection_min', 'connection_max')}. Your exact fee is fixed in writing before work "
-              f"starts. Shopify, Odoo and app vendors bill you separately for plans and licenses.")),
+     lambda: ("Two parts. Software is billed by Shopify, Odoo and any app or connector vendor at their published "
+              "prices, and our guides list those with the date we checked them. Our work is a fixed fee that depends "
+              "on your product count, locations, how much history moves and which connector fits. We quote it in "
+              f"writing {C.PROMISES['proposal_after_call']}, after a free {C.PROMISES['call_length']} call.")),
     ("How long does a project take?",
      lambda: ("A Systems Roadmap takes 2 to 3 weeks. A Store Move takes 3 to 8 weeks, a Store to Back Office "
               "Sync 3 to 6 weeks and a Back Office Launch 6 to 12 weeks. Go-live dates are planned around "
@@ -58,7 +57,8 @@ SERVICE_FAQS = [
      "and hosting before you commit."),
     ("Can you start without a Systems Roadmap?",
      "For a Store Move or a Store to Back Office Sync with a clear scope, a scoping call is often "
-     "enough. Odoo projects over $20,000 always start with a Roadmap."),
+     "enough. Odoo projects with manufacturing, several companies or more than 15 users always start with a "
+     "Roadmap."),
 ]
 
 SVC_EXTRA = {
@@ -146,7 +146,7 @@ PROBLEMS = [  # home: the four problems we're asked to fix, each tied to the ser
 def svc_mini(slug, i=0):
     """A compact link card for one service: icon, name, price and timeline."""
     return (f'<a class="svc-mini {SVC_COLOR[slug]}" href="{svc_href(slug)}"><span class="ic-block">{spot(SVC_SPOT[slug])}</span>'
-            f'<span><b>{e(svc_name(slug))}</b><em><span class="price">{svc_price(slug)}</span> · {e(svc_time(slug))}</em></span>'
+            f'<span><b>{e(svc_name(slug))}</b><em>{e(svc_time(slug))}</em></span>'
             f'{icon("arrow-right")}</a>')
 
 
@@ -154,7 +154,7 @@ def hero(h1, lead, *, eyebrow="", trail="", art="", cta="", extra="", cls=""):
     """Inner page hero: copy on the left, a drawn scene or a screen on the right."""
     return f"""
 <section class="hero {cls}"><div class="wrap hero-grid{' no-art' if not art else ''}">{'' if art else deco_cluster()}
-  <div class="hero-copy">{trail}{f'<p class="eyebrow">{eyebrow}</p>' if eyebrow else ''}
+  <div class="hero-copy">{trail}
     <h1>{hl(h1)}</h1><p class="lead">{lead}</p>{extra}{f'<div class="cta-line">{cta}</div>' if cta else ''}</div>
   {f'<div class="hero-art deco-host">{deco_pair(h1)}{art}</div>' if art else ''}
 </div></section>"""
@@ -165,7 +165,7 @@ def hero(h1, lead, *, eyebrow="", trail="", art="", cta="", extra="", cls=""):
 # ---------------------------------------------------------------------------
 
 def page_home():
-    cta = primary_cta("hero") + more_link("/pricing", "See prices")
+    cta = primary_cta("hero") + more_link("/pricing", "See the packages")
     assure = "".join(f"<li>{icon(i)}<span>{e(t)}</span></li>" for i, t in [
         ("file-check-2", "A fixed fee, agreed in writing"), ("key-round", "Your accounts stay in your name"),
         ("clock", f"{C.TIMEZONE_LABEL} business hours")])
@@ -183,7 +183,7 @@ def page_home():
 <a class="prob {SVC_COLOR[s]}" href="{svc_href(s)}">
   <span class="ic-block">{spot(SVC_SPOT[s])}</span>
   <h3>{e(h)}</h3><p>{e(t)}</p>
-  <span class="prob-fix"><b>{e(svc_name(s))}</b><span class="price">{svc_price(s)}</span><span>{e(svc_time(s))}</span>{icon('arrow-right')}</span>
+  <span class="prob-fix"><b>{e(svc_name(s))}</b><span>{e(svc_time(s))}</span>{icon('arrow-right')}</span>
 </a>""" for s, h, t in PROBLEMS)
     inds = "".join(f"""
 <a class="ind-tile" href="/industries/{x['slug']}">
@@ -198,8 +198,10 @@ def page_home():
               "and our access removed in writing.")]
     step_html = "".join(f'<li><span class="ic-block">{spot(i)}</span><span><b>{e(h)}</b>{e(t)}</span></li>'
                         for i, h, t in steps)
-    rows = "".join(f'<tr><th scope="row"><a href="{svc_href(s)}">{e(svc_name(s))}</a></th><td class="price">{svc_price(s)}</td>'
-                   f'<td>{e(svc_time(s))}</td></tr>' for s in ORDER + ["support"])
+    quote = [f"A free {C.PROMISES['call_length']} call about what you sell, where, and what isn't working.",
+             f"A written proposal with a fixed fee {C.PROMISES['proposal_after_call']}.",
+             "Payments tied to milestones, with the last one at go-live.",
+             "The fee only changes if you sign a change order for extra work."]
     fit_yes = ["US product businesses with roughly 5 to 50 staff",
                "Selling online, in your own shops, to wholesale accounts, or all three",
                "Running Shopify, or ready to move to it, with stock that has outgrown spreadsheets"]
@@ -210,11 +212,10 @@ def page_home():
     body = f"""
 <section class="hero home"><div class="wrap hero-grid">
   <div class="hero-copy">
-    <p class="eyebrow">Ecommerce and ERP consulting</p>
     <h1 class="display">{hl("Shopify and Odoo, planned, set up and connected for product businesses")}</h1>
     <p class="lead">We decide which systems you need, move your store, set up the back office and connect the two, so
-    orders, stock and the books agree. Every project has a written scope and a fixed fee, from
-    {price('roadmap_min')} for a roadmap.</p>
+    orders, stock and the books agree. Every project has a written scope and a fixed fee, quoted after a
+    free call.</p>
     <div class="cta-line">{cta}</div>
     <ul class="assure">{assure}</ul>
   </div>
@@ -230,12 +231,11 @@ def page_home():
 </div></section>
 
 <section class="sec tint" aria-labelledby="prob-h"><div class="wrap">
-  {sec_head("Four problems we're asked to fix, and what each costs", "Each one maps to a service with a price range "
-            "and a typical timeline. Your exact fee is fixed in writing after a call.", "prob-h",
-            mark="what each costs")}
+  {sec_head("Four problems we're asked to fix", "Each one maps to a fixed-fee package with a typical timeline. "
+            "We set the fee in writing after a free call.", "prob-h", mark="asked to fix")}
   <div class="probs">{probs}</div>
   <p class="after-grid">After go-live, a <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a> gives you prepaid hours
-  for questions and small changes, from {price('support_10h')}.</p>
+  for questions and small changes.</p>
 </div></section>
 
 <section class="sec" aria-labelledby="ind-h"><div class="wrap">
@@ -263,10 +263,10 @@ def page_home():
 
 <section class="sec tint" aria-labelledby="price-h"><div class="wrap split">
   <div>
-    {sec_head("Prices", "Fixed fees, agreed in writing before work starts. Software is billed to you by each vendor.",
-              "price-h")}
-    <div class="tbl"><table class="ptable"><thead><tr><th scope="col">Service</th><th scope="col">Fixed fee</th>
-    <th scope="col">Typical timeline</th></tr></thead><tbody>{rows}</tbody></table></div>
+    {sec_head("How you get a price", "Every project is a fixed fee in a signed statement of work. Software is "
+              "billed to you by each vendor.", "price-h")}
+    <ol class="nums">{''.join(f'<li>{e(x)}</li>' for x in quote)}</ol>
+    <p>{more_link("/pricing", "See the packages")}</p>
   </div>
   <div class="fit">
     <h3>A good fit</h3>{ticks([e(x) for x in fit_yes], "yes")}
@@ -292,8 +292,7 @@ def page_home():
 
 def compare_table():
     head = "".join(f'<th scope="col"><a href="{svc_href(s)}">{e(PKG[s]["name"])}</a></th>' for s in ORDER)
-    rows = [("Fixed fee", lambda p: f'<span class="price">{price(*p["price"])}</span>'),
-            ("Typical timeline", lambda p: e(p["timeline"])),
+    rows = [("Typical timeline", lambda p: e(p["timeline"])),
             ("What it is", lambda p: e(p["kind"])),
             ("Payment", lambda p: e(p["payment"].split(". ")[0].rstrip(".")))]
     body = "".join(f'<tr><th scope="row">{e(lab)}</th>' + "".join(f"<td>{fn(PKG[s])}</td>" for s in ORDER) + "</tr>"
@@ -317,7 +316,7 @@ def page_services():
     <h2><a href="{svc_href(s)}">{e(svc_name(s))}</a></h2>
     <p>{e(summary)}</p>
     {ticks([e(x) for x in fit]) if fit else ''}
-    {facts([("Fixed fee", f'<span class="price">{svc_price(s)}</span>'), ("Typical timeline", e(svc_time(s)))])}
+    {facts([("Fee", "Fixed, quoted after a call"), ("Typical timeline", e(svc_time(s)))])}
     {more_link(svc_href(s), "What's included")}
   </div>
 </article>""")
@@ -329,7 +328,7 @@ def page_services():
 <section class="sec tint" aria-labelledby="cmp-h"><div class="wrap">
   {sec_head("The four projects side by side", "", "cmp-h")}
   {compare_table()}
-  <p class="small">{e(C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from")))}</p>
+  <p class="small">{e(C.LARGER_PROJECTS)}</p>
 </div></section>
 <section class="sec"><div class="wrap split">
   <div><h2>What you pay Shopify, Odoo and app vendors</h2>
@@ -341,9 +340,9 @@ def page_services():
   <div><h2>Questions about scope and fees</h2>{qa_list(SERVICE_FAQS)}</div>
 </div></section>"""
     return {"path": "/services", "file": "services.html", "h": "Services",
-            "title": f"Shopify and Odoo services and fixed fees | {NAME}",
+            "title": f"Shopify and Odoo services, fixed-fee packages | {NAME}",
             "desc": ("Fixed-fee Shopify store moves, Odoo back office setups for 5 to 15 users, Shopify and Odoo "
-                     "connections, systems roadmaps and prepaid support. Ranges and scope for each."),
+                     "connections, systems roadmaps and prepaid support. Scope and timeline for each."),
             "body": body, "schema": [faq_schema(SERVICE_FAQS)], "band": "Talk through which service fits"}
 
 
@@ -357,7 +356,7 @@ def erp_check():
         ("0", "Not yet", "Your setup is coping. Fix the one or two weak spots with Shopify's own tools or a single "
          "app, and run this check again in six months."),
         ("1", "Worth a roadmap", "Several jobs are straining your setup. Before you buy anything, map what an ERP would "
-         f"change and what it would cost. That is what a Systems Roadmap does, for {price('roadmap_min', 'roadmap_max')}."),
+         "change and what it would cost. That is what a Systems Roadmap does."),
         ("2", "Ready for an ERP", "Workarounds are likely costing more than one system would. The next step is a "
          "written scope: which apps, which data, and a go-live date outside your busy season."),
     ]
@@ -546,7 +545,7 @@ def page_service(p):
     ind_html = "".join(f'<a class="chip-link" href="/industries/{i["slug"]}">{e(i["short"])}</a>' for i in inds)
     others = "".join(svc_mini(o) for o in ORDER + ["support"] if o != slug)
     body = hero(x["h1"], e(p["summary"]), trail=trail, eyebrow=e(p["kind"]),
-                extra=facts([("Fixed fee", f'<span class="price">{price(*p["price"])}</span>'),
+                extra=facts([("Fee", "Fixed, quoted after a call"),
                              ("Typical timeline", e(p["timeline"]))], "hero-facts"),
                 cta=primary_cta("service"), art=svc_stack(slug, eager=True), cls=SVC_COLOR[slug]) + f"""
 <section class="sec" aria-labelledby="fit-h"><div class="wrap split">
@@ -566,7 +565,7 @@ def page_service(p):
 </div></section>"""
     return {"path": svc_href(slug), "file": f"services/{svc_href(slug).split('/')[-1]}.html", "h": p["name"],
             "title": f"{p['name']}: {p['kind'].lower()} | {NAME}",
-            "desc": f"{x['h1']}. {p['name']}: {price(*p['price'])}, typically {p['timeline']}. Fixed fee in writing.",
+            "desc": f"{x['h1']}. {p['name']}: typically {p['timeline']}, at a fixed fee quoted in writing after a free call.",
             "body": body, "schema": [faq_schema(faqs), service_schema(p, svc_href(slug)), crs],
             "band": f"Ask about a {p['name']}"}
 
@@ -574,8 +573,7 @@ def page_service(p):
 def page_support():
     s = C.SUPPORT
     trail, crs = crumbs([("Services", "/services"), (s["name"], svc_href("support"))])
-    opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><span class="price big">{price(k)}</span><em>{e(v)}</em></div>'
-                   for h, k, v in s["options"])
+    opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><em>{e(v)}</em></div>' for h, k, v in s["options"])
     faqs = [("What counts as a support request?",
              "Questions, small changes, report tweaks, adding users, connector troubleshooting and short training. "
              "Anything over 4 hours is quoted separately first."),
@@ -598,8 +596,8 @@ def page_support():
 <section class="sec tint"><div class="wrap"><h2>The projects before support</h2><div class="svc-minis four">{others}</div></div></section>"""
     return {"path": svc_href("support"), "file": "services/support-block.html", "h": s["name"],
             "title": f"Support block: prepaid hours | {NAME}",
-            "desc": (f"Prepaid support hours for Shopify and Odoo after go-live: 10 hours {price('support_10h')}, "
-                     f"20 hours {price('support_20h')}. Replies {C.PROMISES['support_reply']}."),
+            "desc": (f"Prepaid support hours for Shopify and Odoo after go-live, in blocks of 10 or 20 hours. "
+                     f"Replies {C.PROMISES['support_reply']}."),
             "body": body, "schema": [faq_schema(faqs), crs], "band": "Ask about support hours"}
 
 
@@ -750,14 +748,22 @@ def page_how():
 
 
 PRICING_FAQS = [
-    ("Why ranges and not one price?",
-     "Because the work depends on things we can only see in your setup, like product count and how clean your data "
-     "is. Your exact fee is fixed in writing before work starts, and it doesn't change unless the scope does."),
+    ("Why aren't prices listed on the site?",
+     "Two businesses on the same Shopify plan can need very different work. One has 40 products and clean data, "
+     "another has 4,000 variants and stock in three spreadsheets. A range wide enough to cover both doesn't help you "
+     "budget. After a free 30-minute call we quote your project as a fixed fee, in writing, within 3 business days."),
+    ("What makes a project cost more or less?",
+     "Product and variant count, how much order and customer history comes over, how many shops and warehouses there "
+     "are, how many staff need accounts, whether point of sale is in scope, which connector fits, and how clean "
+     "today's data is."),
+    ("Is there a smaller way to start?",
+     "Yes. If you aren't sure what you need, a Systems Roadmap is a short paid first step: a written plan and a fixed "
+     "quote for the next phase. The plan is yours to keep, whether or not we do the work."),
     ("Can we pay in parts?",
-     "Yes. Each project splits payment at milestones: the Systems Roadmap is paid at signing, a Store Move and a Back "
-     "Office Launch are paid 40%, 40% and 20%, and a Sync is paid half at signing and half at go-live."),
+     "Yes. Payments are tied to milestones. The Systems Roadmap is paid at signing. A Store Move and a Back Office "
+     "Launch are paid 40%, 40% and 20%, and a Sync is paid half at signing and half at go-live."),
     ("What if the scope changes mid-project?",
-     "We pause that part and send a written change order with the price and the effect on dates. Nothing extra "
+     "We pause that part and send a written change order with the cost and the effect on dates. Nothing extra "
      "starts until you sign it."),
     ("Is the first call free?",
      "Yes. The scoping call is 30 minutes at no charge. You leave with a straight answer on whether we can help."),
@@ -775,43 +781,50 @@ def page_pricing():
 <div class="pr-card {SVC_COLOR[s]}">
   <span class="ic-block">{spot(SVC_SPOT[s])}</span>
   <h3><a href="{svc_href(s)}">{e(PKG[s]['name'])}</a></h3>
-  <p class="price big">{price(*PKG[s]['price'])}</p>
+  <p>{e(SVC_EXTRA[s]['for'][0])}.</p>
   {facts([("Typical timeline", e(PKG[s]['timeline'])), ("Payment", e(PKG[s]['payment'].split('. ')[0].rstrip('.'))),
-          ("What moves the price", e(drivers[s]))], "stack")}
+          ("What moves the fee", e(drivers[s]))], "stack")}
+  {more_link(svc_href(s), "What's included")}
 </div>""" for s in ORDER)
     sup = C.SUPPORT
-    sup_opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><span class="price big">{price(k)}</span><em>{e(v)}</em></div>'
-                       for h, k, v in sup["options"])
-    body = hero("What a project costs, before you call us",
-                "Every project is a fixed fee written into a statement of work. Under each range you'll see what "
-                "moves a project toward the low or the high end.", eyebrow="Pricing", art=hero_art("pricing")) + f"""
+    sup_opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><em>{e(v)}</em></div>' for h, k, v in sup["options"])
+    steps = [f"A free {C.PROMISES['call_length']} call. We ask what you sell, where you sell it, which systems you run "
+             "and what isn't working.",
+             f"A written proposal {C.PROMISES['proposal_after_call']}: scope, exclusions, milestones, timeline and one "
+             "fixed fee.",
+             "You sign, pay the first milestone, and we start. Later payments follow milestones you can check.",
+             "If you ask for more mid-project, you get a change order to sign first. Otherwise the fee stays as quoted."]
+    body = hero("Packages and how we price them",
+                "Every project is a fixed fee written into a statement of work. We quote it after a free 30-minute "
+                "call, once we know what you sell and how your systems are set up. Below is what each package covers "
+                "and what moves the fee.", eyebrow="Pricing", cta=primary_cta("pricing"), art=hero_art("pricing")) + f"""
 <section class="sec"><div class="wrap">
-  <h2 class="vh">Fixed fees by service</h2>
+  <h2 class="vh">Packages</h2>
   <div class="pr-cards">{cards}</div>
-  <p class="small">{e(C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from")))}</p>
+  <p class="small">{e(C.LARGER_PROJECTS)}</p>
 </div></section>
-<section class="sec tint"><div class="wrap split">
+<section class="sec tint" aria-labelledby="quote-h"><div class="wrap split">
+  <div>{sec_head("How the quote works", "", "quote-h")}
+  <ol class="nums">{''.join(f'<li>{e(x)}</li>' for x in steps)}</ol>
+  <div class="cta-line">{primary_cta("pricing")}</div></div>
   <div><h2>{e(sup['name'])}</h2><p>{e(sup['summary'])}</p><div class="opt-cards">{sup_opts}</div>
   <p class="small">{e(sup['terms'])}</p></div>
-  <div><h2>Software you pay for separately</h2>
-  <p>Your Shopify plan and apps, your Odoo subscription and any Odoo.sh hosting, connector licenses, card processing
-  and hardware are billed to you by each vendor. None of it is part of our fee, and every item is listed in your
-  proposal.</p>
-  <p>{more_link(svc_href("store-move") + "#plan-picker", "Which Shopify plan fits")}</p>
-  <p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p>
-  <p class="small">{e(C.SALES_TAX_LINE)}</p></div>
 </div></section>
 <section class="sec"><div class="wrap split">
   <div><h2>Pricing questions</h2>{qa_list(PRICING_FAQS)}</div>
-  <div><h2>Choosing between services</h2>
-  <p>Start with the free 30-minute scoping call. If the answer isn't clear by the end of it, a Systems Roadmap
-  gives you a written plan and a fixed quote, and you keep the plan either way.</p>
-  <p>{more_link(svc_href("systems-roadmap") + "#readiness", "Take the ERP readiness check")}</p></div>
+  <div><h2>Software you pay for separately</h2>
+  <p>Your Shopify plan and apps, your Odoo subscription and any Odoo.sh hosting, connector licenses, card processing
+  and hardware are billed to you by each vendor at their published prices. None of it is part of our fee, and every
+  item is listed in your proposal.</p>
+  <p>{more_link("/guides/odoo-standard-vs-custom-plan", "What Odoo's plans cost")}</p>
+  <p>{more_link(svc_href("store-move") + "#plan-picker", "Which Shopify plan fits")}</p>
+  <p class="small">{e(C.REFERRAL_DISCLOSURE.format(name=NAME))}</p>
+  <p class="small">{e(C.SALES_TAX_LINE)}</p></div>
 </div></section>"""
     return {"path": "/pricing", "file": "pricing.html", "h": "Pricing",
-            "title": f"Pricing for Shopify and Odoo projects | {NAME}",
-            "desc": ("Fixed-fee ranges for a Systems Roadmap, a Shopify store move, an Odoo setup and a Shopify to Odoo "
-                     "sync. Plus prepaid support hours and what decides your fee."),
+            "title": f"Shopify and Odoo project pricing and packages | {NAME}",
+            "desc": ("Fixed-fee packages for a roadmap, a Shopify store move, an Odoo setup and a sync. What moves the "
+                     "fee, and how you get a written quote after a free call."),
             "body": body, "schema": [faq_schema(PRICING_FAQS)]}
 
 

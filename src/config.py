@@ -66,6 +66,8 @@ PROMISES = {
 # then 05's math, then this file, in one PR.
 # ---------------------------------------------------------------------------
 
+# Internal fee ranges for proposals. Since Nov 13, 2026 (Vee) the site shows no prices of ours: packages, what moves
+# the fee, and a fixed quote after a free call. Nothing on the site reads these.
 PRICES = {
     "roadmap_min": 1500, "roadmap_max": 3500,
     "store_move_min": 2500, "store_move_max": 10000,
@@ -196,8 +198,7 @@ SUPPORT = {
 }
 
 LARGER_PROJECTS = (
-    "Manufacturing, several companies, QuickBooks history, or more than 15 users: "
-    "from {larger_odoo_from}, quoted after a Systems Roadmap."
+    "Manufacturing, several companies, QuickBooks history, or more than 15 users: quoted after a Systems Roadmap."
 )
 
 # ---------------------------------------------------------------------------
