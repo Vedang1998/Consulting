@@ -32,7 +32,7 @@ def n(v):
 
 
 def T(x, y, s, size=14, weight=400, fill=INK, font="b", anchor="start", spacing=None, extra=""):
-    """Text. font: h = Archivo, b = IBM Plex Sans, m = IBM Plex Mono."""
+    """Text. font: h = Archivo, b = IBM Plex Sans, m = IBM Plex Sans with tabular figures."""
     ls = f' letter-spacing="{spacing}"' if spacing is not None else ""
     a = f' text-anchor="{anchor}"' if anchor != "start" else ""
     return (f'<text class="a{font}" x="{n(x)}" y="{n(y)}" font-size="{size}" font-weight="{weight}" fill="{fill}"{a}{ls}'

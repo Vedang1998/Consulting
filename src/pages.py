@@ -166,9 +166,6 @@ def hero(h1, lead, *, eyebrow="", trail="", art="", cta="", extra="", cls=""):
 
 def page_home():
     cta = primary_cta("hero") + more_link("/pricing", "See the packages")
-    assure = "".join(f"<li>{icon(i)}<span>{e(t)}</span></li>" for i, t in [
-        ("file-check-2", "A fixed fee, agreed in writing"), ("key-round", "Your accounts stay in your name"),
-        ("clock", f"{C.TIMEZONE_LABEL} business hours")])
     shop_clip = next((k for k in C.CLIPS if C.CLIPS[k][0] == "shopify"), None)
     pair = [shop_clip, "sale"] if shop_clip else ["sale", "locations"]
     gap = [("Storefront agencies", "theme", "Build the theme, the apps and the checkout. Their work usually ends once the "
@@ -198,10 +195,6 @@ def page_home():
               "and our access removed in writing.")]
     step_html = "".join(f'<li><span class="ic-block">{spot(i)}</span><span><b>{e(h)}</b>{e(t)}</span></li>'
                         for i, h, t in steps)
-    quote = [f"A free {C.PROMISES['call_length']} call about what you sell, where, and what isn't working.",
-             f"A written proposal with a fixed fee {C.PROMISES['proposal_after_call']}.",
-             "Payments tied to milestones, with the last one at go-live.",
-             "The fee only changes if you sign a change order for extra work."]
     fit_yes = ["US product businesses with roughly 5 to 50 staff",
                "Selling online, in your own shops, to wholesale accounts, or all three",
                "Running Shopify, or ready to move to it, with stock that has outgrown spreadsheets"]
@@ -212,12 +205,11 @@ def page_home():
     body = f"""
 <section class="hero home"><div class="wrap hero-grid">
   <div class="hero-copy">
-    <h1 class="display">{hl("Shopify and Odoo, planned, set up and connected for product businesses")}</h1>
+    <h1 class="display">{hl("Shopify and Odoo consulting for retailers and wholesalers")}</h1>
     <p class="lead">We decide which systems you need, move your store, set up the back office and connect the two, so
     orders, stock and the books agree. Every project has a written scope and a fixed fee, quoted after a
     free call.</p>
     <div class="cta-line">{cta}</div>
-    <ul class="assure">{assure}</ul>
   </div>
   <div class="hero-art deco-host">{deco_pair("home")}{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
 </div></section>
@@ -232,7 +224,7 @@ def page_home():
 
 <section class="sec tint" aria-labelledby="prob-h"><div class="wrap">
   {sec_head("Four problems we're asked to fix", "Each one maps to a fixed-fee package with a typical timeline. "
-            "We set the fee in writing after a free call.", "prob-h", mark="asked to fix")}
+            "We set the fee in writing after a free call.", "prob-h")}
   <div class="probs">{probs}</div>
   <p class="after-grid">After go-live, a <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a> gives you prepaid hours
   for questions and small changes.</p>
@@ -263,14 +255,17 @@ def page_home():
 
 <section class="sec tint" aria-labelledby="price-h"><div class="wrap split">
   <div>
-    {sec_head("How you get a price", "Every project is a fixed fee in a signed statement of work. Software is "
-              "billed to you by each vendor.", "price-h")}
-    <ol class="nums">{''.join(f'<li>{e(x)}</li>' for x in quote)}</ol>
-    <p>{more_link("/pricing", "See the packages")}</p>
+    {sec_head("How you get a price", "A fixed fee, written into a statement of work before anything starts.",
+              "price-h")}
+    <p>We set the fee after the scoping call, once we know your products, locations, history and apps, because two stores on the same plan can differ
+    several times over in the work they need.</p>
+    <p>You pay in milestones, with the last payment at go-live. The fee only moves if you ask for more and sign a
+    change order for it. Shopify, Odoo and app vendors bill you directly.</p>
+    <p>{more_link("/pricing", "How pricing works")}</p>
   </div>
   <div class="fit">
-    <h3>A good fit</h3>{ticks([e(x) for x in fit_yes], "yes")}
-    <h3>Not a fit</h3>{ticks([e(x) for x in fit_no], "no")}
+    <h3>Who we work with</h3>{ticks([e(x) for x in fit_yes], "yes")}
+    <h3>What we don't take on</h3>{ticks([e(x) for x in fit_no], "no")}
   </div>
 </div></section>
 
@@ -636,10 +631,10 @@ def page_industry(x):
         rows.append(f"""
 <article class="pr-row{' flip' if n % 2 == 0 else ''}{' no-media' if not m else ''}">
   <div class="pr-copy">
-    <span class="pr-n">{n:02d}</span>
+    <span class="pr-n">Problem {n}</span>
     <h3>{e(title)}</h3>
-    <p class="pr-cost"><b>What it costs you.</b> {e(cost)}</p>
-    <p class="pr-fix"><b>How it gets fixed.</b> {e(fix)}</p>
+    <p class="pr-cost">{e(cost)}</p>
+    <p class="pr-fix">{e(fix)}</p>
   </div>
   {f'<div class="pr-media">{m}</div>' if m else ''}
 </article>""")
@@ -782,7 +777,7 @@ def page_pricing():
   <span class="ic-block">{spot(SVC_SPOT[s])}</span>
   <h3><a href="{svc_href(s)}">{e(PKG[s]['name'])}</a></h3>
   <p>{e(SVC_EXTRA[s]['for'][0])}.</p>
-  {facts([("Typical timeline", e(PKG[s]['timeline'])), ("Payment", e(PKG[s]['payment'].split('. ')[0].rstrip('.'))),
+  {facts([("You end with", e(SVC_EXTRA[s]['after'][0])), ("Typical timeline", e(PKG[s]['timeline'])), ("Payment", e(PKG[s]['payment'].split('. ')[0].rstrip('.'))),
           ("What moves the fee", e(drivers[s]))], "stack")}
   {more_link(svc_href(s), "What's included")}
 </div>""" for s in ORDER)
@@ -822,7 +817,7 @@ def page_pricing():
   <p class="small">{e(C.SALES_TAX_LINE)}</p></div>
 </div></section>"""
     return {"path": "/pricing", "file": "pricing.html", "h": "Pricing",
-            "title": f"Shopify and Odoo project pricing and packages | {NAME}",
+            "title": f"How pricing works for Shopify and Odoo projects | {NAME}",
             "desc": ("Fixed-fee packages for a roadmap, a Shopify store move, an Odoo setup and a sync. What moves the "
                      "fee, and how you get a written quote after a free call."),
             "body": body, "schema": [faq_schema(PRICING_FAQS)]}
@@ -834,16 +829,15 @@ def page_about():
         NOTES.append("ABOUT_BIO blank: the About page shows only the business facts")
     photo = (f'<img class="portrait" src="/{e(C.PHOTO)}" alt="{e(C.FOUNDER)}" width="320" height="400">'
              if C.PHOTO else "")
-    values = [("file-check-2", "Written before it is done",
-               "Scope, price, field maps, test cases and handover are all on paper you can check."),
-              ("key-round", "Your accounts, your data",
-               "Everything stays in your name and on your billing. We leave with nothing."),
-              ("person", "One contact from call to handover",
-               f"{C.FOUNDER} scopes the project, writes the statement of work and runs it."),
-              ("clock", "US business hours",
-               f"{C.PROMISES['business_days']}, {C.TIMEZONE_LABEL} time, with a reply {C.PROMISES['first_reply']}.")]
-    vals = "".join(f'<li><span class="ic-block">{spot(ic)}</span><b>{e(h)}</b><span>{e(t)}</span></li>'
-                   for ic, h, t in values)
+    holds = "".join(f"<p><b>{e(h)}</b> {e(t)}</p>" for h, t in [
+        ("It's written down.", "The scope, the fee, the field maps, the test cases and the handover notes are "
+         "documents you keep and can check against the work."),
+        ("Your accounts stay yours.", "Shopify, Odoo and every app are opened in your name and billed to your card. "
+         "We work from staff logins and remove them at handover, confirmed in writing."),
+        ("Changes are tested in a copy first.", "Nothing touches your live store or database until your team has "
+         "tried it against written test cases."),
+        ("You deal with one person.", f"{C.FOUNDER} scopes the project, writes the statement of work and runs it "
+         "through to handover.")])
     body = hero(f"About {NAME}",
                 f"{e(NAME)} is an ecommerce and ERP consultancy based in {e(C.STATE)}. We plan, set up and connect "
                 f"Shopify and Odoo for product businesses across the US, remotely, during {e(C.TIMEZONE_LABEL)} "
@@ -859,7 +853,7 @@ def page_about():
           ("Hours", f"{e(C.PROMISES['business_days'])}, {e(C.TIMEZONE_LABEL)} time"),
           ("Replies", e(C.PROMISES['first_reply']).capitalize()),
           ("Services", '<a href="/services">Five services, each with a written scope</a>')], "stack")}</div>
-  <ul class="values">{vals}</ul>
+  <div class="prose-s"><h2>What you can hold us to</h2>{holds}</div>
 </div></section>"""
     return {"path": "/about", "file": "about.html", "h": "About",
             "title": f"About {NAME}",

@@ -244,23 +244,16 @@ def secondary_contacts():
 def book_block(heading=None):
     """The booking card at the foot of most pages. The heading changes with the page."""
     h = heading or f"Talk it through on a {C.PROMISES['call_length']} call"
-    steps = [("Pick a time" if C.BOOKING_URL else "Get in touch",
-              "Tell us what you sell, where you sell it and what runs your stock and books today."),
-             (f"A {C.PROMISES['call_length']} video call",
-              "We go through your setup and timeline. If we are not the right fit, we say so."),
-             ("A written proposal",
-              f"A proposal or Roadmap quote reaches you {C.PROMISES['proposal_after_call']}.")]
-    lis = "".join(f'<li><span class="n">{i}</span><span><b>{e(a)}</b>{e(b)}</span></li>'
-                  for i, (a, b) in enumerate(steps, 1))
     sec = secondary_contacts()
     return f"""
 <!--reuse--><section class="book" aria-labelledby="book-h"><div class="wrap"><div class="book-card">
   <div class="book-copy">
     <h2 id="book-h">{e(h)}</h2>
-    <p>The call costs nothing. We reply {e(C.PROMISES['first_reply'])}, {e(C.PROMISES['business_days'])},
-    {e(C.TIMEZONE_LABEL)} time.</p>
-    <ol class="steps3">{lis}</ol>
+    <div>
+    <p>Tell us what you sell, where you sell it and what runs your stock and books today. The call costs nothing,
+    and if we aren't the right fit we'll say so. A written proposal follows {e(C.PROMISES['proposal_after_call'])}.</p>
     <div class="cta-line">{primary_cta("band")}{f'<p class="small">{sec}</p>' if sec else ''}</div>
+    </div>
   </div>
 </div></div></section><!--/reuse-->"""
 
@@ -310,7 +303,7 @@ def qa_list(faqs, more=None):
 
 # The yellow half highlight: one phrase per page heading, drawn in with the reveal (site.css .hl). Kept to the hero
 # heading and a few home section heads so it stays a signature, not decoration.
-HL = ["planned, set up and connected", "with fixed fees", "by industry", "how we price them", "from first call to handover",
+HL = ["retailers and wholesalers", "with fixed fees", "by industry", "how we price them", "from first call to handover",
       "scoping call", "running both", "real Shopify and Odoo screens", "working with us", "plain words", "intact",
       "a fixed quote", "a team of 5 to 15", "stay in step", "after go-live", "apparel and footwear", "wholesalers and distributors",
       "food and beverage", "health and beauty", "furniture and home goods", "doesn't exist"]
@@ -354,7 +347,7 @@ def facts(rows, cls=""):
 
 
 def ticks(items, cls=""):
-    return f'<ul class="ticks {cls}">' + "".join(f"<li>{icon('check')}<span>{x}</span></li>" for x in items) + "</ul>"
+    return f'<ul class="ticks {cls}">' + "".join(f"<li>{x}</li>" for x in items) + "</ul>"
 
 
 def more_link(href, text):
