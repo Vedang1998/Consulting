@@ -8,7 +8,7 @@ Workers Builds from this repository.
 
 | Path | What it holds |
 | --- | --- |
-| `src/config.py` | Every business fact: name, domain, contact, booking link, prices, promises, offer, profiles, and the screen recordings (`CLIPS`) and screenshots (`SCREENS`). Most changes happen here. `# CONFIRM` marks values Vee must supply. |
+| `src/config.py` | Every business fact: name, domain, contact, booking link, internal fee ranges (never shown on the site), promises, offer, profiles, and the screen recordings (`CLIPS`) and screenshots (`SCREENS`). Most changes happen here. `# CONFIRM` marks values Vee must supply. |
 | `src/build.py` | The build engine: page layout (header, nav, footer, booking block), site files (`_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`) and the output checks. |
 | `src/kit.py` | Shared helpers every page uses: text and Markdown helpers, old-URL remapping (`MOVED`), the call-to-action, the booking block, FAQ lists, schema, and the `clip()` and `shot()` media helpers. |
 | `src/pages.py` | Home, Services and each service page (with the tools built into them: ERP readiness check, Shopify plan picker, stock sync model), Industries, How we work, Pricing, About and Book. |
@@ -90,6 +90,9 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
   icon gets drawn in `spot.py` in the same style (ink outline, 48-unit grid, offset color block) and added to
   `SPOT_FOR`, so no list mixes the two sets.
   Hero art: real screens on the home and service pages, `art.py` diagrams elsewhere. No people illustrations (Vee, Nov 13).
+- No prices of ours anywhere on the site (Vee, Nov 13, 2026): packages, what moves the fee, and a fixed quote
+  after a free call. Vendor prices in guides are fine with their checked date. The build fails on a `[[price]]` token.
+- No eyebrow labels with dots and no uppercase tracked label text: both read as template or AI-made.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py and an entry in `MOVED` in kit.py, so old links in
   guide text point at the new page.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.

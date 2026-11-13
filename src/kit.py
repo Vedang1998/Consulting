@@ -72,8 +72,8 @@ def fill(text):
     text = text.replace("{NAME}", NAME)
 
     def rep(m):
-        a, _, b = m.group(1).partition("|")
-        return price(a, b or None)
+        ERRORS.append(f"price token [[{m.group(1)}]] in resource text: the site shows no prices of ours")
+        return ""
     return re.sub(r"\[\[([a-z0-9_|]+)\]\]", rep, text)
 
 
@@ -209,7 +209,8 @@ def svc_name(slug):
 
 
 def svc_price(slug):
-    return f"From {price('support_10h')}" if slug == "support" else price(*PKG[slug]["price"])
+    """Kept for old call sites: the site shows no prices of ours (Vee, Nov 13, 2026)."""
+    return "Fixed fee, quoted after a call"
 
 
 def svc_time(slug):
@@ -275,13 +276,10 @@ def faq_schema(faqs):
 
 
 def service_schema(p, path):
-    lo, hi = (C.PRICES[k] for k in (p["price"] if len(p["price"]) == 2 else (p["price"][0], p["price"][0])))
     url = SITE + path
     return {"@context": "https://schema.org", "@type": "Service", "@id": url + "#service",
             "name": p["name"], "serviceType": p["kind"], "description": p["summary"], "url": url,
-            "provider": {"@id": SITE + "/#org"}, "areaServed": {"@type": "Country", "name": "US"},
-            "offers": {"@type": "Offer", "url": url, "priceSpecification": {
-                "@type": "PriceSpecification", "priceCurrency": "USD", "minPrice": lo, "maxPrice": hi}}}
+            "provider": {"@id": SITE + "/#org"}, "areaServed": {"@type": "Country", "name": "US"}}
 
 
 def crumbs(items):
@@ -312,7 +310,7 @@ def qa_list(faqs, more=None):
 
 # The yellow half highlight: one phrase per page heading, drawn in with the reveal (site.css .hl). Kept to the hero
 # heading and a few home section heads so it stays a signature, not decoration.
-HL = ["planned, set up and connected", "with fixed fees", "by industry", "before you call us", "from first call to handover",
+HL = ["planned, set up and connected", "with fixed fees", "by industry", "how we price them", "from first call to handover",
       "scoping call", "running both", "real Shopify and Odoo screens", "working with us", "plain words", "intact",
       "a fixed quote", "a team of 5 to 15", "stay in step", "after go-live", "apparel and footwear", "wholesalers and distributors",
       "food and beverage", "health and beauty", "furniture and home goods", "doesn't exist"]

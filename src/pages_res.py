@@ -6,7 +6,7 @@ import re
 
 from kit import (C, moved, NAME, ERRORS, RELEASE, SITE, SVC_COLOR, SVC_SPOT, anchor, clip, clip_info, crumbs, e,  # noqa: F401
                  faq_schema, fill, first_sentence, icon, inline, md, nice_date, primary_cta, hero_art, qa_list,
-                 sec_head, spot, svc_href, svc_name, svc_price)
+                 sec_head, spot, svc_href, svc_name, svc_time)
 import content as R
 from pages import hero
 
@@ -80,7 +80,7 @@ def page_resources():
 
 def guide_side(g):
     svc = "".join(f'<a class="svc-mini {SVC_COLOR[s]}" href="{svc_href(s)}"><span class="ic-block">{spot(SVC_SPOT[s])}</span>'
-                  f'<span><b>{e(svc_name(s))}</b><em class="price">{svc_price(s)}</em></span>{icon("arrow-right")}</a>'
+                  f'<span><b>{e(svc_name(s))}</b><em>{e(svc_time(s))}</em></span>{icon("arrow-right")}</a>'
                   for s in g["services"])
     toc = "".join(f'<li><a href="#{anchor(h)}">{e(h)}</a></li>' for h in re.findall(r"^## (.+)$", g["body"], re.M))
     return f"""<!--reuse-->
@@ -249,7 +249,7 @@ def page_404():
 
 
 def legal_head(eyebrow, h1):
-    return (f'<section class="hero slim"><div class="wrap"><p class="eyebrow">{e(eyebrow)}</p><h1>{e(h1)}</h1>'
+    return (f'<section class="hero slim"><div class="wrap"><h1>{e(h1)}</h1>'
             f'<p class="small">{e(C.LEGAL_LINE)}.</p></div></section>')
 
 

@@ -405,9 +405,9 @@ def write_site_files(indexable):
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     svc = "\n".join(
-        f"- [{p['name']}]({SITE}{svc_href(p['slug'])}): {price(*p['price'])}, typically {p['timeline']}. "
+        f"- [{p['name']}]({SITE}{svc_href(p['slug'])}): typically {p['timeline']}, fixed fee quoted after a free call. "
         f"{p['summary']}" for p in C.PACKAGES)
-    sup = "; ".join(f"{h} {price(k)}, {v}" for h, k, v in C.SUPPORT["options"])
+    sup = "; ".join(f"{h}, {v}" for h, k, v in C.SUPPORT["options"])
     inds = "\n".join(f"- [{x['short']}]({SITE}/industries/{x['slug']}): " +
                      "; ".join(pr[0] for pr in x["problems"]) + "." for x in I.INDUSTRIES)
     contact = []
@@ -427,7 +427,7 @@ def write_site_files(indexable):
 ## Services
 {svc}
 - [Support block]({SITE}{svc_href('support')}): {sup}.
-- Larger Odoo projects: {C.LARGER_PROJECTS.format(larger_odoo_from=price("larger_odoo_from"))}
+- Larger Odoo projects: {C.LARGER_PROJECTS}
 
 ## Industries
 {inds}

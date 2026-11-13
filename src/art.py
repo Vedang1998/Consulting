@@ -12,7 +12,6 @@ it shows.
 import html
 import math
 
-import config as C
 import spot as S
 
 INK = "#0e1a2e"; MUTED = "#5b6577"; EDGE = "#dbe0e8"; TINT = "#f3f5f9"; WHITE = "#ffffff"
@@ -46,7 +45,7 @@ def lines(x, y, rows, size=14, lead=1.4, **kw):
 
 
 def mono(x, y, s, fill=MUTED, size=10, anchor="start", weight=500):
-    return T(x, y, s.upper(), size, weight, fill, "m", anchor, spacing=".9")
+    return T(x, y, s, size, weight, fill, "m", anchor)
 
 
 def R(x, y, w, h, rx=0, fill=WHITE, stroke=None, sw=1.5, extra=""):
@@ -64,7 +63,7 @@ def pill(x, y, label, fam, solid=False, anchor="start"):
     w = 14 + len(label) * 6.6
     x0 = x - w if anchor == "end" else x
     bg, fg = (bright, INK) if solid else (soft, deep)
-    return R(x0, y - 10, w, 20, 10, bg) + T(x0 + w / 2, y + 3.6, label.upper(), 9.5, 600, fg, "m", "middle", ".7")
+    return R(x0, y - 10, w, 20, 10, bg) + T(x0 + w / 2, y + 3.6, label, 10.5, 600, fg, "b", "middle")
 
 
 def icon(name, x, y, size=36, ink=INK):
@@ -438,47 +437,37 @@ def industries():
                     "price list and terms on every order.", b, "blue")
 
 
-PRICE_FAM = {"systems-roadmap": "lilac", "store-move": "coral", "odoo-launch": "mint", "connection": "blue"}
-
-
-def money(v):
-    return f"${v:,}"
-
-
 def pricing():
-    """Each service's fixed-fee range on one dollar scale, from config.PRICES."""
+    """What we look at on the call to set a fixed fee, for one sample business, and the proposal it leads to."""
     u = "pr"
-    top = 20000
-    x0, x1 = 28, 572
-
-    def X(v):
-        return x0 + (x1 - x0) * v / top
-    b = mono(28, 48, "Fixed fee ranges, US dollars", ON_DARK_MUTED)
-    for v in range(0, top + 1, 5000):
-        b += f'<path d="M{n(X(v))} 66 V420" stroke="{GRID}" stroke-width="1.2" stroke-dasharray="2 5"/>'
-        b += T(X(v), 446, "$0" if v == 0 else f"${v // 1000}K", 10, 500, ON_DARK_MUTED, "m",
-               "start" if v == 0 else "end" if v == top else "middle")
-    pk = {p["slug"]: p for p in C.PACKAGES}
-    rows = [(s, pk[s]["name"], C.PRICES[pk[s]["price"][0]], C.PRICES[pk[s]["price"][1]], pk[s]["timeline"])
-            for s in ("systems-roadmap", "store-move", "connection", "odoo-launch")]
-    y = 84
-    for slug, name, lo, hi, weeks in rows:
-        deep, bright, soft = FAM[PRICE_FAM[slug]]
-        b += T(28, y, name, 15, 700, ON_DARK, "h")
-        b += T(572, y, f"{money(lo)}–{money(hi)} · {weeks}", 12, 500, ON_DARK_MUTED, "m", "end")
-        b += R(x0, y + 14, x1 - x0, 12, 6, "#22324f") + R(X(lo), y + 14, X(hi) - X(lo), 12, 6, bright)
-        y += 66
-    sup = [C.PRICES[k] for _h, k, _v in C.SUPPORT["options"]]
-    hours = [h for h, _k, _v in C.SUPPORT["options"]]
-    deep, bright, soft = FAM["yellow"]
-    b += T(28, y, C.SUPPORT["name"], 15, 700, ON_DARK, "h")
-    b += T(572, y, " · ".join(f"{h} {money(v)}" for h, v in zip(hours, sup)), 12, 500, ON_DARK_MUTED, "m", "end")
-    b += R(x0, y + 14, x1 - x0, 12, 6, "#22324f")
-    for v in sup:
-        b += f'<circle cx="{n(X(v))}" cy="{n(y + 20)}" r="8" fill="{bright}" stroke="{CANVAS}" stroke-width="2.5"/>'
-    label = "Chart of fixed-fee ranges: " + "; ".join(f"{nm} {money(lo)} to {money(hi)}, {wk}" for _s, nm, lo, hi, wk in rows)
-    label += "; Support block " + " or ".join(f"{h} for {money(v)}" for h, v in zip(hours, sup)) + "."
-    return frame(u, label, b, "blue")
+    b = mono(28, 46, "What sets the fee, for one sample business", ON_DARK_MUTED)
+    lx, ly, lw, lh = 24, 62, 366, 392
+    b += card(u, lx, ly, lw, lh, 18)
+    factors = [("inventory", "Products and variants", "1,240 variants", 3, "lilac"),
+               ("back-office", "Where stock lives", "2 shops and 1 warehouse", 2, "mint"),
+               ("invoice", "History to move", "2 years of orders", 2, "coral"),
+               ("sync", "Connector", "Shopify and Odoo, both ways", 2, "blue"),
+               ("person", "Staff accounts", "8 people", 1, "yellow")]
+    for i, (ic, name, val, lvl, fam) in enumerate(factors):
+        y = ly + 22 + i * 74
+        if i:
+            b += R(lx + 18, y - 10, lw - 36, 1, 0, EDGE)
+        b += icon(ic, lx + 18, y + 6, 36)
+        b += T(lx + 66, y + 22, name, 14.5, 700, INK, "h") + T(lx + 66, y + 42, val, 13, 400, MUTED)
+        for k in range(3):
+            b += R(lx + 286 + k * 22, y + 20, 18, 10, 3, FAM[fam][1] if k < lvl else "#e3e7ee")
+    b += mono(lx + 286, ly + 16, "Effort", MUTED, 10)
+    b += arrow(f"M{lx + lw + 6} 258 C{lx + lw + 26} 258 {lx + lw + 22} 258 412 258", FAM["yellow"][1], uid=u)
+    px, py, pw, ph = 416, 150, 160, 216
+    b += card(u, px, py, pw, ph, 18) + icon("contract", px + 16, py + 16, 36)
+    b += mono(px + 16, py + 76, "Proposal") + T(px + 16, py + 104, "One fixed fee", 17, 800, INK, "h")
+    b += lines(px + 16, py + 128, ["In writing within", "3 business days"], 12.5, 1.35, fill=MUTED)
+    b += R(px + 16, py + 160, pw - 32, 1, 0, EDGE)
+    b += lines(px + 16, py + 182, ["Changes only with", "your signature"], 12.5, 1.35, fill=INK, weight=600)
+    return frame(u, "Diagram of what sets a fixed fee for one sample business: 1,240 product variants, two shops and a "
+                    "warehouse, two years of orders to move, a two-way Shopify and Odoo connector, and eight staff "
+                    "accounts. They lead to a proposal with one fixed fee, in writing within 3 business days, that "
+                    "changes only with your signature.", b, "yellow")
 
 
 # ---------------------------------------------------------------------------
@@ -569,7 +558,7 @@ HERO = {"apparel": apparel, "home-and-furniture": furniture, "food-and-beverage"
 
 
 # Diagrams whose records are sample data get the same "Sample data" note as the real screens and clips.
-SAMPLE = {"apparel", "home-and-furniture", "food-and-beverage", "health-and-beauty", "wholesale", "industries"}
+SAMPLE = {"apparel", "home-and-furniture", "food-and-beverage", "health-and-beauty", "wholesale", "industries", "pricing"}
 
 
 def hero_art(name):
