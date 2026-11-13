@@ -16,6 +16,9 @@
   "analytics_engine_datasets": [
     { "binding": "EVENTS", "dataset": "site_events" }
   ],
+  // Question form (/api/ask). Add once Email Routing is on for the domain and the inbox is verified (thread 10):
+  // "send_email": [{ "name": "ASK_MAIL", "destination_address": "CONFIRM inbox, same as config.ASK_INBOX" }],
+  // "vars": { "ASK_FROM": "CONFIRM form@<domain>", "ASK_TO": "CONFIRM inbox, same as config.ASK_INBOX" },
   "observability": { "enabled": false }
   // Custom domains (apex and www) are added in the dashboard once DOMAIN is set.
   // www to apex 301 is a dashboard Redirect Rule, not code.

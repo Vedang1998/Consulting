@@ -29,6 +29,11 @@ TAGLINE = "Shopify and Odoo set up as one system, in US business hours."  # 03 s
 # ---------------------------------------------------------------------------
 
 EMAIL = ""  # CONFIRM: domain inbox with MX, SPF, DKIM and DMARC set and tested (thread 10)
+# Ask-a-question form (research R-lead-capture 4.2). It posts to /api/ask on our own Worker, which emails the
+# message to this inbox through a Cloudflare Email Routing send_email binding (wrangler.jsonc, ASK_MAIL).
+# Blank: launch builds leave the form out; staging builds show it with sending switched off.
+ASK_INBOX = ""  # CONFIRM: the inbox Odoo CRM turns into leads (thread 10), verified in Email Routing
+ASK_SYSTEMS = ["Shopify", "Shopify POS", "Odoo", "QuickBooks", "Spreadsheets", "Something else"]
 BOOKING_URL = ""  # CONFIRM: the one scheduler that books into the CRM (thread 10/14). No stopgap form services.
 PHONE = ""  # CONFIRM: leave blank unless it rings Vee. A placeholder number must never ship.
 PHONE_DISPLAY = ""  # CONFIRM: how the number is written on the page, if PHONE is set

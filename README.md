@@ -93,6 +93,13 @@ variables are needed. The Analytics Engine dataset `site_events` is created on f
 - No prices of ours anywhere on the site (Vee, Nov 13, 2026): packages, what moves the fee, and a fixed quote
   after a free call. Vendor prices in guides are fine with their checked date. The build fails on a `[[price]]` token.
 - No eyebrow labels with dots and no uppercase tracked label text: both read as template or AI-made.
+- Also out as template tells: icon reassurance rows under buttons, check and cross badges on lists, filled number
+  circles, "01" badges, 1-2-3 step strips in the booking band, icon "values" grids, monospace labels. The build
+  fails if any `config.PRICES` value appears in a page or llms.txt (`check_fees`).
+- Question form (`kit.ask_form`, `/api/ask` in worker/index.js): name, work email, package, systems, question; no
+  phone. Honeypot plus a 3-second minimum. Launch builds leave it out until `ASK_INBOX` is set and the
+  `send_email` binding in wrangler.jsonc is filled in; staging shows it with sending off. Links use
+  `/book?for=<package>#ask` to preselect the package.
 - A renamed URL gets a 301 line in `REDIRECTS` in build.py and an entry in `MOVED` in kit.py, so old links in
   guide text point at the new page.
 - Work on a branch, open a PR, and nothing merges to `main` until Vee says "merge" in the thread.
