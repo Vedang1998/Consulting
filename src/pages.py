@@ -340,7 +340,7 @@ def page_services():
             "title": f"Shopify and Odoo services and fixed fees | {NAME}",
             "desc": ("Fixed-fee Shopify store moves, Odoo back office setups for 5 to 15 users, Shopify and Odoo "
                      "connections, systems roadmaps and prepaid support. Ranges and scope for each."),
-            "body": body, "schema": [faq_schema(SERVICE_FAQS)], "band": "Not sure which one fits? Ask on a call"}
+            "body": body, "schema": [faq_schema(SERVICE_FAQS)], "band": "Talk through which service fits"}
 
 
 def erp_check():

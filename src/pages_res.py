@@ -305,7 +305,7 @@ records are kept for as long as we need them for the work and for tax and legal 
 {contact}. We reply within 30 days.</p>
 </div>"""
     return {
-        "path": "/privacy", "file": "privacy.html",
+        "path": "/privacy", "file": "privacy.html", "no_band": True,
         "title": f"Privacy policy | {NAME}", "h": "Privacy policy",
         "desc": ("What this site records, the one first-party cookie it sets, how to turn the visit "
                  "counter off, and how we handle messages you send us."),
@@ -338,7 +338,7 @@ arising from use of the general information here.</p>
 <p>These terms are governed by the laws of the State of New York.</p>
 </div>"""
     return {
-        "path": "/terms", "file": "terms.html",
+        "path": "/terms", "file": "terms.html", "no_band": True,
         "title": f"Website terms of use | {NAME}", "h": "Website terms of use",
         "desc": ("Terms for using this website. Prices shown are typical ranges; projects are governed "
                  "by a signed services agreement and statement of work."),
