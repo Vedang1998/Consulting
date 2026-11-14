@@ -265,6 +265,8 @@ a.quiet:hover { color: var(--ink); }
 .sec-head h2 { margin-bottom: 14px; }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: start; }
 .split > div > h2 { font-size: clamp(1.45rem, 2.2vw, 1.85rem); }
+.split > div > * + h2 { margin-top: 44px; }
+.split > div > ol + .note-box, .split > div > ul + .note-box { margin-top: 20px; }
 .split > div > h3 { margin-top: 28px; }
 .split-art { min-width: 0; }
 .after-grid { margin: 32px 0 0; color: var(--muted); }

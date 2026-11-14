@@ -866,15 +866,15 @@ def page_about():
         NOTES.append("ABOUT_BIO blank: the About page shows only the business facts")
     photo = (f'<img class="portrait" src="/{e(C.PHOTO)}" alt="{e(C.FOUNDER)}" width="320" height="400">'
              if C.PHOTO else "")
-    holds = "".join(f"<p><b>{e(h)}</b> {e(t)}</p>" for h, t in [
-        ("It's written down.", "The scope, the fee, the field maps, the test cases and the handover notes are "
-         "documents you keep and can check against the work."),
-        ("Your accounts stay yours.", "Shopify, Odoo and every app are opened in your name and billed to your card. "
-         "We work from staff logins and remove them at handover, confirmed in writing."),
-        ("Changes are tested in a copy first.", "Nothing touches your live store or database until your team has "
-         "tried it against written test cases."),
-        ("You deal with one person.", f"{C.FOUNDER} scopes the project, writes the statement of work and runs it "
-         "through to handover.")])
+    holds = "".join(f"<p>{e(t)}</p>" for t in [
+        "The scope, the fee, the field maps, the test cases and the handover notes are all written down, and "
+        "they're yours to keep and check against the work.",
+        "Shopify, Odoo and every app are opened in your name and billed to your card. We work from staff logins "
+        "and remove them at handover, confirmed in writing.",
+        "Nothing touches your live store or database until your team has tried it in a copy against written "
+        "test cases.",
+        "If we aren't the right fit, we say so on the first call and tell you what kind of help would suit you "
+        "better."])
     body = hero(f"About {NAME}",
                 f"{e(NAME)} is an ecommerce and ERP consultancy based in {e(C.STATE)}. We plan, set up and connect "
                 f"Shopify and Odoo for product businesses across the US, remotely, during {e(C.TIMEZONE_LABEL)} "
