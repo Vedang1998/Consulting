@@ -238,9 +238,12 @@
     function pick(f) {
       var keep = SHOWS[f], shown = 0;
       btns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-filter") === f ? "true" : "false"); });
-      all(":scope > li[data-platform]", list).forEach(function (li) {
+      all("li[data-platform]", list).forEach(function (li) {
         var on = !keep || keep.indexOf(li.getAttribute("data-platform")) > -1;
         if (on) { li.removeAttribute("data-hide"); shown += 1; } else li.setAttribute("data-hide", "");
+      });
+      all("[data-group]", list).forEach(function (g) {
+        g.hidden = !g.querySelector("li[data-platform]:not([data-hide])");
       });
       none.textContent = shown ? "" : "Nothing in this list for that filter yet.";
     }

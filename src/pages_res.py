@@ -54,9 +54,22 @@ def chips(target):
             f'<span class="chips-l">Show</span>{btns}</div>')
 
 
+# Guides that start from a problem an owner describes, shown first on the hub.
+PROBLEM_GUIDES = {
+    "shopify-payouts-dont-match-bank", "shopify-stock-doesnt-match-shelf", "retail-and-wholesale-one-stock-count",
+    "stalled-odoo-project", "retyping-shopify-orders-into-quickbooks", "opening-a-second-location",
+    "landed-cost-and-shopify-margins", "shopify-overselling", "when-to-reorder-best-sellers",
+    "clean-product-data-before-moving", "wholesale-price-lists-shopify-or-odoo", "month-end-close-takes-too-long",
+}
+
+
 def page_resources():
     _, crs = crumbs([("Resources", "/resources")])
-    cards = "".join(guide_card(g) for g in guides_live())
+    live = guides_live()
+    groups = [("Problems owners bring us", [g for g in live if g["slug"] in PROBLEM_GUIDES]),
+              ("Choosing and planning", [g for g in live if g["slug"] not in PROBLEM_GUIDES])]
+    cards = "".join(f'<div class="g-group" data-group><h3>{e(h)}</h3><ul class="gcards">'
+                    f'{"".join(guide_card(g) for g in gs)}</ul></div>' for h, gs in groups if gs)
     n_faq = sum(len(x[5]) for x in R.FAQ_PAGES)
     n_clip = sum(1 for k in C.CLIPS if clip_info(k))
     doors = [("/videos", "videos", "Recordings", f"{n_clip} short recordings of real screens with sample data."),
@@ -70,7 +83,7 @@ def page_resources():
 <section class="sec" aria-labelledby="g-h"><div class="wrap">
   {sec_head("Guides", "", "g-h")}
   {chips("guides")}
-  <ul class="gcards" data-filter-list="guides">{cards}</ul>
+  <div class="g-groups" data-filter-list="guides">{cards}</div>
 </div></section>
 <section class="sec tint"><div class="wrap"><!--reuse--><div class="doors">{door_html}</div><!--/reuse--></div></section>"""
     return {"path": "/resources", "file": "resources.html", "h": "Resources",
