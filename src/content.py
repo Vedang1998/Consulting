@@ -1409,7 +1409,7 @@ Once the review is written, finishing usually means fixing configuration, removi
 
 ## When starting over costs less
 
-Starting fresh tends to win when the database is several versions old, when key behavior depends on custom code you don't have or nobody can explain, or when the data has been edited so often that no one trusts a single number. A new database on the current version, with the useful configuration copied across by hand, can come in under the cost of untangling the old one. The written review should price both paths so you can compare them.
+Starting fresh tends to win when the database is several versions old, when behavior you rely on depends on custom code you don't have or nobody can explain, or when the data has been edited so often that no one trusts a single number. A new database on the current version, with the useful configuration copied across by hand, can come in under the cost of untangling the old one. The written review should price both paths so you can compare them.
 """,
         "faqs": [
             ("Who owns the database if a contractor set it up?",
@@ -1917,7 +1917,7 @@ Keep the stack when you sell finished goods from one or two locations, buy from 
 
 ## When one system pays off
 
-Odoo tends to win when you sell wholesale and retail from the same stock, buy from many vendors with landed costs, run more than one warehouse or stockroom, or spend days each month matching the three apps. The move is a project, with data to clean and a cutover to plan. [Moving from QuickBooks to Odoo](/guides/quickbooks-to-odoo-data) lists what to collect before you start.
+Odoo is usually the better fit when you sell wholesale and retail from the same stock, buy from many vendors with landed costs, run more than one warehouse or stockroom, or spend days each month matching the three apps. The move is a project, with data to clean and a cutover to plan. [Moving from QuickBooks to Odoo](/guides/quickbooks-to-odoo-data) lists what to collect before you start.
 """,
         "faqs": [
             ("Can QuickBooks track inventory by itself?",
@@ -2021,7 +2021,7 @@ Start with whichever takes longest; for most stores that's payouts. Bringing pay
 
 ## When a back office changes the close
 
-When sales, stock, purchases and invoices are in one system, most of the matching happens as the work does. A delivery lowers stock and posts its cost, a receipt raises stock, a vendor bill is matched to the receipt, and a payout is reconciled against the orders it covers. Month-end becomes a review of exceptions rather than a week of assembly. That's the point where moving to a back office such as Odoo pays back its setup, and [Retyping Shopify orders into QuickBooks](/guides/retyping-shopify-orders-into-quickbooks) covers the cheaper steps to try first.
+When sales, stock, purchases and invoices are in one system, most of the matching happens as the work does. A delivery lowers stock and posts its cost, a receipt raises stock, a vendor bill is matched to the receipt, and a payout is reconciled against the orders it covers. Month-end becomes a review of the exceptions. If the fixes above still leave a close of several days, moving to a back office such as Odoo pays back its setup. [Retyping Shopify orders into QuickBooks](/guides/retyping-shopify-orders-into-quickbooks) covers the cheaper steps to try first.
 """,
         "faqs": [
             ("How long should month-end take for a small store?",
@@ -2070,7 +2070,7 @@ Shopify can calculate sales tax at checkout for the places you tell it you're re
 
 ## Plan for the second channel
 
-Most product businesses add a second way to sell within a few years: a market stall that becomes a shop, a stockist that becomes a wholesale account, or a marketplace. Each one means stock sold in two places. Shopify handles a shop and basic wholesale on its standard plans. When purchasing, wholesale accounts and accounting start to take more time than selling, that's the point to look at a back office, and [When you don't need an ERP yet](/guides/when-you-dont-need-an-erp) has the signs.
+Most product businesses add a second way to sell within a few years: a market stall that becomes a shop, a stockist that becomes a wholesale account, or a marketplace. Each one means stock sold in two places. Shopify handles a shop and basic wholesale on its standard plans. When purchasing, wholesale accounts and accounting start to take more time than selling, look at a back office. [When you don't need an ERP yet](/guides/when-you-dont-need-an-erp) has the signs.
 
 ## When to get help
 
