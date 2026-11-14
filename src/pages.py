@@ -311,13 +311,15 @@ def page_services():
     <h2><a href="{svc_href(s)}">{e(svc_name(s))}</a></h2>
     <p>{e(summary)}</p>
     {ticks([e(x) for x in fit]) if fit else ''}
-    {facts([("Fee", "Fixed, quoted after a call"), ("Typical timeline", e(svc_time(s)))])}
+    {facts([("Fee", "Fixed, quoted after a call"),
+            ("Hours" if s == "support" else "Typical timeline",
+             "10 or 20, used within 90 or 180 days" if s == "support" else e(svc_time(s)))])}
     {more_link(svc_href(s), "What's included")}
   </div>
 </article>""")
     body = hero("Ecommerce and ERP services with fixed fees",
-                "Five services, each with a written scope. The ranges are what most projects of each kind cost; your "
-                "exact fee comes from a scoping call or a Systems Roadmap and goes into your statement of work.",
+                "Five services, each with a written scope. The fee is fixed, set after a scoping call or a Systems "
+                "Roadmap, and written into your statement of work before anything starts.",
                 eyebrow="Services", cta=primary_cta("hero")) + f"""
 <section class="sec"><div class="wrap">{''.join(rows)}</div></section>
 <section class="sec tint" aria-labelledby="cmp-h"><div class="wrap">
@@ -713,7 +715,7 @@ STEPS = [
      "exclusions, milestones and price. Work starts when the deposit clears."),
     ("key-round", "Access, the safe way", "week 1",
      "We ask for named staff or collaborator accounts with only the permissions the work needs, with "
-     "two-factor sign-in. Never shared passwords, and never by email or chat."),
+     "two-factor sign-in. Passwords are never shared, and never sent by email or chat."),
     ("server", "Build in staging", "most of the project",
      "Configuration and data loads happen in a staging copy or trial database first, with two trial "
      "data loads checked against record counts and totals that you sign off."),
