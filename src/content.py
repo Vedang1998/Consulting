@@ -2121,6 +2121,16 @@ GLOSSARY = [
     ("Webhook", "A message one system sends another the moment something happens, such as a new order. Odoo's own "
      "Shopify connector uses scheduled runs instead.", "/guides/shopify-odoo-inventory-sync",
      "How stock moves between Shopify and Odoo"),
+    ("Lead time", "The days between placing an order with a supplier and having the stock on your shelf. Reorder "
+     "points are worked out from it.", "/guides/when-to-reorder-best-sellers", "Setting reorder points"),
+    ("Month-end close", "The work of making sales, stock, bills and the bank agree for one month, so the books can "
+     "be finished.", "/guides/month-end-close-takes-too-long", "Why month-end takes so long"),
+    ("Overselling", "Taking orders for stock you don't have, usually because two channels or two counts disagree.",
+     "/guides/shopify-overselling", "Where the extra orders come from"),
+    ("Pricelist", "In Odoo, a set of price rules given to a customer: fixed prices, discounts or surcharges, with "
+     "minimum quantities and dates.", "/guides/wholesale-price-lists-shopify-or-odoo", "Wholesale price lists"),
+    ("Safety stock", "Extra units held to cover a busy week or a late delivery, on top of what sells while an order "
+     "is on its way.", "/guides/when-to-reorder-best-sellers", "Setting reorder points"),
 ]
 
 # ERP readiness check: eight yes or no questions. A yes is a sign the current setup is straining.
