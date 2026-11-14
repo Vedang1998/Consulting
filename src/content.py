@@ -503,7 +503,7 @@ Some businesses do need their history in Odoo. A lender or auditor may want seve
              "https://www.odoo.com/documentation/20.0/applications/essentials/export_import_data.html", CHECKED),
         ],
         "services": ["odoo-launch"],
-        "related": ["clean-product-data-before-moving", "odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos"],
+        "related": ["odoo-vs-quickbooks-and-an-inventory-app", "clean-product-data-before-moving", "odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos"],
         "notes": ["QuickBooks help pages could not be opened from the build environment; the guide makes no "
                   "QuickBooks-specific claims beyond exporting lists and reports."],
     },
@@ -1541,7 +1541,7 @@ A store with a few dozen orders a week, finished goods, and a bookkeeper happy w
         ],
         "sources": [],
         "services": ["systems-roadmap", "odoo-launch"],
-        "related": ["quickbooks-to-odoo-data", "shopify-payouts-dont-match-bank", "when-you-dont-need-an-erp"],
+        "related": ["odoo-vs-quickbooks-and-an-inventory-app", "quickbooks-to-odoo-data", "shopify-payouts-dont-match-bank", "when-you-dont-need-an-erp"],
         "notes": ["No app names or QuickBooks prices; neither was checked on a live page."],
     },
     {
@@ -1871,6 +1871,70 @@ A few hundred products with consistent SKUs can be cleaned in-house over a week 
         "services": ["store-move", "systems-roadmap"],
         "related": ["quickbooks-to-odoo-data", "shopify-stock-doesnt-match-shelf", "odoo-implementation-timeline"],
         "notes": ["Practice-based. No vendor facts. US spelling."],
+    },
+    {
+        "slug": "odoo-vs-quickbooks-and-an-inventory-app",
+        "platform": "odoo",
+        "status": "draft",
+        "title": "Odoo or QuickBooks plus an inventory app, for a Shopify store",
+        "seo_title": "Odoo vs QuickBooks with an inventory app",
+        "desc": ("Comparing one back office with a stack of QuickBooks, an inventory app and Shopify. Where each "
+                 "number lives, what breaks between them, and the signs it's time to move."),
+        "checked": "2026-11-13",
+        "short": ("QuickBooks plus an inventory app works while stock is simple and one person owns the links between "
+                  "them. Odoo puts stock, purchasing, sales and accounting in one database, so there are fewer copies "
+                  "to keep in step. Move when the gaps between apps cost more than a setup project would."),
+        "body": """
+## Two ways to run the back office
+
+In the stack, Shopify takes orders, an inventory app holds stock and purchase orders, and QuickBooks keeps the books. Each tool is good at its job and you can swap one without touching the others. The price is that the same order, product and cost exist in three places, and connectors keep them in step.
+
+With one system, Shopify still takes orders and Odoo holds stock, purchasing, wholesale invoicing and accounting together. A product's cost, its stock and the journal entry for a sale come from the same record. You still need one connector, between Shopify and Odoo.
+
+## Where each number lives
+
+| Number | The stack | Odoo |
+| Stock on hand | Inventory app, copied to Shopify | Odoo, sent to Shopify |
+| Product cost | Inventory app, sometimes QuickBooks too | Odoo |
+| Purchase orders | Inventory app | Odoo |
+| Wholesale invoices | QuickBooks or the inventory app | Odoo |
+| Inventory value in the books | QuickBooks, from what the app sends | Odoo, from stock moves |
+
+Inventory value is where stacks most often drift. If the inventory app sends sales but not adjustments, or sends costs at a different moment than QuickBooks expects, the stock value on the balance sheet stops matching the stock in the building.
+
+## What breaks between apps
+
+- A connector stops quietly after a password change or an app update, and nobody notices for a week.
+- A product is renamed in one app and matched as a new item in another.
+- Returns are restocked in the inventory app but not credited in QuickBooks, or the other way round.
+- Month-end needs someone who understands all three tools and the links between them. When that person is away, the close waits.
+
+None of these is a reason to change on its own. Together, they're the work an owner usually means by "our systems don't talk to each other."
+
+## When QuickBooks plus an app is the right call
+
+Keep the stack when you sell finished goods from one or two locations, buy from a handful of vendors, and someone checks each month that stock value in QuickBooks matches the inventory app. It's cheaper to start, your bookkeeper probably knows QuickBooks already, and each piece can be replaced on its own.
+
+## When one system pays off
+
+Odoo tends to win when you sell wholesale and retail from the same stock, buy from many vendors with landed costs, run more than one warehouse or stockroom, or spend days each month matching the three apps. The move is a project, with data to clean and a cutover to plan. [Moving from QuickBooks to Odoo](/guides/quickbooks-to-odoo-data) lists what to collect before you start.
+""",
+        "faqs": [
+            ("Can QuickBooks track inventory by itself?",
+             "QuickBooks Online tracks quantities and cost on its higher plans, which suits a simple product list. "
+             "Stores with variants, several locations or purchase orders tied to sales usually add an inventory app."),
+            ("Is Odoo harder to learn than QuickBooks?",
+             "For the accounting alone, it's about the same. Odoo covers more ground, so staff learn the parts they "
+             "use: the warehouse learns receipts and deliveries, and the bookkeeper learns invoices and the "
+             "reconciliation screens."),
+            ("Can we keep QuickBooks for accounting and use Odoo only for inventory?",
+             "It's possible, but it brings back the same gap between stock value and the books. Most stores that "
+             "move stock to Odoo move accounting too, and keep QuickBooks read-only for past years."),
+        ],
+        "sources": [],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["retyping-shopify-orders-into-quickbooks", "quickbooks-to-odoo-data", "when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
+        "notes": ["Practice-based. QuickBooks Online inventory tracking on higher plans is from general knowledge; check intuit.com plan page before approval. No QuickBooks or app prices."],
     },
 ]
 
