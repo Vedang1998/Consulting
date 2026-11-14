@@ -656,7 +656,7 @@ Some changes are easier to make with the ERP already in place. Opening a warehou
             ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
         ],
         "services": ["systems-roadmap"],
-        "related": ["retyping-shopify-orders-into-quickbooks", "shopify-pos-vs-odoo-pos", "shopify-odoo-inventory-sync", "odoo-online-vs-odoo-sh"],
+        "related": ["starting-a-product-business-on-shopify", "retyping-shopify-orders-into-quickbooks", "shopify-pos-vs-odoo-pos", "shopify-odoo-inventory-sync", "odoo-online-vs-odoo-sh"],
         "notes": ["The six 'time' signs are judgment, not vendor facts. Vee should check they match what Vee sees "
                   "on calls."],
     },
@@ -2038,6 +2038,59 @@ When sales, stock, purchases and invoices are in one system, most of the matchin
         "services": ["systems-roadmap", "odoo-launch"],
         "related": ["shopify-payouts-dont-match-bank", "retyping-shopify-orders-into-quickbooks", "odoo-vs-quickbooks-and-an-inventory-app"],
         "notes": ["Practice-based. No vendor facts. Not tax or accounting advice; the bookkeeper FAQ points to their role."],
+    },
+    {
+        "slug": "starting-a-product-business-on-shopify",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Starting a product business on Shopify: decisions that are hard to undo later",
+        "seo_title": "New product business on Shopify: what to set up first",
+        "desc": ("The setup choices for a new Shopify store that cost the most to change later. SKUs, variants, "
+                 "store ownership, sales tax and how sales reach your books."),
+        "checked": "2026-11-13",
+        "short": ("Most early Shopify settings can be changed any time. A few can't, cheaply: how SKUs and variants "
+                  "are set up, whose name the store and accounts are in, and how sales reach your books. Get those "
+                  "right in the first week and the store can grow into wholesale, a shop or a back office without "
+                  "starting over."),
+        "body": """
+## What can wait
+
+Themes, colors, apps, discount codes and most store settings can be changed any afternoon without breaking anything. Don't spend the first weeks on them. A clean, standard theme and good product photos sell better than a custom design nobody has tested.
+
+## What's hard to change later
+
+1. SKUs. Give every variant a unique SKU from the first product, using a pattern you can extend. Every system you add later, from a stock app to an accounting connector, matches products on SKU. Renaming thousands of them later breaks order history and supplier codes.
+2. Variants. Put sizes and colors of one item under one product. Products split into many separate listings are hard to merge once they have sales and reviews.
+3. Ownership. Open the store, the domain, the payment account and every app in the business's name, with an owner login that belongs to you. Stores set up under a freelancer's or agency's account are a common source of trouble when that relationship ends.
+4. Units and costs. Record what each item costs you and how the supplier sells it, even if it's rough. Margins and reorder points are built from these later.
+
+## Tax and money from day one
+
+Shopify can calculate sales tax at checkout for the places you tell it you're registered, but deciding where you must register is a question for your accountant. Ask before launch, not after the first busy month. Decide too how sales will reach your books: most new stores bring in one entry per payout, with fees and refunds split out, rather than every order. [Shopify payouts don't match the bank deposit](/guides/shopify-payouts-dont-match-bank) explains why the deposit never equals the day's sales.
+
+## Plan for the second channel
+
+Most product businesses add a second way to sell within a few years: a market stall that becomes a shop, a stockist that becomes a wholesale account, or a marketplace. Each one means stock sold in two places. Shopify handles a shop and basic wholesale on its standard plans. When purchasing, wholesale accounts and accounting start to take more time than selling, that's the point to look at a back office, and [When you don't need an ERP yet](/guides/when-you-dont-need-an-erp) has the signs.
+
+## When to get help
+
+Most owners can set up a first Shopify store on their own. Help is worth it when you're moving an existing store with order history, when stock lives in more than one place from the start, or when you already know wholesale or a shop is coming within the year and want the setup to allow for it.
+""",
+        "faqs": [
+            ("Which Shopify plan should a new store start on?",
+             "Usually the smallest plan that covers your staff logins and channels. You can move up at any time, "
+             "and a higher plan rarely pays for itself through lower card rates alone in the first year."),
+            ("Do we need SKUs if we only have a few products?",
+             "Yes. A simple, unique SKU on every variant costs nothing now and saves a painful clean-up when you "
+             "add stock tracking, a supplier feed or an accounting connector."),
+            ("Should a new store use an accounting app or a full back office?",
+             "Start with an accounting app and summary entries for payouts. A back office makes sense once "
+             "purchasing, several locations or wholesale accounts take more time than the selling does."),
+        ],
+        "sources": [],
+        "services": ["store-move", "systems-roadmap"],
+        "related": ["clean-product-data-before-moving", "shopify-plan-for-pos-pro", "when-you-dont-need-an-erp"],
+        "notes": ["Practice-based. Tax answer defers to the client's accountant on purpose. No plan prices quoted."],
     },
 ]
 
