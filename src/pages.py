@@ -482,13 +482,13 @@ def sync_model():
   <ol class="sim-log" data-log aria-label="Sync log"><li><b>09:00:00</b>Connector running. Odoo holds the stock count.</li></ol>
 </div>
 <ul class="plain sim-rules">
-  <li><b>Sell 1 online.</b> Shopify takes the order. The connector brings it into Odoo, Odoo lowers its count, and the
-  new count goes back to Shopify.</li>
-  <li><b>Sell 1 at the register.</b> The same path. To Odoo, a register sale is one more order.</li>
-  <li><b>Receive 10 in Odoo.</b> Stock arrives on a purchase order. Shopify can sell those units once the connector
-  sends the new count.</li>
-  <li><b>Connector off.</b> Orders pile up in Shopify and received stock stays invisible to it, so both counts drift.
-  Switching it back on catches up the queue.</li>
+  <li>An online sale reaches Odoo through the connector. Odoo lowers its count and sends the new number back to
+  Shopify.</li>
+  <li>A register sale takes the same path, because to Odoo it is one more order.</li>
+  <li>Stock received on a purchase order in Odoo becomes sellable in Shopify once the connector sends the new
+  count.</li>
+  <li>With the connector off, orders pile up in Shopify and received stock stays invisible to it, so the two counts
+  drift. Switching it back on works through the queue.</li>
 </ul>
 <p class="small">A simplified model with one product and sample numbers. Real connectors differ in what they sync
 and how often; we set and test those rules for your plan.</p>"""
@@ -685,8 +685,8 @@ def page_industry(x):
                 art=hero_art(x["slug"]), cls=x["color"]) + f"""
 <section class="sec" aria-labelledby="pr-h"><div class="wrap">
   {sec_head(f"What costs {x['short'].lower()} businesses the most", "The problems owners in this trade raise most "
-            "often, what each one costs, and how it gets fixed. Recordings are from our own demo database with "
-            "sample data.", "pr-h")}
+            "often, what each one costs, and how it gets fixed. Most recordings come from our own demo database, "
+            "a furniture store with sample data, so the steps match your trade even where the products don't.", "pr-h")}
   <div class="pr-rows">{''.join(rows)}</div>
 </div></section>
 <section class="sec tint" id="start" aria-labelledby="st-h"><div class="wrap split">
