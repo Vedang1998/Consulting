@@ -702,6 +702,12 @@ li[data-hide] { display: none; }
   .cta-bar.show { transform: none; }
   .cta-bar .btn { min-height: 44px; padding: 10px 16px; font-size: .94rem; }
 }
+@media (max-width: 560px) {
+  .fmap thead { display: none; }
+  .fmap tr { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 4px 10px; padding: 9px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+  .fmap td { display: contents; }
+  .fmap td::before { content: attr(data-l); color: var(--muted); font: 600 .66rem/1.9 var(--f-body); letter-spacing: .05em; text-transform: uppercase; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .js .reveal { opacity: 1; transform: none; }

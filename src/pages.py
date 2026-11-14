@@ -79,7 +79,7 @@ SVC_EXTRA = {
     },
     "store-move": {
         "h1": "Move your store to Shopify with products, customers, order history and redirects intact",
-        "for": ["You sell on WooCommerce, Wix, Square Online or BigCommerce and the plugins are holding you back",
+        "for": ["You sell on WooCommerce, Wix, Square Online or BigCommerce, and plugin updates or missing features cost you sales or staff time",
                 "You want Shopify POS in one or two stores alongside the online shop",
                 "Search rankings and old links have to survive the move"],
         "after": ["Products, customers and order history in Shopify, checked against counts you sign off",
@@ -136,8 +136,8 @@ PROBLEMS = [  # home: the four problems we're asked to fix, each tied to the ser
      "Orders are copied between systems by hand, stock counts drift apart and refunds miss the books."),
     ("odoo-launch", "Stock and purchasing live in spreadsheets",
      "Nobody trusts the count, reorders come from memory and vendor bills are typed in twice."),
-    ("store-move", "The store platform is holding you back",
-     "Plugins break on update, the registers don't match the website and every change needs a developer."),
+    ("store-move", "The store platform needs a developer for every change",
+     "Plugins break on update, and the registers don't match the website."),
     ("systems-roadmap", "Something has to change, but it isn't clear what",
      "Which systems, which connector, which plan and in what order, settled before money goes on software."),
 ]
