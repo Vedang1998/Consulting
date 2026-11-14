@@ -112,7 +112,7 @@ def page_guide(g):
                  f'launch build until they are approved.</span></p>')
     srcs = "".join(f'<li><a href="{e(u)}" rel="noopener">{e(t)}</a><span>checked {nice_date(d)}</span></li>'
                    for t, u, d in g["sources"])
-    related = "".join(guide_card(GUIDE_BY[s]) for s in g["related"] if GUIDE_BY[s] in guides_live())
+    related = "".join(guide_card(GUIDE_BY[s]) for s in [s for s in g["related"] if GUIDE_BY[s] in guides_live()][:3])
     faqs = [(q, fill(a)) for q, a in g["faqs"]]
     body_html = md(g["body"])
     if "<p>@tool</p>" in body_html:

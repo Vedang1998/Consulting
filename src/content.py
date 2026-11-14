@@ -351,7 +351,7 @@ If you take a handful of orders a day, keep stock in Shopify and use Odoo mainly
              "2026-11-06"),
         ],
         "services": ["connection"],
-        "related": ["odoo-online-vs-odoo-sh", "shopify-pos-vs-odoo-pos", "quickbooks-to-odoo-data"],
+        "related": ["shopify-vs-woocommerce-with-a-back-office", "odoo-online-vs-odoo-sh", "shopify-pos-vs-odoo-pos", "quickbooks-to-odoo-data"],
         "notes": [
             "Names six vendors with prices. R0 asks for a quick legal look before publishing a page that compares "
             "named firms; Vee decides.",
@@ -432,7 +432,7 @@ For a business with 5 to 15 users on Odoo's standard apps, Online is the lower-e
             ("Odoo.sh pricing", "https://www.odoo.sh/pricing", "2026-11-06"),
         ],
         "services": ["systems-roadmap"],
-        "related": ["shopify-connectors-odoo-online", "quickbooks-to-odoo-data", "shopify-pos-vs-odoo-pos"],
+        "related": ["stalled-odoo-project", "shopify-connectors-odoo-online", "quickbooks-to-odoo-data", "shopify-pos-vs-odoo-pos"],
         "notes": ["Odoo.sh dollar amounts could not be read on Nov 6; the guide gives none."],
     },
     {
@@ -503,7 +503,7 @@ Some businesses do need their history in Odoo. A lender or auditor may want seve
              "https://www.odoo.com/documentation/20.0/applications/essentials/export_import_data.html", CHECKED),
         ],
         "services": ["odoo-launch"],
-        "related": ["odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos"],
+        "related": ["clean-product-data-before-moving", "odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos"],
         "notes": ["QuickBooks help pages could not be opened from the build environment; the guide makes no "
                   "QuickBooks-specific claims beyond exporting lists and reports."],
     },
@@ -579,7 +579,7 @@ An Odoo business that sells mostly online may still be better off with Shopify P
             ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
         ],
         "services": ["store-move", "odoo-launch"],
-        "related": ["shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh", "quickbooks-to-odoo-data"],
+        "related": ["opening-a-second-location", "shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh", "quickbooks-to-odoo-data"],
         "notes": ["Offline behavior of both registers was not checked, so the guide doesn't compare it."],
     },    {
         "slug": "when-you-dont-need-an-erp",
@@ -656,7 +656,7 @@ Some changes are easier to make with the ERP already in place. Opening a warehou
             ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
         ],
         "services": ["systems-roadmap"],
-        "related": ["shopify-pos-vs-odoo-pos", "shopify-odoo-inventory-sync", "odoo-online-vs-odoo-sh"],
+        "related": ["retyping-shopify-orders-into-quickbooks", "shopify-pos-vs-odoo-pos", "shopify-odoo-inventory-sync", "odoo-online-vs-odoo-sh"],
         "notes": ["The six 'time' signs are judgment, not vendor facts. Vee should check they match what Vee sees "
                   "on calls."],
     },
@@ -745,7 +745,7 @@ A store with a few orders a day may not need a sync at all. Keep stock in Shopif
             ("Odoo pricing (US)", "https://www.odoo.com/pricing", CHECKED),
         ],
         "services": ["connection"],
-        "related": ["shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos", "odoo-online-vs-odoo-sh"],
+        "related": ["shopify-overselling", "shopify-connectors-odoo-online", "shopify-pos-vs-odoo-pos", "odoo-online-vs-odoo-sh"],
         "notes": ["Whether the order-pull interval can be shortened was not checked on a live Odoo.sh database; the "
                   "guide says 'if your Odoo setup allows it'."],
     },
@@ -922,7 +922,7 @@ If you already know you'll connect Shopify through an outside app, or you need a
              "2026-11-12"),
         ],
         "services": ["systems-roadmap", "odoo-launch"],
-        "related": ["odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "odoo-20-changes"],
+        "related": ["shopify-odoo-project-cost", "odoo-online-vs-odoo-sh", "shopify-connectors-odoo-online", "odoo-20-changes"],
         "notes": ["Odoo's pricing page also lists a Light User at $8.90. Its terms were not read, so the guide leaves "
                   "it out."],
     },
@@ -1005,7 +1005,7 @@ More than 10 selling locations, more than 15 staff accounts, or more than 3 B2B 
              "https://www.odoo.com/documentation/19.0/applications/sales/sales/shopify_connector/setup.html", CHECKED),
         ],
         "services": ["store-move"],
-        "related": ["shopify-pos-vs-odoo-pos", "when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
+        "related": ["opening-a-second-location", "shopify-pos-vs-odoo-pos", "when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
         "notes": ["The 'Can we change plans later' answer says a plan change keeps data. That's Shopify's normal "
                   "behavior but was not read on a Shopify page on Nov 11; re-check on help.shopify.com before "
                   "approving.",
@@ -1092,7 +1092,7 @@ If 6 weeks is more than you can spare, start smaller. Sales, inventory and purch
              "https://www.odoo.com/documentation/20.0/applications/essentials/export_import_data.html", "2026-11-12"),
         ],
         "services": ["odoo-launch"],
-        "related": ["quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan", "odoo-online-vs-odoo-sh"],
+        "related": ["stalled-odoo-project", "quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan", "odoo-online-vs-odoo-sh"],
         "notes": ["The 6 to 12 weeks matches the Back Office Launch timeline in config.py. The stage lengths and the "
                   "sample plan are our own planning, not a track record."],
     },    {
@@ -1248,7 +1248,7 @@ A store with a few payouts a week, one currency and only online sales can match 
         ],
         "sources": [],
         "services": ["connection", "odoo-launch"],
-        "related": ["quickbooks-to-odoo-data", "shopify-odoo-inventory-sync", "shopify-odoo-project-cost"],
+        "related": ["retyping-shopify-orders-into-quickbooks", "quickbooks-to-odoo-data", "shopify-odoo-inventory-sync", "shopify-odoo-project-cost"],
         "notes": ["Written from practice; no vendor numbers. Vee should check the Payouts screen wording in the demo "
                   "store before approving, and add a screenshot if it helps."],
     },
@@ -1312,7 +1312,7 @@ If counts drift because two systems both write stock, or because purchasing, kit
         ],
         "sources": [],
         "services": ["connection", "odoo-launch"],
-        "related": ["shopify-odoo-inventory-sync", "when-you-dont-need-an-erp", "shopify-pos-vs-odoo-pos"],
+        "related": ["shopify-overselling", "when-to-reorder-best-sellers", "shopify-odoo-inventory-sync", "when-you-dont-need-an-erp", "shopify-pos-vs-odoo-pos"],
         "notes": ["Practice-based. Check the inventory history wording against the demo store before approving."],
     },
     {
@@ -1367,7 +1367,7 @@ If wholesale is most of your volume, ships from a different building, or is sold
         ],
         "sources": [("Shopify pricing", "https://www.shopify.com/pricing", "2026-11-11")],
         "services": ["connection", "odoo-launch"],
-        "related": ["shopify-odoo-inventory-sync", "shopify-stock-doesnt-match-shelf", "shopify-plan-for-pos-pro"],
+        "related": ["shopify-overselling", "when-to-reorder-best-sellers", "shopify-odoo-inventory-sync", "shopify-stock-doesnt-match-shelf", "shopify-plan-for-pos-pro"],
         "notes": ["The draft order reserve behavior should be tried in the demo store before approval."],
     },
     {
@@ -1489,7 +1489,7 @@ If you only need one side, hire for that side. A store moving platforms with no 
         ],
         "sources": [("Odoo Success Packs", "https://www.odoo.com/pricing-packs", "2026-11-06")],
         "services": ["systems-roadmap", "connection"],
-        "related": ["shopify-odoo-project-cost", "stalled-odoo-project", "odoo-implementation-timeline"],
+        "related": ["shopify-vs-woocommerce-with-a-back-office", "shopify-odoo-project-cost", "stalled-odoo-project", "odoo-implementation-timeline"],
         "notes": ["No named agencies, partners or freelancers, per the competitor rule. The table is our summary of "
                   "typical scopes, not a survey."],
     },
@@ -1654,7 +1654,7 @@ Once you import several times a year or carry more than a few dozen products, co
         ],
         "sources": [],
         "services": ["systems-roadmap", "odoo-launch"],
-        "related": ["shopify-odoo-inventory-sync", "retyping-shopify-orders-into-quickbooks", "when-you-dont-need-an-erp"],
+        "related": ["when-to-reorder-best-sellers", "shopify-odoo-inventory-sync", "retyping-shopify-orders-into-quickbooks", "when-you-dont-need-an-erp"],
         "notes": ["Practice-based. Odoo 20 split options (equal, quantity, current cost, weight, volume) confirmed in the stock_landed_costs source on Nov 13, 2026."],
     },
     {
@@ -1760,6 +1760,117 @@ WooCommerce tends to win when the website is mostly content and the shop is a sm
         "services": ["store-move", "connection"],
         "related": ["shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh", "who-to-hire-for-shopify-and-odoo"],
         "notes": ["Practice-based. No WooCommerce or hosting prices; Shopify third-party payment fee wording should be checked on shopify.com before approval."],
+    },
+    {
+        "slug": "when-to-reorder-best-sellers",
+        "platform": "both",
+        "status": "draft",
+        "title": "Running out of best sellers: setting reorder points that hold up",
+        "seo_title": "When to reorder: reorder points for small retailers",
+        "desc": ("How to work out when to reorder each product from sales and supplier lead times, with sample "
+                 "numbers. Where a spreadsheet stops and reordering rules in a back office take over."),
+        "checked": "2026-11-13",
+        "short": ("Reorder when the stock left covers what you'll sell while the next order is on its way, plus a "
+                  "small cushion. That point comes from two numbers per product: daily sales and the supplier's "
+                  "lead time. Work it out for your best sellers first; they cause most of the lost sales."),
+        "body": """
+## Why best sellers run out first
+
+Most stores reorder by walking the shelf or scrolling the product list. That works for slow lines and fails for the fast ones, because by the time a gap is visible the next shipment is weeks away. The products that sell fastest are also the ones that go out of stock the longest, and they're usually the ones customers come for.
+
+## The two numbers you need
+
+For each product, you need average daily sales and the supplier's lead time, from the day you place the order to the day it's on your shelf. Use the last 8 to 12 weeks of sales, leaving out days the product was out of stock, since those show zero sales for the wrong reason. Ask suppliers for their usual lead time, then check it against your last few deliveries.
+
+## Working out the reorder point
+
+Sample numbers, for illustration only. A product sells 6 units a day and the supplier takes 14 days.
+
+| Item | Units |
+| Sold while the order is on its way (6 x 14) | 84 |
+| Cushion for a busy week or a late delivery | 30 |
+| Reorder point | 114 |
+
+When stock falls to 114, place the order. How much to order depends on cash, shelf space and the supplier's minimums; enough for four to eight weeks of sales is a common starting point. Revisit the cushion after a season. If you never touch it, it can be smaller. If you still run out, it's too small or the lead time is longer than the supplier says.
+
+## Keeping it in a spreadsheet
+
+A spreadsheet with sales, lead time and reorder point per product works for a few dozen lines. Export sales from Shopify each week, update the averages and flag anything below its reorder point. It breaks down when the export is skipped, when products have many variants, or when stock sits in more than one place.
+
+## When a back office should do it
+
+Once you carry hundreds of variants, buy from several suppliers or sell wholesale as well as retail, the reorder check belongs in the system that holds the stock. In Odoo, reordering rules hold a minimum and maximum per product and location. When forecast stock drops below the minimum, Odoo suggests or creates a purchase order up to the maximum, using the supplier and lead time on the product. The weekly export goes away, and the numbers move as sales do.
+""",
+        "faqs": [
+            ("How much safety stock should a small store keep?",
+             "Enough to cover a busy week or a late delivery on your best sellers, and very little on slow lines. "
+             "Start with a week of sales for the top products and adjust after a season."),
+            ("Should reorder points change with the seasons?",
+             "Yes, for products whose sales swing. Recalculate before each busy period from the same weeks last "
+             "year, and lower them again afterward so you don't carry extra stock into the quiet months."),
+            ("Can Shopify reorder stock automatically?",
+             "Shopify tracks stock and can warn you when it runs low through its reports and apps, but most stores "
+             "that want purchase orders raised from sales and lead times do it in a back office such as Odoo."),
+        ],
+        "sources": [],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["shopify-overselling", "shopify-stock-doesnt-match-shelf", "landed-cost-and-shopify-margins"],
+        "notes": ["Practice-based. Odoo 20 reordering rule fields (minimum, maximum, auto or manual trigger, lead days) confirmed in stock_orderpoint source Nov 13, 2026. Shopify low-stock FAQ answer kept general on purpose."],
+    },
+    {
+        "slug": "clean-product-data-before-moving",
+        "platform": "both",
+        "status": "draft",
+        "title": "Cleaning up SKUs and product data before you change systems",
+        "seo_title": "Clean up SKUs and product data before a migration",
+        "desc": ("What to fix in your product list before moving to Shopify or adding Odoo: SKUs, variants, "
+                 "barcodes, units and costs. The order to do it in, and what can wait."),
+        "checked": "2026-11-13",
+        "short": ("Every product needs one unique SKU, the right variants, a unit you buy and sell in, and a cost. "
+                  "Fix those before a move, in a copy of your product export, and leave descriptions and photos "
+                  "for later. Messy product data is the most common reason a new system's stock numbers are wrong "
+                  "from day one."),
+        "body": """
+## Why it matters before a move
+
+A new system trusts the product list you give it. Two products sharing a SKU, a variant created as a separate product, or a case of 12 entered as one unit will all import without complaint and then break counts, orders and costs for months. Cleaning up beforehand costs days. Cleaning up afterward means fixing sales, stock moves and invoices that already used the bad records.
+
+## What to fix, in order
+
+1. SKUs. One per variant, unique, and never reused for a different item. Pick a simple pattern and write it down. Leave old SKUs in a separate column so past orders can still be matched.
+2. Variants. Size and color of the same item should be variants of one product, not separate products. Separate products that are really variants split sales history and make reordering harder.
+3. Barcodes. Where you scan at a counter or in a warehouse, each variant needs its own barcode, and no two items can share one.
+4. Units. Decide the unit you count and sell in, and record how suppliers sell it, such as cases of 12. Mixing cases and singles in one count is a common reason stock never matches.
+5. Costs. A current cost for every item, ideally including freight and duty. See [Why Shopify margins read high](/guides/landed-cost-and-shopify-margins).
+6. Dead products. Archive anything you won't sell again. Moving it costs time and clutters every search.
+
+## How to do it without breaking the live store
+
+Work in an export, not the live store. Export products to a spreadsheet, fix the columns above, and keep the original export untouched next to it. Sort by SKU to find duplicates, and by product name to find variants entered as products. Check the cleaned file with whoever counts stock, since they know which items are really the same.
+
+## What can wait
+
+Descriptions, photos, tags and search wording affect how products sell, and they can be improved after the move. Stock counts should be taken close to the switch, and a full count just before go-live is better than a cleaned-up count from a month earlier.
+
+## When it's worth getting help
+
+A few hundred products with consistent SKUs can be cleaned in-house over a week or two. When there are thousands of variants, several sales channels with their own product lists, or SKUs that differ between the website, the shop and the supplier, the cleanup becomes part of the project. In that case it should be scoped and mapped before any data moves.
+""",
+        "faqs": [
+            ("Should we change our SKUs when we move systems?",
+             "Only if the current ones aren't unique or follow no pattern. If you do change them, keep the old SKU "
+             "in a separate field so past orders, supplier codes and reports can still be matched."),
+            ("Do variants need their own barcodes?",
+             "Yes, wherever you scan. Each size and color is a different item on the shelf, so each needs its own "
+             "barcode. Shared barcodes are one of the quickest ways to make counts drift."),
+            ("How long does a product data cleanup take?",
+             "For a few hundred products with fairly consistent data, about a week or two alongside normal work. "
+             "Thousands of variants across several channels can take longer and are best planned with the move."),
+        ],
+        "sources": [],
+        "services": ["store-move", "systems-roadmap"],
+        "related": ["quickbooks-to-odoo-data", "shopify-stock-doesnt-match-shelf", "odoo-implementation-timeline"],
+        "notes": ["Practice-based. No vendor facts. US spelling."],
     },
 ]
 
