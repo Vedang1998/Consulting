@@ -1597,6 +1597,170 @@ Shopify handles two shops well when you sell finished goods and reorder from a h
         "related": ["shopify-pos-vs-odoo-pos", "shopify-plan-for-pos-pro", "shopify-stock-doesnt-match-shelf"],
         "notes": ["Transfer 'in transit' wording should be checked in the demo store before approval."],
     },
+    {
+        "slug": "landed-cost-and-shopify-margins",
+        "platform": "both",
+        "status": "draft",
+        "title": "Why Shopify margins read high when freight and duty are left out",
+        "seo_title": "Shopify margins and landed cost: freight and duty",
+        "desc": ("How freight, duty and broker fees change what a product really costs you. A worked example with "
+                 "sample numbers, and where landed cost belongs once you import regularly."),
+        "checked": "2026-11-13",
+        "short": ("Shopify's profit figures use the cost per item you type in, which is usually the vendor's price. "
+                  "Freight, duty and brokerage sit on separate bills, so margins look better than they are. Add "
+                  "those charges to each shipment's cost, or keep cost in a back office that does it on receipt."),
+        "body": """
+## What the cost field leaves out
+
+Each Shopify variant has a cost per item field, and Shopify's margin and profit figures are built from it. Most stores fill it in once, from the vendor's price list, and never touch it again. The freight bill, the customs duty and the broker's fee arrive weeks later, get paid from the bank and land in the books as general expenses. The product never hears about them.
+
+For a store that buys locally, the gap is small. For one that imports by the container or the pallet, it can be the difference between a product that pays for itself and one that only looks like it does.
+
+## A worked example
+
+Sample numbers, for illustration only. A shipment of 400 units costs $6.00 each from the vendor, so $2,400. Freight is $480, duty is $240 and the customs broker charges $60.
+
+| Cost | Total | Per unit |
+| Vendor price | $2,400 | $6.00 |
+| Freight, duty and broker | $780 | $1.95 |
+| Landed cost | $3,180 | $7.95 |
+
+Sold at $19.00, the margin on the vendor price alone reads 68%. On the landed cost it's 58%. Ten points of margin are missing from every report, and the product's ranking against others can flip once every item carries its own shipping and duty.
+
+## Spreading the extra charges
+
+A shipment usually holds more than one product, so the extra charges have to be shared out. The usual ways are by quantity, by value, by weight or by volume. Value is a sensible default for duty, since duty is charged on value. Weight or volume suits freight, because a carton of light, bulky goods takes the same space whatever it's worth. Pick one rule for each kind of charge and use it every time, so costs are comparable from one shipment to the next.
+
+## Keeping it in Shopify
+
+With a few products and a few shipments a year, a spreadsheet works. List the shipment, split the charges, work out the landed cost per unit and type it into the cost per item field. When a new shipment arrives at a different cost, decide whether to overwrite the old figure or average the two, and do the same every time.
+
+The weak point is that it depends on someone remembering. A shipment that never gets entered leaves last year's cost on the product, and nothing in Shopify will flag it.
+
+## When the back office should hold the cost
+
+Once you import several times a year or carry more than a few dozen products, cost belongs in the system that receives the stock. Odoo can add freight, duty and other charges to a receipt and split them across the products in it, so each unit's cost includes what it took to reach your shelf. Your accounts then show the same cost your margins use. Shopify can still show the price customers pay, while the cost lives in Odoo with the stock.
+""",
+        "faqs": [
+            ("Does Shopify include shipping and duty in product cost?",
+             "No. Shopify uses the cost per item entered on each variant. Unless you add freight, duty and other "
+             "charges to that figure yourself, they aren't part of the margins Shopify shows."),
+            ("Should we average costs or update them with each shipment?",
+             "Either works if you pick one and stick to it. Averaging smooths out price changes; replacing the cost "
+             "with the newest shipment reacts faster when prices rise. Mixing the two makes reports hard to trust."),
+            ("What counts as landed cost?",
+             "Anything you pay to get the goods onto your shelf: the vendor's price, freight, insurance in transit, "
+             "duty, broker fees and any handling charges at the port or warehouse."),
+        ],
+        "sources": [],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["shopify-odoo-inventory-sync", "retyping-shopify-orders-into-quickbooks", "when-you-dont-need-an-erp"],
+        "notes": ["Practice-based. Odoo 20 split options (equal, quantity, current cost, weight, volume) confirmed in the stock_landed_costs source on Nov 13, 2026."],
+    },
+    {
+        "slug": "shopify-overselling",
+        "platform": "both",
+        "status": "draft",
+        "title": "Overselling on Shopify: where the extra orders come from",
+        "seo_title": "Overselling on Shopify: causes and how to stop it",
+        "desc": ("The settings and habits that let a Shopify store sell stock it doesn't have, checks you can run "
+                 "today, and when a buffer or a back office is the better fix."),
+        "checked": "2026-11-13",
+        "short": ("Most overselling comes from a few settings and habits: variants set to keep selling at zero, stock "
+                  "shared across channels that update late, counts typed over during a sale, and returns put back "
+                  "on the shelf before they're back in Shopify. Check each one before adding software."),
+        "body": """
+## Check the product settings first
+
+Open a product that oversold and look at the variant. Two settings matter. If quantity isn't tracked, Shopify has no count to stop at. If the variant is set to continue selling when out of stock, it will take orders past zero on purpose. Both are easy to switch on by accident during an import, and both are easy to miss on a store with hundreds of variants. Filter the product list for them before looking anywhere else.
+
+## Where else extra orders come from
+
+1. Several channels share one count. A marketplace, a wholesale portal or a second store that copies stock from Shopify only knows what it was last told. If it updates every 15 minutes, a busy quarter hour can sell the same units twice.
+2. Counts typed over during trading. Someone counts a shelf in the morning and enters the number at lunch, overwriting the sales made in between. Adjusting by the difference avoids this.
+3. Returns restocked on the shelf but not in Shopify, or the other way round.
+4. Bundles and kits. If a gift set and the single items draw on the same stock but are counted separately, either can sell what the other already sold.
+5. Locations set to fill online orders that don't actually hold the stock, such as a pop-up or a closed shop.
+
+## A buffer while you fix the cause
+
+Holding back a few units of fast sellers, so online shows a little less than the shelf holds, is a reasonable stopgap. It costs a few sales at the very end of a product's stock and saves the refunds and apologies. Treat it as temporary. A buffer that hides a sync problem will hide it until the next big sale.
+
+## When one stock record is the better fix
+
+When stock is sold in more than one place, overselling usually comes from more than one system each keeping its own count. The fix is a single record of stock that every channel reads from, updated as orders arrive. For some stores that's Shopify itself, with other channels connected to it. For stores that also sell wholesale, buy from many vendors or hold stock in a warehouse, the record usually moves to a back office such as Odoo, with Shopify sent what it can sell. [How stock moves between Shopify and Odoo](/guides/shopify-odoo-inventory-sync) covers which way each number travels.
+""",
+        "faqs": [
+            ("Why does Shopify let customers buy items that are out of stock?",
+             "Usually because the variant is set to continue selling when out of stock, or because quantity isn't "
+             "tracked for it. Both are per-variant settings and can be changed in bulk."),
+            ("Can a marketplace sync cause overselling?",
+             "Yes. Any channel that copies stock from Shopify on a schedule can sell units that have already gone "
+             "elsewhere. The longer the gap between updates, the bigger the risk during busy periods."),
+            ("Should we keep a safety buffer on every product?",
+             "Only on fast sellers, and only while you fix the cause. A buffer on everything ties up stock you could "
+             "sell and makes counts harder to check."),
+        ],
+        "sources": [],
+        "services": ["connection", "odoo-launch"],
+        "related": ["shopify-stock-doesnt-match-shelf", "shopify-odoo-inventory-sync", "retail-and-wholesale-one-stock-count"],
+        "notes": ["Practice-based. Shopify setting names (track quantity, continue selling when out of stock) should be checked in the demo store before approval."],
+    },
+    {
+        "slug": "shopify-vs-woocommerce-with-a-back-office",
+        "platform": "shopify",
+        "status": "draft",
+        "title": "Shopify or WooCommerce when you also need stock and accounting",
+        "seo_title": "Shopify vs WooCommerce with inventory and accounting",
+        "desc": ("How Shopify and WooCommerce compare once inventory and accounting sit in a back office. Who "
+                 "looks after what, and when WooCommerce is the better choice."),
+        "checked": "2026-11-13",
+        "short": ("Shopify is a hosted platform you rent; WooCommerce is free software you run on your own WordPress "
+                  "site. Once stock and accounting live in a back office, the bigger difference is upkeep: who keeps "
+                  "the store, the plugins and the connector working. Stores without a developer usually do better on "
+                  "Shopify."),
+        "body": """
+## Rented or run yourself
+
+Shopify hosts the store for a monthly fee. Updates, security fixes and checkout changes happen on Shopify's side, and you add features with apps. WooCommerce is a free plugin for WordPress. You choose the host, install the updates, keep backups and decide which extensions to trust. That freedom is real, and so is the work that comes with it.
+
+## What changes when a back office joins
+
+Once inventory, purchasing and accounting move to a system such as Odoo, the storefront's own stock and reporting features matter less. What matters more is the link between the two systems.
+
+- On Shopify, connectors use Shopify's published API, which changes on a published schedule. Connector vendors update for it, and you mostly don't see it.
+- On WooCommerce, the connector depends on your WordPress version, the WooCommerce version and every plugin that touches orders or products. An update to any of them can change what the connector sees. Someone has to test after updates.
+- Either way, the back office should hold the stock count and the storefront should be told what it can sell. [How stock moves between Shopify and Odoo](/guides/shopify-odoo-inventory-sync) explains the usual directions.
+
+## Who looks after it
+
+On Shopify, the person who runs the store can usually handle the store. Apps are installed from Shopify's app store and billed through Shopify. On WooCommerce, it pays to have a developer or a hosting company on call for updates, plugin conflicts and speed problems, especially in the weeks before a busy season. Count that time or that contract in the cost, because it's the part owners tend to leave out.
+
+## Money and checkout
+
+Shopify includes its own payment processing, and using another provider can add a fee on top. WooCommerce works with many payment providers through extensions, and you pay each one's rates. Compare card costs at your own sales volume rather than on headline rates, since the totals depend on your mix of online, in-person and wholesale orders.
+
+## When WooCommerce is the better choice
+
+WooCommerce tends to win when the website is mostly content and the shop is a smaller part of it, when you already have a WordPress developer you trust, or when checkout needs rules that Shopify won't allow and you're prepared to maintain the code. Stores in that position should stay put and make the connection to their back office solid. If you're moving from WooCommerce to Shopify, test orders, redirects and customer accounts before launch, and carry over the order history your accountant needs.
+""",
+        "faqs": [
+            ("Is WooCommerce cheaper than Shopify?",
+             "The plugin is free, but hosting, paid extensions, payments and developer time are not. For a store "
+             "without its own developer, the yearly total is often closer than it looks, so price the upkeep as "
+             "well as the software."),
+            ("Can WooCommerce connect to Odoo?",
+             "Through third-party connectors, yes. Check which Odoo hosting the connector needs, since Odoo Online "
+             "runs only Odoo's standard apps, and test it after every WordPress or WooCommerce update."),
+            ("Should we move from WooCommerce to Shopify before adding a back office?",
+             "Not always. If the WooCommerce store is stable and someone maintains it, connect it first. If it "
+             "breaks after updates or nobody owns it, moving first is usually cheaper than connecting twice."),
+        ],
+        "sources": [],
+        "services": ["store-move", "connection"],
+        "related": ["shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh", "who-to-hire-for-shopify-and-odoo"],
+        "notes": ["Practice-based. No WooCommerce or hosting prices; Shopify third-party payment fee wording should be checked on shopify.com before approval."],
+    },
 ]
 
 # ---------------------------------------------------------------------------
