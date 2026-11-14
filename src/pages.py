@@ -97,6 +97,8 @@ SVC_EXTRA = {
     },
     "odoo-launch": {
         "h1": "A back office for stock, purchasing, sales and accounting, set up for a team of 5 to 15",
+        "meta": ("Odoo set up as the back office for stock, purchasing, sales and accounting for a team of 5 to 15, "
+                 "next to your Shopify store. Fixed fee quoted after a free call."),
         "for": ["Stock lives in spreadsheets and nobody trusts the numbers",
                 "Purchasing is done from memory, and vendor bills are typed in by hand",
                 "You have outgrown QuickBooks for inventory and want one system for the back office"],
@@ -595,7 +597,7 @@ def page_service(p):
 </div></section>"""
     return {"path": svc_href(slug), "file": f"services/{svc_href(slug).split('/')[-1]}.html", "h": p["name"],
             "title": f"{p['name']}: {p['kind'].lower()} | {NAME}",
-            "desc": f"{x['h1']}. {p['name']}: typically {p['timeline']}, at a fixed fee quoted in writing after a free call.",
+            "desc": x.get("meta") or f"{x['h1']}. {p['name']}: {p['timeline']}, fixed fee quoted after a free call.",
             "body": body, "schema": [faq_schema(faqs), service_schema(p, svc_href(slug)), crs],
             "band": f"Ask about a {p['name']}"}
 
