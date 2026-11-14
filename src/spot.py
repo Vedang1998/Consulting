@@ -175,25 +175,6 @@ SPOT_FOR = {
     "package-check": "go-live", "shopping-cart": "cart", "users": "person", "landmark": "books",
 }
 
-SHAPES = {
-  "squiggle": '<path d="M4 40 q7-14 14 0 t14 0 t14 0 t14 0" fill="none" stroke="#ff7a59" stroke-width="5" stroke-linecap="round"/>',
-  "zigzag": '<path d="M5 44 l9-14 9 14 9-14 9 14 9-14 9 14" fill="none" stroke="#2f55d4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
-  "triangle": '<path d="M36 12 L58 52 H14 Z" fill="#0e1a2e"/><path d="M32 8 L54 48 H10 Z" fill="#ffc53d" stroke="#0e1a2e" stroke-width="2.5" stroke-linejoin="round"/>',
-  "dots": "".join(f'<circle cx="{10 + 11 * i}" cy="{10 + 11 * j}" r="2.6" fill="#a99bff"/>' for i in range(5) for j in range(5)),
-  "half-moon": '<path d="M12 44 a22 22 0 0 1 44 0 Z" fill="#0e1a2e" transform="translate(3 3)"/><path d="M10 44 a22 22 0 0 1 44 0 Z" fill="#3ecf9e" stroke="#0e1a2e" stroke-width="2.5" stroke-linejoin="round"/>',
-  "ring": '<circle cx="32" cy="32" r="19" fill="none" stroke="#ffc53d" stroke-width="9"/><circle cx="32" cy="32" r="24" fill="none" stroke="#0e1a2e" stroke-width="2"/>',
-  "confetti": ('<g stroke-width="5" stroke-linecap="round" fill="none"><path d="M10 14 l8 -6" stroke="#ff7a59"/><path d="M34 10 l3 9" stroke="#2f55d4"/>'
-               '<path d="M50 20 l8 2" stroke="#3ecf9e"/><path d="M16 38 l-2 9" stroke="#ffc53d"/><path d="M38 34 l8 6" stroke="#a99bff"/>'
-               '<path d="M26 54 l9 -2" stroke="#0e1a2e"/><path d="M52 50 l4 -7" stroke="#ff7a59"/></g>'),
-  "stripe-pill": ('<defs><clipPath id="pc"><rect x="6" y="20" width="52" height="24" rx="12"/></clipPath></defs>'
-                  '<rect x="9" y="23" width="52" height="24" rx="12" fill="#0e1a2e"/><rect x="6" y="20" width="52" height="24" rx="12" fill="#fff"/>'
-                  '<g clip-path="url(#pc)" stroke="#2f55d4" stroke-width="4">' + "".join(f'<path d="M{x} 48 L{x + 28} 16"/>' for x in range(-20, 60, 9)) + '</g>'
-                  '<rect x="6" y="20" width="52" height="24" rx="12" fill="none" stroke="#0e1a2e" stroke-width="2.5"/>'),
-  "plus": '<path d="M32 12 V52 M12 32 H52" stroke="#2f55d4" stroke-width="9" stroke-linecap="round"/>',
-  "blob": '<path d="M34 8 C48 8 58 20 54 34 C50 50 34 58 22 52 C8 46 6 30 12 20 C16 12 24 8 34 8 Z" fill="#eeebff" stroke="#0e1a2e" stroke-width="2.5"/>',
-}
-
-
 def icon(name, cls=""):
     """Inline a spot icon. Its color block follows the nearest --c, else the icon's own color."""
     col, label, fills, inks = ICONS[name]
@@ -201,11 +182,6 @@ def icon(name, cls=""):
     return (f'<svg class="{c}" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'
             f'<g class="sp-c" transform="translate(2.5 2.5)">{"".join(fills)}</g>'
             f'<g fill="none" stroke="{INK}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">{"".join(inks)}</g></svg>')
-
-
-def shape(name, cls=""):
-    """Inline a Memphis shape (decoration only)."""
-    return f'<svg class="{('mshape ' + cls).strip()}" viewBox="0 0 64 64" aria-hidden="true" focusable="false">{SHAPES[name]}</svg>'
 
 
 # Brand shapes for the navy heroes: flat brand colors, no outline, used two at a time behind the corners of the hero

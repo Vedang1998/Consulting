@@ -337,8 +337,8 @@ def page_terms():
 {legal_head("Terms", "Website terms of use")}
 <div class="wrap prose legal">
 <h2>Information on this site</h2>
-<p>The pages on this site describe our services in general terms. Price ranges and timelines are typical
-figures, not a quote or an offer. A project is agreed only through a signed services agreement and a
+<p>The pages on this site describe our services in general terms. Timelines are typical figures, and
+nothing on the site is a quote or an offer. A project is agreed only through a signed services agreement and a
 signed statement of work, and those documents govern the work.</p>
 <p>Guides and articles are general information about Shopify and Odoo, checked on the date shown. They
 are not legal, tax or accounting advice; settings that affect tax or accounts should be confirmed with
