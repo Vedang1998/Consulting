@@ -279,7 +279,8 @@ a.quiet:hover { color: var(--ink); }
 .ic-block { display: block; flex: none; width: 52px; height: 52px; }
 
 /* ---- Cards (one family: white, ink outline, offset shadow) ---------------------------------- */
-.prob, .ind-tile, .gcard, .door, .svc-mini, .pr-card, .ind-card, .opt-card, .gap-col,   background: var(--surface); border: 1px solid var(--edge); border-radius: var(--r); box-shadow: var(--pop);
+.prob, .ind-tile, .gcard, .door, .svc-mini, .pr-card, .ind-card, .opt-card, .gap-col {
+  background: var(--surface); border: 1px solid var(--edge); border-radius: var(--r); box-shadow: var(--pop);
 }
 a.prob, a.ind-tile, a.gcard, a.door, a.svc-mini, a.ind-card { color: var(--ink); text-decoration: none; transition: transform .18s var(--ease), box-shadow .18s var(--ease); }
 a.prob:hover, a.ind-tile:hover, a.gcard:hover, a.door:hover, a.svc-mini:hover, a.ind-card:hover { color: var(--ink); transform: translateY(-2px); box-shadow: var(--pop-lg); border-color: #c9d0dc; }

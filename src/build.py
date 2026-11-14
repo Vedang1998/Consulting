@@ -79,6 +79,7 @@ def build_assets():
         if not (SRC / fname).exists():
             ERRORS.append(f"SCREENS[{key!r}]: {fname} is not in src/")
     css = "\n".join(faces) + "\n" + (SRC / "site.css").read_text()
+    check_css(css)
     js = (SRC / "site.js").read_text()
     names = {}
     for kind, body in (("css", css), ("js", js)):
@@ -471,6 +472,26 @@ VENDOR_PRICE_OK = [
     r'data-label="Hours">50</td><td data-label="List price">\$7,000',  # Odoo Success Pack Standard, odoo.com/pricing-packs
 ]
 
+
+
+def check_css(css):
+    """Catch a rule whose selector swallowed declarations (a lost "{"), which silently drops the next rule too."""
+    text = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    depth, buf = 0, ""
+    for ch in text:
+        if ch == "{":
+            pre = buf.strip()
+            if ";" in pre and not pre.startswith("@"):
+                ERRORS.append(f"site.css: a rule's selector holds declarations, so a brace is missing near: {pre[:80]!r}")
+            depth, buf = depth + 1, ""
+        elif ch == "}":
+            depth, buf = depth - 1, ""
+        elif ch == ";" and depth > 0:
+            buf = ""
+        else:
+            buf += ch
+    if depth != 0:
+        ERRORS.append(f"site.css: braces don't balance ({depth:+d})")
 
 def check_fees(path, text):
     """Our package fees are internal (Vee, Nov 13). Fail if any of them reaches a public file, source included."""
