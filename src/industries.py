@@ -256,7 +256,7 @@ INDUSTRIES = [
              "We scope it and connect a third-party EDI provider to Odoo. The provider charges its own fees, and "
              "we list them in the Roadmap before you commit."),
         ],
-        "guides": ["retail-and-wholesale-one-stock-count", "odoo-vs-quickbooks-and-an-inventory-app", "quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan"],
+        "guides": ["wholesale-price-lists-shopify-or-odoo", "retail-and-wholesale-one-stock-count", "odoo-vs-quickbooks-and-an-inventory-app", "quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan"],
         "sources": [
             ("Shopify changelog: key B2B features on non-Plus plans",
              "https://changelog.shopify.com/posts/key-b2b-features-now-available-on-non-plus-plans"),

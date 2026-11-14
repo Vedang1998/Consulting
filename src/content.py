@@ -1248,7 +1248,7 @@ A store with a few payouts a week, one currency and only online sales can match 
         ],
         "sources": [],
         "services": ["connection", "odoo-launch"],
-        "related": ["retyping-shopify-orders-into-quickbooks", "quickbooks-to-odoo-data", "shopify-odoo-inventory-sync", "shopify-odoo-project-cost"],
+        "related": ["month-end-close-takes-too-long", "retyping-shopify-orders-into-quickbooks", "quickbooks-to-odoo-data", "shopify-odoo-inventory-sync", "shopify-odoo-project-cost"],
         "notes": ["Written from practice; no vendor numbers. Vee should check the Payouts screen wording in the demo "
                   "store before approving, and add a screenshot if it helps."],
     },
@@ -1367,7 +1367,7 @@ If wholesale is most of your volume, ships from a different building, or is sold
         ],
         "sources": [("Shopify pricing", "https://www.shopify.com/pricing", "2026-11-11")],
         "services": ["connection", "odoo-launch"],
-        "related": ["shopify-overselling", "when-to-reorder-best-sellers", "shopify-odoo-inventory-sync", "shopify-stock-doesnt-match-shelf", "shopify-plan-for-pos-pro"],
+        "related": ["wholesale-price-lists-shopify-or-odoo", "shopify-overselling", "when-to-reorder-best-sellers", "shopify-odoo-inventory-sync", "shopify-stock-doesnt-match-shelf", "shopify-plan-for-pos-pro"],
         "notes": ["The draft order reserve behavior should be tried in the demo store before approval."],
     },
     {
@@ -1935,6 +1935,109 @@ Odoo tends to win when you sell wholesale and retail from the same stock, buy fr
         "services": ["systems-roadmap", "odoo-launch"],
         "related": ["retyping-shopify-orders-into-quickbooks", "quickbooks-to-odoo-data", "when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
         "notes": ["Practice-based. QuickBooks Online inventory tracking on higher plans is from general knowledge; check intuit.com plan page before approval. No QuickBooks or app prices."],
+    },
+    {
+        "slug": "wholesale-price-lists-shopify-or-odoo",
+        "platform": "both",
+        "status": "draft",
+        "title": "Wholesale price lists: Shopify catalogs or Odoo pricelists",
+        "seo_title": "Wholesale price lists in Shopify and Odoo",
+        "desc": ("How Shopify B2B catalogs and Odoo pricelists handle wholesale prices and quantity breaks. The "
+                 "catalog limit below Plus, and when the price list should move to Odoo."),
+        "checked": "2026-11-13",
+        "short": ("Shopify lets each business customer see a catalog with its own prices, and Basic, Grow and "
+                  "Advanced allow up to 3 catalogs. Odoo pricelists can be set per customer, with quantity breaks "
+                  "and dates. Stores with a few price tiers can stay in Shopify; many accounts with their own terms "
+                  "usually belong in Odoo."),
+        "body": """
+## Why wholesale prices get messy
+
+Most stores start wholesale with one discount for everyone, kept in someone's head or a spreadsheet. Then a big account negotiates its own prices, another wants a break at 50 units, and a distributor gets a different list again. Orders come in by email, someone looks up the right price, and the invoice goes out by hand. Every exception is one more thing to remember.
+
+## Shopify B2B catalogs
+
+In Shopify, a catalog is a set of prices assigned to a company location. A business customer who logs in sees that catalog's prices instead of the retail ones, and can order on payment terms where you allow it. Basic, Grow and Advanced each allow up to 3 catalogs; Plus has no limit (shopify.com/pricing, checked Nov 11, 2026).
+
+Three catalogs covers a lot of stores: a standard wholesale list, a distributor list and one for a single large account, for example. The limit starts to bite when several accounts each expect their own prices.
+
+## Odoo pricelists
+
+In Odoo, a pricelist is a set of rules, and each customer can be given one. A rule can take a percentage off a base price, add a percentage on top, or set a fixed price, and it can apply from a minimum quantity or between two dates. Pricelists can also be based on another pricelist, so a distributor list can follow the wholesale list with an extra discount and update when it does. These rule types and options are from Odoo 20's own code, checked Nov 13, 2026.
+
+Because the same pricelist is used on quotes, sales orders and invoices, phone and email orders get the right price without anyone looking it up.
+
+## How the two work together
+
+If wholesale customers order on your Shopify store, their prices have to exist in Shopify, whatever runs the back office. If they order by email, phone or a sales rep, the prices only need to exist in Odoo. Many stores split it that way: retail and small wholesale accounts order online through Shopify catalogs, while larger accounts with negotiated prices are quoted and invoiced from Odoo.
+
+## When the price list should move to Odoo
+
+Keep wholesale in Shopify while you have a few price tiers, accounts order online and you don't need quantity breaks beyond what Shopify offers. Move the price list to Odoo when accounts negotiate their own prices, when orders arrive outside the website, or when wholesale invoices, payment terms and stock all need to agree with the books. [Selling retail and wholesale from one stock count](/guides/retail-and-wholesale-one-stock-count) covers the stock side of the same decision.
+""",
+        "faqs": [
+            ("How many wholesale price lists can we have in Shopify?",
+             "Basic, Grow and Advanced allow up to 3 B2B catalogs; Plus has no set limit (checked Nov 11, 2026). "
+             "Each catalog can be assigned to more than one company location."),
+            ("Can Odoo give one customer its own prices?",
+             "Yes. Assign the customer a pricelist, and quotes, orders and invoices use it automatically. Rules can "
+             "set fixed prices, discounts or surcharges, with minimum quantities and start and end dates."),
+            ("Do wholesale prices need to be in both systems?",
+             "Only if wholesale customers order on the Shopify store. If they order by email, phone or a rep, the "
+             "prices can live in Odoo alone."),
+        ],
+        "sources": [("Shopify pricing", "https://www.shopify.com/pricing", CHECKED)],
+        "services": ["odoo-launch", "connection"],
+        "related": ["retail-and-wholesale-one-stock-count", "shopify-plan-for-pos-pro", "odoo-standard-vs-custom-plan"],
+        "notes": ["Odoo 20 pricelist rule types (discount, surcharge, fixed price), minimum quantity, dates and based-on-another-pricelist confirmed in product_pricelist_item source Nov 13, 2026. Shopify payment terms wording should be checked in the demo store before approval."],
+    },
+    {
+        "slug": "month-end-close-takes-too-long",
+        "platform": "both",
+        "status": "draft",
+        "title": "Month-end takes a week: where a product business loses the time",
+        "seo_title": "Why month-end close takes so long for a store",
+        "desc": ("The usual reasons month-end drags for a store selling on Shopify: payouts, stock value, unmatched "
+                 "bills and wholesale balances. What to fix first, and what a back office changes."),
+        "checked": "2026-11-13",
+        "short": ("For most stores, the slow part of month-end is matching: payouts to sales, stock counts to stock "
+                  "value, and vendor bills to what arrived. Each one gets faster when the records agree during the "
+                  "month, so the work moves from the last week to every day."),
+        "body": """
+## What month-end has to answer
+
+However it's done, the close has to say what you sold, what it cost you, what you hold and what you owe. For a store on Shopify, those answers live in different places: sales in Shopify, deposits at the bank, stock on the shelf or in a spreadsheet, and bills in an inbox. The time goes into making them agree.
+
+## Where the days go
+
+1. Payouts. Shopify deposits are sales minus fees, refunds and chargebacks, grouped over several days. Matching each deposit back to the sales behind it is slow when it's done by hand. [Shopify payouts don't match the bank deposit](/guides/shopify-payouts-dont-match-bank) covers why.
+2. Stock value. If stock is counted in one place and valued in another, the balance sheet needs a manual adjustment every month, and nobody is sure which number is right.
+3. Vendor bills. Bills arrive late, against purchases nobody recorded, at prices that differ from what was ordered. Each one has to be chased and matched.
+4. Wholesale balances. Invoices sent from a spreadsheet or a separate tool have to be checked against payments before anyone knows who owes what.
+5. Questions. When the bookkeeper finds something odd, the answer is often with one person in the business, who has to stop and look it up.
+
+## What to fix first
+
+Start with whichever takes longest; for most stores that's payouts. Bringing payouts into the books as one entry per payout, with fees and refunds split out, removes most of the matching. Next, agree one place where stock is valued and stop adjusting it by hand. Then record purchases when they're ordered, so bills have something to match against.
+
+## When a back office changes the close
+
+When sales, stock, purchases and invoices are in one system, most of the matching happens as the work does. A delivery lowers stock and posts its cost, a receipt raises stock, a vendor bill is matched to the receipt, and a payout is reconciled against the orders it covers. Month-end becomes a review of exceptions rather than a week of assembly. That's the point where moving to a back office such as Odoo pays back its setup, and [Retyping Shopify orders into QuickBooks](/guides/retyping-shopify-orders-into-quickbooks) covers the cheaper steps to try first.
+""",
+        "faqs": [
+            ("How long should month-end take for a small store?",
+             "There's no fixed figure, but if it regularly takes more than a few days, most of that time is "
+             "usually matching records that should already agree. That's the part worth fixing."),
+            ("Does our bookkeeper need to be involved in a system change?",
+             "Yes, from the start. They know which reports they rely on and how the books are closed today, and "
+             "the new setup has to produce what they need."),
+            ("Can we speed up month-end without changing systems?",
+             "Often. Payout-level entries, one place for stock value and recording purchases as they're ordered "
+             "each save time on their own. Change systems when those aren't enough."),
+        ],
+        "sources": [],
+        "services": ["systems-roadmap", "odoo-launch"],
+        "related": ["shopify-payouts-dont-match-bank", "retyping-shopify-orders-into-quickbooks", "odoo-vs-quickbooks-and-an-inventory-app"],
+        "notes": ["Practice-based. No vendor facts. Not tax or accounting advice; the bookkeeper FAQ points to their role."],
     },
 ]
 
