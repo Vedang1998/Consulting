@@ -644,6 +644,7 @@ li[data-hide] { display: none; }
   .svc-minis.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .phase { gap: 18px; }
   .g-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .g-grid > .g-body { padding-bottom: 8px; }
   .g-side { position: static; display: contents; }
   .g-side > .g-box:first-child { order: -1; }
   .g-side > .g-box:last-child { margin-bottom: 56px; }
