@@ -565,10 +565,13 @@ def page_service(p):
     slug = p["slug"]
     x = SVC_EXTRA[slug]
     trail, crs = crumbs([("Services", "/services"), (p["name"], svc_href(slug))])
-    faqs = x["faqs"] + SERVICE_FAQS[:2]
+    starts = {" ".join(q.split()[:3]) for q, *_ in x["faqs"]}
+    faqs = x["faqs"] + [f for f in SERVICE_FAQS if " ".join(f[0].split()[:3]) not in starts][:2]
     inds = industries_for(slug)
     ind_html = "".join(f'<a class="chip-link" href="/industries/{i["slug"]}">{e(i["short"])}</a>' for i in inds)
     others = "".join(svc_mini(o) for o in ORDER + ["support"] if o != slug)
+    reads = [g for g in R.GUIDES if slug in g["services"] and (not RELEASE or g["status"] == "approved")][:4]
+    read_html = "".join(f'<li><a href="/guides/{g["slug"]}">{e(g["title"])}</a></li>' for g in reads)
     body = hero(x["h1"], e(p["summary"]), trail=trail, eyebrow=e(p["kind"]),
                 extra=facts([("Fee", "Fixed, quoted after a call"),
                              ("Typical timeline", e(p["timeline"]))], "hero-facts"),
@@ -587,7 +590,8 @@ def page_service(p):
 </div></section>
 <section class="sec" aria-labelledby="q-h"><div class="wrap split">
   <div><h2 id="q-h">Questions about the {e(p['name'])}</h2>{qa_list(faqs)}</div>
-  <div><h2>Other services</h2><div class="svc-minis">{others}</div></div>
+  <div><h2>Other services</h2><div class="svc-minis">{others}</div>
+  {f'<h3>Related guides</h3><!--reuse--><ul class="plain">{read_html}</ul><!--/reuse-->' if read_html else ''}</div>
 </div></section>"""
     return {"path": svc_href(slug), "file": f"services/{svc_href(slug).split('/')[-1]}.html", "h": p["name"],
             "title": f"{p['name']}: {p['kind'].lower()} | {NAME}",
