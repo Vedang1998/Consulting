@@ -443,15 +443,16 @@ def plan_picker():
   </div>
 </div>
 <div class="split rules">
-  <div><h3>How the picker decides</h3><ul class="plain">
-    <li><b>Plus</b> when you sell from more than 10 locations, need more than 15 staff logins, or need more than 3
-    wholesale catalogs. Plus is quoted from $2,300 a month.</li>
-    <li><b>Advanced</b> when 6 to 15 staff need their own login. It includes 15 staff accounts.</li>
-    <li><b>Grow</b> when up to 5 staff need a login, or Shopify will connect to a back office. Grow includes 5 staff
+  <div><h3>How the picker decides</h3>
+    <p>It suggests the smallest plan that covers every answer.</p><ul class="plain">
+    <li>An owner-run store fits Basic. Every plan takes in-person payments and allows up to 10 locations.</li>
+    <li>Up to 5 staff with their own login, or a connection to a back office, needs Grow. It includes 5 staff
     accounts, and Shopify lists full data access for custom apps from Grow up, which some connectors use.</li>
-    <li><b>Basic</b> for an owner-run store. Every plan takes in-person payments and allows up to 10 locations.</li>
-    <li><b>POS Pro</b> adds staff roles, in-store inventory tools, and pickup and delivery for $89 a month per location.
-    Plus includes it for 20 locations.</li></ul></div>
+    <li>Six to 15 staff logins calls for Advanced, which includes 15 staff accounts.</li>
+    <li>More than 10 locations, more than 15 staff logins or more than 3 wholesale catalogs means Plus, which
+    Shopify quotes from $2,300 a month.</li>
+    <li>POS Pro is an add-on for staff roles, in-store inventory tools, and pickup and delivery, at $89 a month
+    per location. Plus includes it for 20 locations.</li></ul></div>
   <div><h3>Shopify plan prices</h3>
     <div class="tbl"><table class="gtable"><thead><tr><th scope="col">Plan</th><th scope="col">Paid yearly</th>
     <th scope="col">Paid monthly</th></tr></thead><tbody>{rows}</tbody></table></div>
@@ -669,7 +670,8 @@ def page_industry(x):
   {f'<div class="pr-media">{m}</div>' if m else ''}
 </article>""")
     a, b, text = x["start"]
-    guides = [GUIDE_BY[g] for g in x.get("guides", []) if g in GUIDE_BY]
+    guides = [GUIDE_BY[g] for g in x.get("guides", []) if g in GUIDE_BY
+              and (not RELEASE or GUIDE_BY[g]["status"] == "approved")][:3]
     glinks = "".join(f'<li><a href="/guides/{g["slug"]}">{e(g["title"])}</a></li>' for g in guides)
     srcs = "".join(f'<li><a href="{e(u)}" rel="noopener">{e(t)}</a></li>' for t, u in x.get("sources", []))
     others = "".join(f'<a class="chip-link" href="/industries/{o["slug"]}">{e(o["short"])}</a>'

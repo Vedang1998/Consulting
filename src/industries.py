@@ -55,7 +55,7 @@ INDUSTRIES = [
              "Either into Shopify B2B, which every Shopify plan has had since April 2, 2026, or straight into "
              "Odoo as quotations. Both take stock from the same count."),
         ],
-        "guides": ["when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
+        "guides": ["shopify-overselling", "clean-product-data-before-moving", "when-you-dont-need-an-erp", "shopify-odoo-inventory-sync"],
         "sources": [
             ("Shopify changelog: key B2B features on non-Plus plans",
              "https://changelog.shopify.com/posts/key-b2b-features-now-available-on-non-plus-plans"),
@@ -109,7 +109,7 @@ INDUSTRIES = [
              "We set up delivery orders, dates and the carriers you use. Route planning for your own trucks needs "
              "a separate tool, and we'll say so on the first call if you need one."),
         ],
-        "guides": ["odoo-standard-vs-custom-plan", "odoo-implementation-timeline"],
+        "guides": ["landed-cost-and-shopify-margins", "when-to-reorder-best-sellers", "odoo-standard-vs-custom-plan", "odoo-implementation-timeline"],
         "sources": [],
     },
     {
@@ -157,7 +157,7 @@ INDUSTRIES = [
              "Not by default. If it matters for what you sell, we can show it as product information, kept up to "
              "date when stock changes."),
         ],
-        "guides": ["when-you-dont-need-an-erp", "quickbooks-to-odoo-data"],
+        "guides": ["when-to-reorder-best-sellers", "odoo-vs-quickbooks-and-an-inventory-app", "when-you-dont-need-an-erp", "quickbooks-to-odoo-data"],
         "sources": [],
     },
     {
@@ -207,7 +207,7 @@ INDUSTRIES = [
              "We connect Shopify subscription orders to Odoo like any other order. The subscription app itself "
              "stays in Shopify."),
         ],
-        "guides": ["shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh"],
+        "guides": ["shopify-overselling", "retail-and-wholesale-one-stock-count", "shopify-connectors-odoo-online", "odoo-online-vs-odoo-sh"],
         "sources": [],
     },
     {
@@ -256,7 +256,7 @@ INDUSTRIES = [
              "We scope it and connect a third-party EDI provider to Odoo. The provider charges its own fees, and "
              "we list them in the Roadmap before you commit."),
         ],
-        "guides": ["quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan"],
+        "guides": ["retail-and-wholesale-one-stock-count", "odoo-vs-quickbooks-and-an-inventory-app", "quickbooks-to-odoo-data", "odoo-standard-vs-custom-plan"],
         "sources": [
             ("Shopify changelog: key B2B features on non-Plus plans",
              "https://changelog.shopify.com/posts/key-b2b-features-now-available-on-non-plus-plans"),
