@@ -67,7 +67,7 @@ SVC_EXTRA = {
         "for": ["You know the current setup is not working, but not yet which systems, connector or plan to use",
                 "You are moving off spreadsheets or QuickBooks and want the order of work decided first",
                 "The project is larger: more than 15 users, manufacturing, several companies or long history"],
-        "after": ["An 8 to 15 page roadmap that is yours to keep, with us or without us",
+        "after": ["An 8 to 15 page roadmap that is yours to keep, whoever does the build",
                   "A connector and plan recommendation checked in a trial database",
                   "A draft statement of work with a fixed fee for the next phase"],
         "faqs": [("Is the roadmap fee credited if we go ahead?",
@@ -90,7 +90,7 @@ SVC_EXTRA = {
                   "before launch."),
                  ("What happens to our search rankings?",
                   "Every old URL gets a 301 redirect to its new page, tested before the domain moves. That keeps "
-                  "links and bookmarks working and passes them to the new pages."),
+                  "links and bookmarks working and tells search engines where each page went."),
                  ("Do customers keep their accounts after a move?",
                   "Their names, addresses and order history come over. Passwords can't be moved between platforms, "
                   "so customers set a new one. We write the invite email with you, so customers know why.")],
@@ -109,7 +109,7 @@ SVC_EXTRA = {
                   "Odoo Online or Odoo.sh. The roadmap or scoping call picks the one that fits your apps and any "
                   "connector you need, before you buy a plan."),
                  ("Can we keep QuickBooks for a while?",
-                  "Yes. Many teams keep QuickBooks open for lookups after go-live. We move products, customers, "
+                  "Yes. You can keep QuickBooks open for lookups after go-live. We move products, customers, "
                   "vendors, opening stock, open invoices and opening balances. Full history stays in QuickBooks."),
                  ("Do you give accounting or tax advice?",
                   "No. Tax and accounting settings follow written instructions from your accountant, and we set "
