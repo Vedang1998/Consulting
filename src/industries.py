@@ -85,7 +85,7 @@ INDUSTRIES = [
              None),
             ("Long lead times and empty showrooms",
              "Pieces that take twelve weeks to arrive run out before anyone notices the reorder date has passed.",
-             "Vendor lead times and reorder rules on each product. Odoo shows what's on order and when it lands, "
+             "Each product carries its vendor's lead time and a reorder rule. Odoo shows what's on order and when it lands, "
              "so you reorder in time and quote honest delivery dates.",
              ("clip", "purchase")),
             ("Damaged deliveries",
@@ -130,7 +130,7 @@ INDUSTRIES = [
              ("clip", "lots")),
             ("Fresh stock ships before old stock",
              "Pickers grab the case at the front. The older lot expires on the shelf and gets thrown out.",
-             "First-expiry-first-out picking: Odoo reserves the lot that expires soonest, and a report shows what "
+             "Odoo picks first-expiry-first-out, reserving the lot that expires soonest, and a report shows what "
              "is close to its date while there's still time to sell it.",
              None),
             ("A recall means a day in spreadsheets",
@@ -140,7 +140,7 @@ INDUSTRIES = [
              None),
             ("Wholesale accounts at their own prices",
              "Grocers and cafes each pay a different price, and the price list lives in someone's inbox.",
-             "Price lists for each account or group, with payment terms, in Odoo. Wholesale buyers can order "
+             "Odoo keeps a price list and payment terms for each account or group. Wholesale buyers can order "
              "through Shopify B2B at their own prices.",
              ("clip", "pricelist")),
         ],
@@ -173,8 +173,8 @@ INDUSTRIES = [
             ("Batches and expiry dates",
              "A customer reports a reaction and asks which batch they bought. The answer is in a notebook, if "
              "anywhere.",
-             "Lot numbers and expiry dates recorded on receipt, carried onto every order, and the oldest batch "
-             "picked first.",
+             "Odoo records lot numbers and expiry dates on receipt, carries them onto every order, and picks the "
+             "oldest batch first.",
              ("clip", "lots")),
             ("Gift sets and bundles",
              "A holiday set sells out on the site while its parts sit on the shelf, or the parts sell out and the "
@@ -189,7 +189,7 @@ INDUSTRIES = [
              ("clip", "purchase")),
             ("A different count on every channel",
              "Shopify, a marketplace and two retailers each think they know how much you have.",
-             "One count in Odoo. Shopify and other connected channels sell from it, and wholesale orders reserve "
+             "Odoo holds one count. Shopify and other connected channels sell from it, and wholesale orders reserve "
              "from it.",
              ("clip", "locations")),
         ],
@@ -217,19 +217,19 @@ INDUSTRIES = [
         "desc": ("Account price lists, payment terms and orders entered once. Shopify B2B and Odoo set up and "
                  "connected for small wholesalers and distributors, for a fixed fee."),
         "lead": ("Orders arrive by email, phone and spreadsheet, each account has its own prices, and someone "
-                 "retypes it all into QuickBooks. That's a back office problem before it's a website problem."),
+                 "retypes it all into QuickBooks. Fixing it starts in the back office."),
         "card": "Every order gets typed twice, and one account keeps getting last year's price.",
         "problems": [
             ("The wrong price on the wrong account",
              "A good customer gets charged list price, or a small one gets the big account's discount, and you "
              "find out at month end.",
-             "Price lists for each account or group in Odoo. Shopify B2B, on every plan since April 2, 2026, "
+             "Odoo keeps a price list for each account or group. Shopify B2B, on every plan since April 2, 2026, "
              "shows each buyer their own catalog, with up to three catalogs below Shopify Plus.",
              ("clip", "pricelist")),
             ("Net terms and credit kept in your head",
              "One account pays in 30 days, another in 60, and a third is two invoices behind but still ordering.",
-             "Payment terms and credit limits on each account, a warning when an order goes over, and an aged "
-             "receivables report that shows who owes what.",
+             "Each account has its payment terms and a credit limit in Odoo. An order over the limit raises a "
+             "warning, and the aged receivables report shows who owes what.",
              ("clip", "invoice")),
             ("Orders typed in twice",
              "An order comes in by email, gets typed into a spreadsheet, then into QuickBooks for the invoice.",
@@ -237,7 +237,7 @@ INDUSTRIES = [
              "accounting, so there is nothing to retype.",
              ("clip", "sale")),
             ("A large retailer asks for EDI",
-             "A chain wants purchase orders and invoices by EDI, and nobody on the team knows where to start.",
+             "A chain wants purchase orders and invoices by EDI, and the team has never set it up.",
              "Odoo doesn't send US retail EDI on its own. When you need it, we scope a third-party EDI provider "
              "in the Systems Roadmap and connect it to Odoo.",
              None),
