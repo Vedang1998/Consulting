@@ -404,8 +404,8 @@ def manual_cost():
 used.</p>"""
 
 
-SHOPIFY_PLANS = {  # research/R-Shopify-plans-checked.md, shopify.com/pricing, checked Nov 11, 2026
-    "basic": ("Basic", 29, 39), "grow": ("Grow", 89, 105), "advanced": ("Advanced", 359, 399),
+SHOPIFY_PLANS = {  # research/R-Shopify-plans-checked.md, shopify.com/pricing, checked Nov 16, 2026
+    "basic": ("Basic", 29, 39), "grow": ("Grow", 79, 105), "advanced": ("Advanced", 299, 399),
     "plus": ("Plus", 2300, 2300),
 }
 POS_PRO = 89
