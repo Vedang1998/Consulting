@@ -1098,7 +1098,7 @@ If 6 weeks is more than you can spare, start smaller. Sales, inventory and purch
     },    {
         "slug": "shopify-odoo-project-cost",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "What a Shopify and Odoo setup costs a small business",
         "seo_title": "Shopify and Odoo setup cost for a small business",
         "desc": ("The yearly software bill for a 10-person store on Shopify and Odoo, what outside help costs on "
@@ -1193,7 +1193,7 @@ You may not need both systems yet. A store with one or two locations, finished g
     },    {
         "slug": "shopify-payouts-dont-match-bank",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Shopify payouts don't match the bank deposit",
         "seo_title": "Why Shopify payouts don't match your sales or bank",
         "desc": ("Why a Shopify Payments deposit is smaller than your sales report. How to match one payout to the "
@@ -1255,7 +1255,7 @@ A store with a few payouts a week, one currency and only online sales can match 
     {
         "slug": "shopify-stock-doesnt-match-shelf",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Shopify stock doesn't match what's on the shelf",
         "seo_title": "Shopify inventory doesn't match the shelf",
         "desc": ("The usual reasons Shopify's counts drift from the stockroom once you sell in person, how to find "
@@ -1318,7 +1318,7 @@ If counts drift because two systems both write stock, or because purchasing, kit
     {
         "slug": "retail-and-wholesale-one-stock-count",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Selling retail and wholesale from one stock count",
         "seo_title": "Stop overselling across Shopify and wholesale",
         "desc": ("Why wholesale orders taken by email or phone oversell your online store. Three ways to share one "
@@ -1373,7 +1373,7 @@ If wholesale is most of your volume, ships from a different building, or is sold
     {
         "slug": "stalled-odoo-project",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "A stalled Odoo project: how to tell if it can be saved",
         "seo_title": "Stalled Odoo implementation: rescue it or start over",
         "desc": ("What to collect when an Odoo project has stalled, the checks that show whether it can be finished, "
@@ -1430,7 +1430,7 @@ Starting fresh tends to win when the database is several versions old, when beha
     {
         "slug": "who-to-hire-for-shopify-and-odoo",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Agency, freelancer, Odoo's own team or a consultant: who to hire",
         "seo_title": "Who to hire for a Shopify and Odoo setup",
         "desc": ("Shopify agency, Odoo partner, Odoo's Success Packs, freelancer or independent consultant. What each "
@@ -1496,7 +1496,7 @@ If you only need one side, hire for that side. A store moving platforms with no 
     {
         "slug": "retyping-shopify-orders-into-quickbooks",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Retyping Shopify orders into QuickBooks: when it stops being worth it",
         "seo_title": "Retyping Shopify orders into QuickBooks: when to stop",
         "desc": ("What retyping Shopify orders into QuickBooks really costs, the cheaper ways to stop, and the point "
@@ -1547,7 +1547,7 @@ A store with a few dozen orders a week, finished goods, and a bookkeeper happy w
     {
         "slug": "opening-a-second-location",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Opening a second shop: registers, transfers and counts",
         "seo_title": "Opening a second shop on Shopify POS: what to set up",
         "desc": ("What changes in Shopify when you open a second shop: locations, POS Pro, staff logins, stock "
@@ -1600,7 +1600,7 @@ Shopify handles two shops well when you sell finished goods and reorder from a h
     {
         "slug": "landed-cost-and-shopify-margins",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Why Shopify margins read high when freight and duty are left out",
         "seo_title": "Shopify margins and landed cost: freight and duty",
         "desc": ("How freight, duty and broker fees change what a product really costs you. A worked example with "
@@ -1660,7 +1660,7 @@ Once you import several times a year or carry more than a few dozen products, co
     {
         "slug": "shopify-overselling",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Overselling on Shopify: where the extra orders come from",
         "seo_title": "Overselling on Shopify: causes and how to stop it",
         "desc": ("The settings and habits that let a Shopify store sell stock it doesn't have, checks you can run "
@@ -1709,7 +1709,7 @@ When stock is sold in more than one place, overselling usually comes from more t
     {
         "slug": "shopify-vs-woocommerce-with-a-back-office",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Shopify or WooCommerce when you also need stock and accounting",
         "seo_title": "Shopify vs WooCommerce with inventory and accounting",
         "desc": ("How Shopify and WooCommerce compare once inventory and accounting sit in a back office. Who "
@@ -1764,7 +1764,7 @@ WooCommerce tends to win when the website is mostly content and the shop is a sm
     {
         "slug": "when-to-reorder-best-sellers",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Running out of best sellers: setting reorder points that hold up",
         "seo_title": "When to reorder: reorder points for small retailers",
         "desc": ("How to work out when to reorder each product from sales and supplier lead times, with sample "
@@ -1820,7 +1820,7 @@ Once you carry hundreds of variants, buy from several suppliers or sell wholesal
     {
         "slug": "clean-product-data-before-moving",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Cleaning up SKUs and product data before you change systems",
         "seo_title": "Clean up SKUs and product data before a migration",
         "desc": ("What to fix in your product list before moving to Shopify or adding Odoo: SKUs, variants, "
@@ -1875,7 +1875,7 @@ A few hundred products with consistent SKUs can be cleaned in-house over a week 
     {
         "slug": "odoo-vs-quickbooks-and-an-inventory-app",
         "platform": "odoo",
-        "status": "draft",
+        "status": "approved",
         "title": "Odoo or QuickBooks plus an inventory app, for a Shopify store",
         "seo_title": "Odoo vs QuickBooks with an inventory app",
         "desc": ("Comparing one back office with a stack of QuickBooks, an inventory app and Shopify. Where each "
@@ -1939,7 +1939,7 @@ Odoo is usually the better fit when you sell wholesale and retail from the same 
     {
         "slug": "wholesale-price-lists-shopify-or-odoo",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Wholesale price lists: Shopify catalogs or Odoo pricelists",
         "seo_title": "Wholesale price lists in Shopify and Odoo",
         "desc": ("How Shopify B2B catalogs and Odoo pricelists handle wholesale prices and quantity breaks. The "
@@ -1993,7 +1993,7 @@ Keep wholesale in Shopify while you have a few price tiers, accounts order onlin
     {
         "slug": "month-end-close-takes-too-long",
         "platform": "both",
-        "status": "draft",
+        "status": "approved",
         "title": "Month-end takes a week: where a product business loses the time",
         "seo_title": "Why month-end close takes so long for a store",
         "desc": ("The usual reasons month-end drags for a store selling on Shopify: payouts, stock value, unmatched "
@@ -2042,7 +2042,7 @@ When sales, stock, purchases and invoices are in one system, most of the matchin
     {
         "slug": "starting-a-product-business-on-shopify",
         "platform": "shopify",
-        "status": "draft",
+        "status": "approved",
         "title": "Starting a product business on Shopify: decisions that are hard to undo later",
         "seo_title": "New product business on Shopify: what to set up first",
         "desc": ("The setup choices for a new Shopify store that cost the most to change later. SKUs, variants, "
