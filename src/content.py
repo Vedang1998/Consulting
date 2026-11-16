@@ -154,7 +154,7 @@ FAQ_ODOO = [
      "products and check a connector on the plan you'd pay for.",
      "/tools/odoo-tours", "Click through Odoo 20 first"),
     ("What does Odoo cost per user?",
-     "On Odoo's US pricing page (checked Nov 11, 2026), Standard is $24.90 per user per month, paid yearly, for the "
+     "On Odoo's US pricing page (checked Nov 16, 2026), Standard is $24.90 per user per month, paid yearly, for the "
      "first 12 months, then $31.10. Custom is $49.00, then $61.00. Paying monthly costs more. Odoo Online hosting is "
      "included, Odoo.sh hosting is billed separately, and you pay Odoo directly, never through us.",
      "/guides/odoo-online-vs-odoo-sh", "Costs for 10 users"),
@@ -264,7 +264,7 @@ GUIDES = [
         "seo_title": "Shopify connectors that work with Odoo Online",
         "desc": ("Odoo-side Shopify connectors need Odoo.sh, Odoo's own included. Apps on the Shopify side can "
                  "work with Odoo Online, but they need the Custom plan."),
-        "checked": CHECKED,
+        "checked": "2026-11-16",
         "short": ("Very few. Odoo Online can't run modules from the Apps store, and Odoo's own documentation says its "
                   "Shopify Connector works only on Odoo.sh. What's left are apps installed on the Shopify side that "
                   "reach Odoo through its API. Odoo lists that API access under its Custom plan, so check your plan "
@@ -294,7 +294,7 @@ Apps store prices are what the Odoo 20.0 listings showed on Nov 11, 2026. Shopif
 
 Apps on the Shopify side don't install anything in Odoo. They log in to your database from outside and read or write records through Odoo's External API, and Odoo's pricing page lists External API under the Custom plan, not Standard.
 
-For a 10-user business paying yearly, that's $249 a month on Standard against $490 a month on Custom in the first year, and $311 against $610 once the first-year discount ends (Odoo's US prices, checked Nov 11, 2026). The higher price applies to every user in the database, so count the whole difference as part of what the connector costs.
+For a 10-user business paying yearly, that's $249 a month on Standard against $490 a month on Custom in the first year, and $311 against $610 once the first-year discount ends (Odoo's US prices, checked Nov 16, 2026). The higher price applies to every user in the database, so count the whole difference as part of what the connector costs.
 
 ## How Odoo's own connector behaves
 
@@ -366,7 +366,7 @@ If you take a handful of orders a day, keep stock in Shopify and use Odoo mainly
         "seo_title": "Odoo Online vs Odoo.sh: when you have to move",
         "desc": ("Odoo Online includes hosting but runs no third-party modules. What forces a move to Odoo.sh, what "
                  "it costs for 10 users, and when to stay where you are."),
-        "checked": CHECKED,
+        "checked": "2026-11-16",
         "short": ("Stay on Odoo Online until you need a module Odoo doesn't ship as standard. Online includes hosting "
                   "and Odoo runs its upgrades, but it can't run third-party or custom modules. Odoo.sh can, needs the "
                   "Custom plan, and bills hosting on top. An Odoo-side Shopify connector is a typical reason to "
@@ -393,7 +393,7 @@ Not on the list: Studio, a second company, or External API access for an outside
 | Odoo Online, Custom | $490 a month | $610 a month | Included |
 | Odoo.sh, Custom | $490 a month | $610 a month | Billed separately by Odoo.sh |
 
-Odoo's US prices for 10 users, checked Nov 11, 2026. Odoo.sh bills hosting per worker, storage and staging environment; its pricing page gives the figure for your size.
+Odoo's US prices for 10 users, checked Nov 16, 2026. Odoo.sh bills hosting per worker, storage and staging environment; its pricing page gives the figure for your size.
 
 ## What you take on with Odoo.sh
 
@@ -589,7 +589,7 @@ An Odoo business that sells mostly online may still be better off with Shopify P
         "seo_title": "When a Shopify store doesn't need an ERP yet",
         "desc": ("The signs a Shopify store can wait on an ERP, the signs it can't, and the cheaper fixes to try "
                  "first. Plan limits checked on Shopify and Odoo's own pages."),
-        "checked": "2026-11-12",
+        "checked": "2026-11-16",
         "short": ("If you sell from a few locations, Shopify's stock counts match your shelves, and your bookkeeper "
                   "closes the month without retyping orders, you can wait. Shopify's paid plans already handle stock "
                   "in up to 10 locations, in-person sales and basic wholesale pricing. An ERP starts to pay when "
@@ -597,7 +597,7 @@ An Odoo business that sells mostly online may still be better off with Shopify P
         "body": """
 ## What Shopify already handles
 
-A lot of what people buy an ERP for is already in a Shopify plan. From Shopify's pricing page, checked Nov 11, 2026:
+A lot of what people buy an ERP for is already in a Shopify plan. From Shopify's pricing page, checked Nov 16, 2026:
 
 - Stock counts in up to 10 locations on Basic, Grow and Advanced.
 - Selling in person with the POS app on every plan. POS Pro, at $89 a month per location, adds staff roles and in-store inventory tools.
@@ -645,7 +645,7 @@ Some changes are easier to make with the ERP already in place. Opening a warehou
              "an accounting app instead, and that's enough for a long time."),
             ("What does an ERP cost for a small store?",
              "Odoo's Standard plan is $24.90 per user a month paid yearly for the first 12 months, then $31.10 "
-             "(odoo.com/pricing, checked Nov 11, 2026). Five users comes to about $125 a month in the first year. "
+             "(odoo.com/pricing, checked Nov 16, 2026). Five users comes to about $125 a month in the first year. "
              "Setup work is extra, and it's usually the bigger number."),
             ("If we add an ERP later, do we have to rebuild the Shopify store?",
              "No. Shopify stays your storefront and checkout. The ERP sits behind it, joined by a connector or a "
@@ -668,7 +668,7 @@ Some changes are easier to make with the ERP already in place. Opening a warehou
         "seo_title": "Shopify Odoo inventory sync: direction and timing",
         "desc": ("What a Shopify to Odoo connector sends in each direction, how often stock updates, where "
                  "overselling comes from, and how to test it before go-live."),
-        "checked": CHECKED,
+        "checked": "2026-11-16",
         "short": ("With Odoo's own Shopify Connector, orders and products flow from Shopify into Odoo, and Odoo "
                   "sends stock levels back after each order pull. Those pulls run every 10 minutes by default, so the "
                   "two counts can disagree for a few minutes. Apps that run on the Shopify side keep their own "
@@ -705,7 +705,7 @@ For most stores, a few minutes of gap is fine. It matters when the same item sel
 
 ## Two or more locations
 
-On Basic, Grow and Advanced, Shopify lets you track stock in up to 10 locations (shopify.com/pricing, checked Nov 11, 2026). Each Shopify location has to match a warehouse or location in Odoo, or the stock lands in the wrong place. Before you buy a connector, confirm it sends a separate count per location, not a total. Then test it with a transfer between two shops.
+On Basic, Grow and Advanced, Shopify lets you track stock in up to 10 locations (shopify.com/pricing, checked Nov 16, 2026). Each Shopify location has to match a warehouse or location in Odoo, or the stock lands in the wrong place. Before you buy a connector, confirm it sends a separate count per location, not a total. Then test it with a transfer between two shops.
 
 ## What changes with an app on the Shopify side
 
@@ -757,7 +757,7 @@ A store with a few orders a day may not need a sync at all. Keep stock in Shopif
         "seo_title": "Odoo 20 for store owners: changes and AI costs",
         "desc": ("The Odoo 20 changes that matter to a store, from offline mode to suggested reorder levels, and "
                  "what the AI features cost in credits and plan price."),
-        "checked": "2026-11-12",
+        "checked": "2026-11-16",
         "short": ("Odoo 20 came out in September 2026. For a store, the useful changes are offline mode, suggested "
                   "reorder levels, a stock aging report, simpler returns and several register updates. The AI "
                   "features run on prepaid credits, and Odoo's documentation says installing the AI app on "
@@ -790,7 +790,7 @@ Three facts from Odoo's own pages, read Nov 12, 2026:
 - In-app purchase credits are prepaid, sold in packs, and priced per service in Odoo's catalog.
 - The AI app's documentation warns that installing it on a Standard plan database triggers an upsell to the Custom plan.
 
-The credits are usually the small part. The plan change is the big one, because it applies to every user in the database. Odoo's US prices, paid yearly, checked Nov 11, 2026:
+The credits are usually the small part. The plan change is the big one, because it applies to every user in the database. Odoo's US prices, paid yearly, checked Nov 16, 2026:
 
 | Users | Standard, first year | Custom, first year | Standard, after year one | Custom, after year one |
 | 5 | $124.50 a month | $245 a month | $155.50 a month | $305 a month |
@@ -848,7 +848,7 @@ If a module you rely on has no 20.0 version yet, or you're in the middle of a bu
         "seo_title": "Odoo Standard vs Custom plan for 10 users",
         "desc": ("What Odoo's Custom plan adds over Standard, what each costs for 10 users, and the five things "
                  "that move a database onto Custom. US prices checked on odoo.com."),
-        "checked": "2026-11-12",
+        "checked": "2026-11-16",
         "short": ("Standard is enough if you run Odoo's own apps on Odoo Online and nothing outside Odoo reads or "
                   "writes your data. You need Custom for Studio, a second company, Odoo.sh or your own server, outside "
                   "apps that use the External API, and the AI app. For 10 users paid yearly, Custom costs $241 more a "
@@ -866,7 +866,7 @@ If a module you rely on has no 20.0 version yet, or you're in the middle of a bu
 | External API for outside apps | Not included | Included |
 | AI agents | Not included | Included, with credits bought separately |
 
-Odoo's US prices from odoo.com/pricing, checked Nov 11, 2026. AI details from Odoo's AI documentation, read Nov 12, 2026.
+Odoo's US prices from odoo.com/pricing, checked Nov 16, 2026. AI details from Odoo's AI documentation, read Nov 12, 2026.
 
 ## What 10 users pay
 
@@ -934,7 +934,7 @@ If you already know you'll connect Shopify through an outside app, or you need a
         "seo_title": "Shopify Basic, Grow or Advanced with POS Pro",
         "desc": ("How to pick a Shopify plan when you also sell in person: staff accounts, card rates, when the "
                  "lower rates pay for the higher plan, and what POS Pro adds."),
-        "checked": CHECKED,
+        "checked": "2026-11-16",
         "short": ("Pick the plan for your staff and online sales first, then add POS Pro only where a shop needs "
                   "staff roles or in-store inventory tools. Basic fits an owner-run shop, Grow adds 5 staff accounts "
                   "and Advanced 15. POS Pro is $89 a month per location on all three. Lower card rates rarely pay "
@@ -943,7 +943,7 @@ If you already know you'll connect Shopify through an outside app, or you need a
 ## The three plans side by side
 
 | | Basic | Grow | Advanced |
-| Paid yearly | $29 a month | $89 a month | $359 a month |
+| Paid yearly | $29 a month | $79 a month | $299 a month |
 | Paid monthly | $39 a month | $105 a month | $399 a month |
 | Staff accounts | None listed beyond the owner | 5 | 15 |
 | Inventory locations | 10 | 10 | 10 |
@@ -953,7 +953,7 @@ If you already know you'll connect Shopify through an outside app, or you need a
 | Custom apps through Shopify's API | Limited data access | Full data access | Full data access |
 | POS Pro | $89 a month per location | $89 a month per location | $89 a month per location |
 
-From shopify.com/pricing, US prices, checked Nov 11, 2026.
+From shopify.com/pricing, US prices, checked Nov 16, 2026.
 
 ## What POS Pro adds
 
@@ -971,14 +971,14 @@ If your shop has one or two people who can do everything, you may not need it. I
 Each step up lowers the card rate by a little. Here's how much you'd need to sell by card each month before the savings cover the higher plan, paid yearly:
 
 | Move | Extra plan cost | In-person savings | Break-even, in-person only | Online savings | Break-even, online only |
-| Basic to Grow | $60 a month | 0.1% | $60,000 a month | 0.2% | $30,000 a month |
-| Grow to Advanced | $270 a month | 0.1% | $270,000 a month | 0.2% | $135,000 a month |
+| Basic to Grow | $50 a month | 0.1% | $50,000 a month | 0.2% | $25,000 a month |
+| Grow to Advanced | $220 a month | 0.1% | $220,000 a month | 0.2% | $110,000 a month |
 
 Staff accounts are usually the better reason to move up. Treat any rate savings as a bonus.
 
 ## Pricing a two-shop setup
 
-Say two shops, six staff who need their own logins, and roles at both counters. That points to Grow, with POS Pro at both locations: $89 plus 2 × $89, or $267 a month paid yearly. The same setup on Advanced comes to $537 a month. The difference only makes sense if you need more than 5 staff accounts or Advanced's other features.
+Say two shops, six staff who need their own logins, and roles at both counters. That points to Grow, with POS Pro at both locations: $79 plus 2 × $89, or $257 a month paid yearly. The same setup on Advanced comes to $477 a month. The difference only makes sense if you need more than 5 staff accounts or Advanced's other features.
 
 To try your own numbers, use the [Shopify plan picker](/tools/shopify-plan-picker).
 
@@ -1103,9 +1103,9 @@ If 6 weeks is more than you can spare, start smaller. Sales, inventory and purch
         "seo_title": "Shopify and Odoo setup cost for a small business",
         "desc": ("The yearly software bill for a 10-person store on Shopify and Odoo, what outside help costs on "
                  "Odoo's own price list, and what makes a project bigger. Vendor prices dated."),
-        "checked": CHECKED,
+        "checked": "2026-11-16",
         "short": ("Budget in two parts. Software is a yearly bill: for a 10-person business on Shopify Grow and Odoo "
-                  "Custom with a connector, our worked example lands near $7,200 to $8,400 in year one. Setup help is "
+                  "Custom with a connector, our worked example lands near $7,100 to $8,300 in year one. Setup help is "
                   "a one-time cost that depends on your data, locations and apps, and it is usually the bigger number."),
         "body": """
 ## The two bills
@@ -1114,15 +1114,15 @@ Owners often price the software and forget the setup, or the other way round. Th
 
 ## The software, for a 10-person business
 
-This example is a store with one shop and a website, 10 people who need Odoo, and Shopify connected to Odoo. Prices are the US list prices on shopify.com and odoo.com, paid yearly, checked Nov 11, 2026.
+This example is a store with one shop and a website, 10 people who need Odoo, and Shopify connected to Odoo. Prices are the US list prices on shopify.com and odoo.com, paid yearly, checked Nov 16, 2026.
 
 | Item | Per month | First year |
-| Shopify Grow (5 staff accounts) | $89 | $1,068 |
+| Shopify Grow (5 staff accounts) | $79 | $948 |
 | POS Pro for the shop, if staff need roles or in-store stock tools | $89 | $1,068 |
 | Odoo Custom, 10 users, first-year price | $490 | $5,880 |
 | A connector that runs on the Shopify side | $20–35 | $240–420 |
 
-That comes to $7,188 to $7,368 without POS Pro and $8,256 to $8,436 with it. From the second year, Odoo Custom for 10 users rises to $610 a month on the list price, which adds $1,440 a year.
+That comes to $7,068 to $7,248 without POS Pro and $8,136 to $8,316 with it. From the second year, Odoo Custom for 10 users rises to $610 a month on the list price, which adds $1,440 a year.
 
 Why Custom and not Standard? A connector has to reach your Odoo data from outside, and Odoo lists that access (the External API) under Custom. Odoo's own Shopify connector needs Odoo.sh hosting, which also needs Custom and bills hosting on top. The full reasoning is in [Odoo Standard or Custom for 10 users](/guides/odoo-standard-vs-custom-plan).
 
@@ -1323,7 +1323,7 @@ If counts drift because two systems both write stock, or because purchasing, kit
         "seo_title": "Stop overselling across Shopify and wholesale",
         "desc": ("Why wholesale orders taken by email or phone oversell your online store. Three ways to share one "
                  "stock count between retail and wholesale."),
-        "checked": "2026-11-11",
+        "checked": "2026-11-16",
         "short": ("Overselling starts when a wholesale order is agreed outside the system that feeds your store, so "
                   "the units still look free online. Fix it by entering wholesale orders where stock is counted, "
                   "keeping a small buffer on fast sellers, or holding a separate wholesale stock location for large "
@@ -1345,7 +1345,7 @@ Most businesses use the first everywhere and the third for their largest orders.
 
 ## What Shopify covers on its own
 
-Shopify's B2B features let wholesale customers order from their own catalogs with their own prices, and those orders take stock like any other. Plans below Plus allow up to 3 catalogs (shopify.com/pricing, checked Nov 11, 2026). Where Shopify gets stretched is many price lists, credit limits, payment terms and statements, and wholesale orders that arrive by phone and need a person to enter them.
+Shopify's B2B features let wholesale customers order from their own catalogs with their own prices, and those orders take stock like any other. Plans below Plus allow up to 3 catalogs (shopify.com/pricing, checked Nov 16, 2026). Where Shopify gets stretched is many price lists, credit limits, payment terms and statements, and wholesale orders that arrive by phone and need a person to enter them.
 
 ## When separate stock is the better choice
 
