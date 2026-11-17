@@ -23,9 +23,9 @@ GUIDE_BY = {g["slug"]: g for g in R.GUIDES}
 HOME_FAQS = [
     ("How much does a Shopify and Odoo project cost?",
      lambda: ("Two parts. Software is billed by Shopify, Odoo and any app or connector vendor at their published "
-              "prices, and our guides list those with the date we checked them. Our work is a fixed fee that depends "
-              "on your product count, locations, how much history moves and which connector fits. We quote it in "
-              f"writing {C.PROMISES['proposal_after_call']}, after a free {C.PROMISES['call_length']} call.")),
+              "prices, and our guides list those with the date we checked them. Our work is sold as a block of prepaid "
+              "hours, and the estimate depends on your product count, locations, how much history moves and which "
+              f"connector fits. We recommend a block in writing {C.PROMISES['proposal_after_call']}, after a free {C.PROMISES['call_length']} call.")),
     ("How long does a project take?",
      lambda: ("A Systems Roadmap takes 2 to 3 weeks. A Store Move takes 3 to 8 weeks, a Store to Back Office "
               "Sync 3 to 6 weeks and a Back Office Launch 6 to 12 weeks. Go-live dates are planned around "
@@ -48,9 +48,10 @@ SERVICE_FAQS = [
     ("Who pays for Shopify, Odoo and connector licenses?",
      "You do, directly to each vendor. Plans, apps, connector licenses and hosting are billed to your "
      "own accounts and listed in your proposal as separate from our fee."),
-    ("Why a fixed fee instead of hourly billing?",
-     "You know the cost before we start. If you ask for something outside the agreed scope, we send a "
-     "written change order with the price before doing it."),
+    ("Why prepaid hours?",
+     "You pay only for time worked, logged in 15-minute steps, and you see hours used and left every week. "
+     "Bigger blocks cost less per hour. If you ask for something outside the agreed scope, we send a written "
+     "change order with the extra hours before doing it."),
     ("Do you work with Odoo Online, Odoo.sh or on-premise Odoo?",
      "Odoo Online and Odoo.sh. Third-party connector modules can't be installed on Odoo Online, and "
      "connectors that use Odoo's API need its Custom plan, so the Systems Roadmap confirms the right plan "
@@ -63,13 +64,13 @@ SERVICE_FAQS = [
 
 SVC_EXTRA = {
     "systems-roadmap": {
-        "h1": "A written plan and a fixed quote before you buy software or start a build",
+        "h1": "A written plan and an hour estimate before you buy software or start a build",
         "for": ["You know the current setup is not working, but not yet which systems, connector or plan to use",
                 "You are moving off spreadsheets or QuickBooks and want the order of work decided first",
                 "The project is larger: more than 15 users, manufacturing, several companies or long history"],
         "after": ["An 8 to 15 page roadmap that is yours to keep, whoever does the build",
                   "A connector and plan recommendation checked in a trial database",
-                  "A draft statement of work with a fixed fee for the next phase"],
+                  "A draft statement of work with an hour estimate for the next phase"],
         "faqs": [("Is the roadmap fee credited if we go ahead?",
                   "The roadmap is a separate paid piece of work, and its price is set in writing before it starts. "
                   "Any credit toward a later phase is written into your proposal, so you know before you sign."),
@@ -98,7 +99,7 @@ SVC_EXTRA = {
     "odoo-launch": {
         "h1": "A back office for stock, purchasing, sales and accounting, set up for a team of 5 to 15",
         "meta": ("Odoo set up as the back office for stock, purchasing, sales and accounting for a team of 5 to 15, "
-                 "next to your Shopify store. Fixed fee quoted after a free call."),
+                 "next to your Shopify store. Prepaid hours, recommended after a free call."),
         "for": ["Stock lives in spreadsheets and nobody trusts the numbers",
                 "Purchasing is done from memory, and vendor bills are typed in by hand",
                 "You have outgrown QuickBooks for inventory and want one system for the back office"],
@@ -190,7 +191,7 @@ def page_home():
 </a>""" for x in I.INDUSTRIES)
     steps = [("calendar-check", "Scoping call", f"{C.PROMISES['call_length'].capitalize()}, no charge. You get a proposal "
               f"or a Roadmap quote {C.PROMISES['proposal_after_call']}."),
-             ("file-check-2", "Written scope", "Scope, exclusions, milestones and a fixed fee, signed before work starts."),
+             ("file-check-2", "Written scope", "Scope, exclusions, milestones and an hour estimate, signed before work starts."),
              ("server", "Build in staging", "Set up and loaded in a copy first, then tested by your team against "
               "written cases."),
              ("package-check", "Go-live and handover", "A planned date outside your peak season, fixes after launch, "
@@ -209,8 +210,8 @@ def page_home():
   <div class="hero-copy">
     <h1 class="display">{hl("Shopify and Odoo consulting for retailers and wholesalers")}</h1>
     <p class="lead">We decide which systems you need, move your store, set up the back office and connect the two, so
-    orders, stock and the books agree. Every project has a written scope and a fixed fee, quoted after a
-    free call.</p>
+    orders, stock and the books agree. Every project has a written scope and a block of prepaid hours,
+    recommended after a free call.</p>
     <div class="cta-line">{cta}</div>
   </div>
   <div class="hero-art deco-host">{deco_pair("home")}{stack("shop-order", "delivery-c", "hero-stack", eager=True)}</div>
@@ -225,8 +226,8 @@ def page_home():
 </div></section>
 
 <section class="sec tint" aria-labelledby="prob-h"><div class="wrap">
-  {sec_head("Four problems we're asked to fix", "Each one maps to a fixed-fee package with a typical timeline. "
-            "We set the fee in writing after a free call.", "prob-h")}
+  {sec_head("Four problems we're asked to fix", "Each one maps to a package with a typical timeline. "
+            "We estimate the hours in writing after a free call.", "prob-h")}
   <div class="probs">{probs}</div>
   <p class="after-grid">After go-live, a <a href="{svc_href('support')}">{e(C.SUPPORT['name'])}</a> gives you prepaid hours
   for questions and small changes.</p>
@@ -257,12 +258,12 @@ def page_home():
 
 <section class="sec tint" aria-labelledby="price-h"><div class="wrap split">
   <div>
-    {sec_head("How you get a price", "A fixed fee, written into a statement of work before anything starts.",
+    {sec_head("How you get a price", "Prepaid hours, recommended in writing after a free call. Book a call for pricing.",
               "price-h")}
-    <p>We set the fee after the scoping call, once we know your products, locations, history and apps, because two stores on the same plan can differ
+    <p>We estimate the hours after the scoping call, once we know your products, locations, history and apps, because two stores on the same plan can differ
     several times over in the work they need.</p>
-    <p>You pay in milestones, with the last payment at go-live. The fee only moves if you ask for more and sign a
-    change order for it. Shopify, Odoo and app vendors bill you directly.</p>
+    <p>You buy a block of hours, and bigger blocks cost less per hour. You see hours used and left every week, and extra
+    hours only come with a change order you sign. Shopify, Odoo and app vendors bill you directly.</p>
     <p>{more_link("/pricing", "How pricing works")}</p>
   </div>
   <div class="fit">
@@ -279,7 +280,7 @@ def page_home():
     return {"path": "/", "file": "index.html", "h": "Home",
             "title": f"Shopify and Odoo consulting for product businesses | {NAME}",
             "desc": ("Ecommerce and ERP consulting for US product businesses. Shopify store moves, Odoo back office "
-                     "setups and the link between them, each at a fixed fee."),
+                     "setups and the link between them, on prepaid hours."),
             "body": body, "schema": [faq_schema(faqs)]}
 
 
@@ -313,15 +314,15 @@ def page_services():
     <h2><a href="{svc_href(s)}">{e(svc_name(s))}</a></h2>
     <p>{e(summary)}</p>
     {ticks([e(x) for x in fit]) if fit else ''}
-    {facts([("Fee", "Fixed, quoted after a call"),
+    {facts([("Fee", "Prepaid hours, recommended after a call"),
             ("Hours" if s == "support" else "Typical timeline",
-             "10 or 20, used within 90 or 180 days" if s == "support" else e(svc_time(s)))])}
+             "10 or 25, used within 90 days or 6 months" if s == "support" else e(svc_time(s)))])}
     {more_link(svc_href(s), "What's included")}
   </div>
 </article>""")
-    body = hero("Ecommerce and ERP services with fixed fees",
-                "Five services, each with a written scope. The fee is fixed, set after a scoping call or a Systems "
-                "Roadmap, and written into your statement of work before anything starts.",
+    body = hero("Ecommerce and ERP services on prepaid hours",
+                "Five services, each with a written scope. After a scoping call or a Systems Roadmap we estimate "
+                "the hours and recommend a block, written into your statement of work before anything starts.",
                 eyebrow="Services", cta=primary_cta("hero")) + f"""
 <section class="sec"><div class="wrap">{''.join(rows)}</div></section>
 <section class="sec tint" aria-labelledby="cmp-h"><div class="wrap">
@@ -339,8 +340,8 @@ def page_services():
   <div><h2>Questions about scope and fees</h2>{qa_list(SERVICE_FAQS)}</div>
 </div></section>"""
     return {"path": "/services", "file": "services.html", "h": "Services",
-            "title": f"Shopify and Odoo services, fixed-fee packages | {NAME}",
-            "desc": ("Fixed-fee Shopify store moves, Odoo back office setups for 5 to 15 users, Shopify and Odoo "
+            "title": f"Shopify and Odoo services, packages and prepaid hours | {NAME}",
+            "desc": ("Shopify store moves, Odoo back office setups for 5 to 15 users, Shopify and Odoo "
                      "connections, systems roadmaps and prepaid support. Scope and timeline for each."),
             "body": body, "schema": [faq_schema(SERVICE_FAQS)], "band": "Talk through which service fits"}
 
@@ -511,7 +512,7 @@ def svc_feature(slug):
   {ticks(["How orders, stock, purchasing and money move today, with the weak spots marked",
           "Which systems, plan and connector fit, checked in a trial database",
           "What data moves, what stays behind, and the risks",
-          "A fixed fee and timeline for the next phase"])}</div>
+          "An hour estimate and timeline for the next phase"])}</div>
   <div class="split-art">{M.sample_roadmap()}</div>
 </div></section>"""
     if slug == "store-move":
@@ -575,7 +576,7 @@ def page_service(p):
     reads = [g for g in R.GUIDES if slug in g["services"] and (not RELEASE or g["status"] == "approved")][:4]
     read_html = "".join(f'<li><a href="/guides/{g["slug"]}">{e(g["title"])}</a></li>' for g in reads)
     body = hero(x["h1"], e(p["summary"]), trail=trail, eyebrow=e(p["kind"]),
-                extra=facts([("Fee", "Fixed, quoted after a call"),
+                extra=facts([("Fee", "Prepaid hours, recommended after a call"),
                              ("Typical timeline", e(p["timeline"]))], "hero-facts"),
                 cta=primary_cta("service") + more_link(ask_href(slug), "Or ask in writing"),
                 art=svc_stack(slug, eager=True), cls=SVC_COLOR[slug]) + f"""
@@ -597,7 +598,7 @@ def page_service(p):
 </div></section>"""
     return {"path": svc_href(slug), "file": f"services/{svc_href(slug).split('/')[-1]}.html", "h": p["name"],
             "title": f"{p['name']}: {p['kind'].lower()} | {NAME}",
-            "desc": x.get("meta") or f"{x['h1']}. {p['name']}: {p['timeline']}, fixed fee quoted after a free call.",
+            "desc": x.get("meta") or f"{x['h1']}. {p['name']}: {p['timeline']}, prepaid hours recommended after a free call.",
             "body": body, "schema": [faq_schema(faqs), service_schema(p, svc_href(slug)), crs],
             "band": f"Ask about a {p['name']}"}
 
@@ -628,7 +629,7 @@ def page_support():
 <section class="sec tint"><div class="wrap"><h2>The projects before support</h2><div class="svc-minis four">{others}</div></div></section>"""
     return {"path": svc_href("support"), "file": "services/support-block.html", "h": s["name"],
             "title": f"Support block: prepaid hours | {NAME}",
-            "desc": (f"Prepaid support hours for Shopify and Odoo after go-live, in blocks of 10 or 20 hours. "
+            "desc": (f"Prepaid support hours for Shopify and Odoo after go-live, in blocks of 10 or 25 hours. "
                      f"Replies {C.PROMISES['support_reply']}."),
             "body": body, "schema": [faq_schema(faqs), crs], "band": "Ask about support hours"}
 
@@ -717,10 +718,10 @@ STEPS = [
      f"proposal or a Roadmap quote {C.PROMISES['proposal_after_call']}."),
     ("map", "Systems Roadmap", "2–3 weeks",
      "Up to three working sessions, then a written plan: what fits standard Shopify and Odoo, which "
-     "connector and plan to use, what data moves, the risks, and a fixed fee for the next phase."),
-    ("file-check-2", "Agreement and deposit", "before any work",
+     "connector and plan to use, what data moves, the risks, and an hour estimate for the next phase."),
+    ("file-check-2", "Agreement and first payment", "before any work",
      "You sign a services agreement once, then a statement of work for each project with scope, "
-     "exclusions, milestones and price. Work starts when the deposit clears."),
+     "exclusions, milestones and the hours it should take. Work starts when the first payment for your block clears."),
     ("key-round", "Access, the safe way", "week 1",
      "We ask for named staff or collaborator accounts with only the permissions the work needs, with "
      "two-factor sign-in. Passwords are never shared, and never sent by email or chat."),
@@ -785,7 +786,7 @@ PRICING_FAQS = [
     ("Why aren't prices listed on the site?",
      "Two businesses on the same Shopify plan can need very different work. One has 40 products and clean data, "
      "another has 4,000 variants and stock in three spreadsheets. A range wide enough to cover both doesn't help you "
-     "budget. After a free 30-minute call we quote your project as a fixed fee, in writing, within 3 business days."),
+     "budget. After a free 30-minute call we estimate the hours and recommend a block of prepaid hours, in writing, within 3 business days."),
     ("What makes a project cost more or less?",
      "Product and variant count, how much order and customer history comes over, how many shops and warehouses there "
      "are, how many staff need accounts, whether point of sale is in scope, which connector fits, and how clean "
@@ -794,8 +795,8 @@ PRICING_FAQS = [
      "Yes. If you aren't sure what you need, a Systems Roadmap is a short paid first step: a written plan and a fixed "
      "quote for the next phase. The plan is yours to keep, whether or not we do the work."),
     ("Can we pay in parts?",
-     "Yes. Payments are tied to milestones. The Systems Roadmap is paid at signing. A Store Move and a Back Office "
-     "Launch are paid 40%, 40% and 20%, and a Sync is paid half at signing and half at go-live."),
+     "Yes, on the bigger blocks. Smaller blocks are paid up front, and larger ones are split into payments as the "
+     "hours are used. Your proposal shows the schedule."),
     ("What if the scope changes mid-project?",
      "We pause that part and send a written change order with the cost and the effect on dates. Nothing extra "
      "starts until you sign it."),
@@ -817,7 +818,7 @@ def page_pricing():
   <h3><a href="{svc_href(s)}">{e(PKG[s]['name'])}</a></h3>
   <p>{e(SVC_EXTRA[s]['for'][0])}.</p>
   {facts([("You end with", e(SVC_EXTRA[s]['after'][0])), ("Typical timeline", e(PKG[s]['timeline'])), ("Payment", e(PKG[s]['payment'].split('. ')[0].rstrip('.'))),
-          ("What moves the fee", e(drivers[s]))], "stack")}
+          ("What moves the hours", e(drivers[s]))], "stack")}
   <p class="pr-links">{more_link(svc_href(s), "What's included")}<a class="quiet" href="{ask_href(s)}">Ask about this package</a></p>
 </div>""" for s in ORDER)
     cg = GUIDE_BY.get("shopify-odoo-project-cost")
@@ -827,14 +828,14 @@ def page_pricing():
     sup_opts = "".join(f'<div class="opt-card"><b>{e(h)}</b><em>{e(v)}</em></div>' for h, k, v in sup["options"])
     steps = [f"A free {C.PROMISES['call_length']} call. We ask what you sell, where you sell it, which systems you run "
              "and what isn't working.",
-             f"A written proposal {C.PROMISES['proposal_after_call']}: scope, exclusions, milestones, timeline and one "
-             "fixed fee.",
-             "You sign, pay the first milestone, and we start. Later payments follow milestones you can check.",
-             "If you ask for more mid-project, you get a change order to sign first. Otherwise the fee stays as quoted."]
+             f"A written proposal {C.PROMISES['proposal_after_call']}: scope, exclusions, milestones, timeline, "
+             "an hour estimate and the block we recommend.",
+             "You sign, pay for your block or its first part, and we start. Every week you see hours used and left.",
+             "If you ask for more mid-project, you get a change order with the extra hours to sign first."]
     body = hero("Packages and how we price them",
-                "Every project is a fixed fee written into a statement of work. We quote it after a free 30-minute "
-                "call, once we know what you sell and how your systems are set up. Below is what each package covers "
-                "and what moves the fee.", eyebrow="Pricing", cta=primary_cta("pricing"), art=hero_art("pricing")) + f"""
+                "Every project runs on a block of prepaid hours, written into a statement of work. We recommend the "
+                "block after a free 30-minute call, once we know what you sell and how your systems are set up. Below "
+                "is what each package covers and what moves the hours.", eyebrow="Pricing", cta=primary_cta("pricing"), art=hero_art("pricing")) + f"""
 <section class="sec"><div class="wrap">
   <h2 class="vh">Packages</h2>
   <div class="pr-cards">{cards}</div>
@@ -861,8 +862,8 @@ def page_pricing():
 </div></section>"""
     return {"path": "/pricing", "file": "pricing.html", "h": "Pricing",
             "title": f"How pricing works for Shopify and Odoo projects | {NAME}",
-            "desc": ("Fixed-fee packages for a roadmap, a Shopify store move, an Odoo setup and a sync. What moves the "
-                     "fee, and how you get a written quote after a free call."),
+            "desc": ("Packages for a roadmap, a Shopify store move, an Odoo setup and a sync, sold as prepaid hours. What "
+                     "moves the hours, and how you get a written quote after a free call."),
             "body": body, "schema": [faq_schema(PRICING_FAQS)]}
 
 
@@ -873,7 +874,7 @@ def page_about():
     photo = (f'<img class="portrait" src="/{e(C.PHOTO)}" alt="{e(C.FOUNDER)}" width="320" height="400">'
              if C.PHOTO else "")
     holds = "".join(f"<p>{e(t)}</p>" for t in [
-        "The scope, the fee, the field maps, the test cases and the handover notes are all written down, and "
+        "The scope, the hour estimate, the field maps, the test cases and the handover notes are all written down, and "
         "they're yours to keep and check against the work.",
         "Shopify, Odoo and every app are opened in your name and billed to your card. We work from staff logins "
         "and remove them at handover, confirmed in writing.",

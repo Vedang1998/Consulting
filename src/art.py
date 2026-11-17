@@ -438,9 +438,9 @@ def industries():
 
 
 def pricing():
-    """What we look at on the call to set a fixed fee, for one sample business, and the proposal it leads to."""
+    """What we look at on the call to size a block of prepaid hours, for one sample business, and the proposal it leads to."""
     u = "pr"
-    b = mono(28, 46, "What sets the fee, for one sample business", ON_DARK_MUTED)
+    b = mono(28, 46, "What sets the hours, for one sample business", ON_DARK_MUTED)
     lx, ly, lw, lh = 24, 62, 366, 392
     b += card(u, lx, ly, lw, lh, 18)
     factors = [("inventory", "Products and variants", "1,240 variants", 3, "lilac"),
@@ -460,14 +460,14 @@ def pricing():
     b += arrow(f"M{lx + lw + 6} 258 C{lx + lw + 26} 258 {lx + lw + 22} 258 412 258", FAM["yellow"][1], uid=u)
     px, py, pw, ph = 416, 150, 160, 216
     b += card(u, px, py, pw, ph, 18) + icon("contract", px + 16, py + 16, 36)
-    b += mono(px + 16, py + 76, "Proposal") + T(px + 16, py + 104, "One fixed fee", 17, 800, INK, "h")
+    b += mono(px + 16, py + 76, "Proposal") + T(px + 16, py + 104, "One hour estimate", 17, 800, INK, "h")
     b += lines(px + 16, py + 128, ["In writing within", "3 business days"], 12.5, 1.35, fill=MUTED)
     b += R(px + 16, py + 160, pw - 32, 1, 0, EDGE)
-    b += lines(px + 16, py + 182, ["Changes only with", "your signature"], 12.5, 1.35, fill=INK, weight=600)
-    return frame(u, "Diagram of what sets a fixed fee for one sample business: 1,240 product variants, two shops and a "
+    b += lines(px + 16, py + 182, ["Extra hours only with", "your signature"], 12.5, 1.35, fill=INK, weight=600)
+    return frame(u, "Diagram of what sets the hours for one sample business: 1,240 product variants, two shops and a "
                     "warehouse, two years of orders to move, a two-way Shopify and Odoo connector, and eight staff "
-                    "accounts. They lead to a proposal with one fixed fee, in writing within 3 business days, that "
-                    "changes only with your signature.", b, "yellow")
+                    "accounts. They lead to a proposal with one hour estimate and a recommended block of prepaid hours, in "
+                    "writing within 3 business days. Extra hours need your signature.", b, "yellow")
 
 
 # ---------------------------------------------------------------------------
@@ -500,7 +500,7 @@ def gap_wide():
          f'<path d="M{n(xs[3])} {y} H{n(xs[6])}" stroke="{grey}" stroke-width="4" stroke-linecap="round"/>')
     for i, (ic, name) in enumerate(GAP_STOPS):
         b += _stop(xs[i], y, ic, gap=(i == 2))
-        b += T(xs[i], y + 52, name, 14, 650, coral if i == 2 else INK, "h", "middle")
+        b += T(xs[i], y + 52, name, 14, 650, "#b23a2a" if i == 2 else INK, "h", "middle")  # coral deep is 4.3:1 at this size (03 v3)
     # who covers what
     def bracket(a, z, label, yb=78):
         return (f'<path d="M{n(a)} {yb + 12} V{yb} H{n(z)} V{yb + 12}" fill="none" stroke="#8b95a7" stroke-width="1.6" '
