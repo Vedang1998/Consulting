@@ -383,7 +383,7 @@ REDIRECTS = [
     "/faq/* /faq 301",
 ]
 
-FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#141c2b"/><rect x="6" y="20" width="20" height="6" fill="#e0a526"/></svg>"""
+FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#2447d8"/><rect x="6" y="20" width="20" height="6" rx="2" fill="#ffc53d"/></svg>"""  # matches the header .mark (03 v3)
 
 
 def write_site_files(indexable):
@@ -404,7 +404,7 @@ def write_site_files(indexable):
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     svc = "\n".join(
-        f"- [{p['name']}]({SITE}{svc_href(p['slug'])}): typically {p['timeline']}, fixed fee quoted after a free call. "
+        f"- [{p['name']}]({SITE}{svc_href(p['slug'])}): typically {p['timeline']}, prepaid hours recommended in writing after a free call. "
         f"{p['summary']}" for p in C.PACKAGES)
     sup = "; ".join(f"{h}, {v}" for h, k, v in C.SUPPORT["options"])
     inds = "\n".join(f"- [{x['short']}]({SITE}/industries/{x['slug']}): " +
@@ -421,7 +421,7 @@ def write_site_files(indexable):
             for g in PR.guides_live())
     llms = f"""# {NAME}
 
-> Ecommerce and ERP consulting for US product businesses. {NAME} plans, sets up and connects Shopify and Odoo, works remotely from {C.STATE} for clients across the US, and runs every project on a fixed fee and a written scope.
+> Ecommerce and ERP consulting for US product businesses. {NAME} plans, sets up and connects Shopify and Odoo, works remotely from {C.STATE} for clients across the US, and runs every project on a written scope and a block of prepaid hours.
 
 ## Services
 {svc}
@@ -494,12 +494,15 @@ def check_css(css):
         ERRORS.append(f"site.css: braces don't balance ({depth:+d})")
 
 def check_fees(path, text):
-    """Our package fees are internal (Vee, Nov 13). Fail if any of them reaches a public file, source included."""
+    """Our package fees and hour tiers are internal (Vee, Nov 13 and Nov 17). Fail if any of them reaches a public file, source included."""
     for ok in VENDOR_PRICE_OK:
         text = re.sub(ok, "", text)
     for k, v in C.PRICES.items():
         if re.search(r"\$\s?" + f"{v:,}".replace(",", ",?") + r"(?!\d)", text):
             ERRORS.append(f"our fee {k} (${v:,}) appears in {path}; fees are quoted after a call only")
+    rates = "|".join(str(r) for r in C.TIER_RATES)
+    if re.search(r"\$\s?(?:" + rates + r")(?:\.00)?\s*(?:an hour|a hour|per hour|/\s?hr|/\s?hour|an hr)", text, re.I):
+        ERRORS.append(f"one of our hourly tier rates appears in {path}; tiers stay in proposals only (Vee, Nov 17)")
 
 
 def check_output(path, text):

@@ -492,7 +492,7 @@ a.prob:hover, a.ind-tile:hover, a.gcard:hover, a.door:hover, a.svc-mini:hover, a
 .hand li { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
 .hand .ic { color: var(--ok); }
 .st { flex: none; padding: 3px 8px; border-radius: 999px; font: 500 .7rem/1.2 var(--f-body); font-style: normal; }
-.st0 { background: var(--ok-tint); color: var(--ok); }
+.st0 { background: var(--ok-tint); color: #096b54; }
 
 /* ---- Pricing and about ---------------------------------------------------------------------- */
 .pr-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-bottom: 22px; }

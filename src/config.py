@@ -73,6 +73,8 @@ PROMISES = {
 
 # Internal fee ranges for proposals. Since Nov 13, 2026 (Vee) the site shows no prices of ours: packages, what moves
 # the fee, and a fixed quote after a free call. Nothing on the site reads these.
+# Since Nov 17, 2026 (Vee, thread 02) all work is sold as prepaid hour blocks; the tier amounts are internal too
+# and sit here only so check_fees keeps them off the site. Source: 02 and the price sheet in 12.
 PRICES = {
     "roadmap_min": 1500, "roadmap_max": 3500,
     "store_move_min": 2500, "store_move_max": 10000,
@@ -80,7 +82,10 @@ PRICES = {
     "connection_min": 2500, "connection_max": 7000,
     "support_10h": 1600, "support_20h": 3000,
     "larger_odoo_from": 15000,
+    "tier_10h": 1000, "tier_25h": 2375, "tier_50h": 4500, "tier_100h": 8500,
 }
+# Hourly tier rates, internal: $100, $95, $90, $85. check_fees blocks "$85" to "$100" next to "an hour", "/hr" or "per hour".
+TIER_RATES = [100, 95, 90, 85]
 
 PACKAGES = [
     {
@@ -91,7 +96,7 @@ PACKAGES = [
         "timeline": "2–3 weeks",
         "summary": (
             "A review of how orders, stock, purchasing and accounting move through "
-            "your business today, ending in a written plan and a fixed quote for the next step. "
+            "your business today, ending in a written plan and an hour estimate for the next step. "
             "You keep the plan whether or not you hire us for the work."
         ),
         "includes": [
@@ -100,10 +105,10 @@ PACKAGES = [
             "Where standard Shopify and Odoo features fit your process, and where they don't",
             "Which connector to use, which records sync and in which direction",
             "Plan and hosting advice: Shopify plan, Odoo Standard or Custom, Odoo Online or Odoo.sh",
-            "A written roadmap of 8 to 15 pages and a draft SOW with a fixed fee for the next phase",
+            "A written roadmap of 8 to 15 pages and a draft SOW with an hour estimate for the next phase",
         ],
         "excludes": "Configuration, data migration and custom code. Those come in the next phase.",
-        "payment": "Paid in full at signing.",
+        "payment": "Paid from a prepaid block of hours. For bigger projects these are the first hours of the block.",
     },
     {
         "slug": "store-move",
@@ -113,7 +118,7 @@ PACKAGES = [
         "timeline": "3–8 weeks",
         "summary": (
             "From WooCommerce, Wix, Square Online or BigCommerce, with test orders run before launch. "
-            "The fee depends mostly on how many products and how much history you bring over."
+            "The hours depend mostly on how many products and how much history you bring over."
         ),
         "includes": [
             "Product, customer and order import, in that order, with notifications off",
@@ -128,7 +133,7 @@ PACKAGES = [
             "Custom theme design, copywriting, product photography, Shopify Plus features "
             "and ongoing work after the two-week launch support period."
         ),
-        "payment": "40% at signing, 40% when the store is ready for your review, 20% at launch.",
+        "payment": "Paid from a prepaid block of hours, recommended in your proposal.",
     },
     {
         "slug": "odoo-launch",
@@ -154,7 +159,7 @@ PACKAGES = [
             "Custom modules, manufacturing (MRP), multi-company setups, payroll, "
             "full transaction history, and accounting or tax advice."
         ),
-        "payment": "40% at signing, 40% at the start of testing, 20% at go-live. The four weeks of support after go-live are included.",
+        "payment": "Paid from a prepaid block of hours, recommended in your proposal. The four weeks of support after go-live are part of the estimate.",
     },
     {
         "slug": "connection",
@@ -179,7 +184,7 @@ PACKAGES = [
             "Writing a custom connector, fixing bugs inside a vendor's connector (we report them to the "
             "vendor), and Odoo plan upgrades."
         ),
-        "payment": "50% at signing, 50% when you accept the go-live.",
+        "payment": "Paid from a prepaid block of hours, recommended in your proposal.",
     },
 ]
 
@@ -187,7 +192,7 @@ SUPPORT = {
     "name": "Support block",
     "options": [
         ("10 hours", "support_10h", "use within 90 days"),
-        ("20 hours", "support_20h", "use within 180 days"),
+        ("25 hours", "tier_25h", "use within 6 months"),
     ],
     "summary": (
         "Prepaid hours for questions, small changes, report tweaks, user setup, connector "
@@ -195,7 +200,7 @@ SUPPORT = {
     ),
     "terms": (
         "Paid up front. Time is recorded in 15-minute steps with a 30-minute minimum per request, "
-        "and you get a monthly statement of hours used and left. Unused hours expire at the end of "
+        "and you get a weekly report of hours used and left. Unused hours expire at the end of "
         "the period. Requests over 4 hours are quoted separately. There is no after-hours or "
         "emergency response."
     ),

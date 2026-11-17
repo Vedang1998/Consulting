@@ -44,7 +44,7 @@ ICONS.update({
   "copy": ("lilac", "A copy to test in",
     ['<rect x="14" y="12" width="26" height="30" rx="2"/>'],
     [P("M8 32 V8 a2 2 0 0 1 2-2 H28"), '<rect x="14" y="12" width="26" height="30" rx="2"/>', P("M19 20 h16"), P("M19 26 h16"), P("M19 32 h10")]),
-  "contract": ("blue", "Fixed fee in writing",
+  "contract": ("blue", "Hours estimated in writing",
     ['<rect x="9" y="5" width="30" height="37" rx="2"/>'],
     ['<rect x="9" y="5" width="30" height="37" rx="2"/>', P("M14 12 h20"), P("M14 18 h20"), P("M14 24 h12"),
      P("M14 34 c2-5 4 2 6-1 s3 2 5 0 2 1 3 0"), P("M13 38 h22")]),
