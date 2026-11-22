@@ -210,11 +210,11 @@ def svc_name(slug):
 
 def svc_price(slug):
     """Kept for old call sites: the site shows no prices of ours (Vee, Nov 13, 2026)."""
-    return "Fixed fee, quoted after a call"
+    return "Prepaid hours, recommended after a call"
 
 
 def svc_time(slug):
-    return "10 or 20 hours" if slug == "support" else PKG[slug]["timeline"]
+    return "10 or 25 hours" if slug == "support" else PKG[slug]["timeline"]
 
 
 # ---------------------------------------------------------------------------
@@ -341,9 +341,9 @@ def qa_list(faqs, more=None):
 
 # The yellow half highlight: one phrase per page heading, drawn in with the reveal (site.css .hl). Kept to the hero
 # heading and a few home section heads so it stays a signature, not decoration.
-HL = ["retailers and wholesalers", "with fixed fees", "by industry", "how we price them", "from first call to handover",
+HL = ["retailers and wholesalers", "on prepaid hours", "by industry", "how we price them", "from first call to handover",
       "scoping call", "running both", "real Shopify and Odoo screens", "working with us", "plain words", "intact",
-      "a fixed quote", "a team of 5 to 15", "stay in step", "after go-live", "apparel and footwear", "wholesalers and distributors",
+      "an hour estimate", "a team of 5 to 15", "stay in step", "after go-live", "apparel and footwear", "wholesalers and distributors",
       "food and beverage", "health and beauty", "furniture and home goods", "doesn't exist"]
 
 

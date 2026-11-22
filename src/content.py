@@ -175,7 +175,7 @@ FAQ_ODOO = [
      "/how-it-works", "How a project runs"),
     ("Our Odoo project stalled. Can you take it over?",
      "Often, yes. The first step is a written review of what's set up, what's broken, what's missing and what state "
-     "the data is in. From that you get a fixed fee to finish, or a plain note that starting over costs less. You "
+     "the data is in. From that you get an hour estimate to finish, or a plain note that starting over costs less. You "
      "keep the review either way, and it says nothing about who worked on it before.",
      "/services/systems-roadmap", "Start with a Systems Roadmap"),
     ("Can Odoo and Shopify share one product list?",
@@ -214,7 +214,7 @@ FAQ_US = [
     ("What happens after launch?",
      "Every project includes time after go-live: two weeks of launch support after a Store Move, four weeks of fixes "
      "after a Back Office Launch, and two weeks of monitoring after a Sync. After that, a Support block covers "
-     "questions and small changes, in blocks of 10 hours used within 90 days or 20 hours within 180 days.",
+     "questions and small changes, in blocks of 10 hours used within 90 days or 25 hours within 6 months.",
      "/services/support-block", "Support block terms"),
     ("What hours do you work, and in which time zone?",
      "Monday to Friday, US Eastern time. Messages get a reply by the end of the next business day, and calls are "
@@ -222,9 +222,9 @@ FAQ_US = [
      "writing well ahead.",
      "/how-it-works", "How a project runs"),
     ("What if we need changes mid-project?",
-     "Raise it as soon as it comes up. You get a written change order that says what's added or dropped, what it "
-     "costs and how it moves the dates, and nothing new starts until you sign it. Everything you agreed at the start "
-     "keeps its fixed fee.",
+     "Raise it as soon as it comes up. You get a written change order that says what's added or dropped, how many "
+     "extra hours it takes and how it moves the dates, and nothing new starts until you sign it. Everything you agreed "
+     "at the start keeps its estimate.",
      "/pricing", "Pricing and payment terms"),
     ("Will you sign our NDA?",
      "Yes. Send it before the first detailed call and we'll review and sign it, or we can send our own mutual NDA. "
@@ -481,7 +481,7 @@ Closed invoices, paid bills, old bank transactions and past years' reports. Keep
 
 ## When bringing the history over is worth it
 
-Some businesses do need their history in Odoo. A lender or auditor may want several years in one system, sales reports by customer may need to reach back years, or QuickBooks access may be ending. Then history is worth moving, scoped on its own with a fixed price. A Back Office Launch covers the opening data above; full history is one of our larger Odoo projects, quoted after a Systems Roadmap.
+Some businesses do need their history in Odoo. A lender or auditor may want several years in one system, sales reports by customer may need to reach back years, or QuickBooks access may be ending. Then history is worth moving, scoped on its own with its own hour estimate. A Back Office Launch covers the opening data above; full history is one of our larger Odoo projects, quoted after a Systems Roadmap.
 """,
         "faqs": [
             ("Can Odoo import QuickBooks files directly?",
@@ -1154,7 +1154,7 @@ A Shopify agency or an Odoo partner will usually quote a project rather than hou
 
 ## Where budgets go over
 
-Most overruns trace back to two things: scope that grows mid-project and data that turns out messier than anyone said. A fixed fee with a written scope protects you from the first, as long as additions go through a signed change order. A short paid discovery step protects you from the second, because someone looks at the real data before the price is set.
+Most overruns trace back to two things: scope that grows mid-project and data that turns out messier than anyone said. A written scope with an hour estimate, and a weekly report of hours used, protects you from the first, as long as additions go through a signed change order. A short paid discovery step protects you from the second, because someone looks at the real data before the hours are estimated.
 
 The other quiet cost is the work you already pay for. If your team retypes orders or fixes stock counts by hand, put a number on it with the calculator below and set that next to the setup cost.
 
@@ -1167,8 +1167,8 @@ You may not need both systems yet. A store with one or two locations, finished g
         "faqs": [
             ("Why don't you publish a price for your own work?",
              "Because two stores on the same plan can need very different amounts of work. Product count, history, "
-             "locations and apps move the number several times over. We set a fixed fee after a free call and put it "
-             "in writing, with the scope, before anything starts."),
+             "locations and apps move the number several times over. After a free call we recommend a block of "
+             "prepaid hours in writing, with the scope and an hour estimate, before anything starts."),
             ("Can we start smaller and add Odoo later?",
              "Yes. Many stores start with Shopify and an accounting app, then add Odoo when purchasing, wholesale or "
              "several locations outgrow it. Clean SKUs and accurate stock counts now make that later step shorter "
@@ -1452,7 +1452,7 @@ A store that runs Shopify in front and Odoo behind it needs three things done: t
 | Odoo partner | Odoo setup, data, training | The Shopify side and the storefront | Project quote or hour blocks |
 | Odoo Success Pack | Odoo setup run by Odoo's own team | Shopify, the connector, your store move | Prepaid hours on a public list |
 | Freelancer | A defined task: an import, a report, a module | Planning, testing, the parts around the task | Hourly or per task |
-| Independent consultant | Planning, both systems and the link, within a set scope | Custom development beyond that scope | Usually a fixed fee after discovery |
+| Independent consultant | Planning, both systems and the link, within a set scope | Custom development beyond that scope | A fixed fee or prepaid hours after discovery |
 
 These are typical shapes, and plenty of firms cross the lines. Ask each one to say in writing what they won't do.
 
@@ -1463,7 +1463,7 @@ Odoo publishes its pack prices, which makes them a useful reference for any quot
 ## What to ask anyone you're considering
 
 1. Who answers for orders, stock and refunds agreeing across both systems?
-2. Is the fee fixed, and what happens when scope changes?
+2. How is the work priced, and what happens when scope changes?
 3. Will we be able to test everything in a copy before it touches the live store?
 4. Whose name are the accounts, the subscription and any code in?
 5. What do we get at handover, and who removes your access?
@@ -1477,7 +1477,7 @@ If you only need one side, hire for that side. A store moving platforms with no 
         "faqs": [
             ("Is a certified Odoo partner always the safer choice?",
              "Partner status tells you a firm sells and implements Odoo at volume. It doesn't tell you whether they "
-             "work on the Shopify side, who you'll deal with day to day, or whether the fee is fixed. Ask the same "
+             "work on the Shopify side, who you'll deal with day to day, or how the work is priced. Ask the same "
              "questions of everyone."),
             ("Can we do the setup ourselves?",
              "Some teams can, especially with standard apps and clean data. The parts that usually need outside help "

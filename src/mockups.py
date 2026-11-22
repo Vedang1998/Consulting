@@ -36,7 +36,7 @@ def sample_roadmap():
     toc = [("1", "How orders, stock and money move today", "2"), ("2", "Systems and data inventory", "4"),
            ("3", "Fit against standard Shopify and Odoo", "6"), ("4", "Connector options and plan check", "8"),
            ("5", "Data to move, and data to leave behind", "10"), ("6", "Risks and open questions", "11"),
-           ("7", "Phases, fixed fee and timeline", "12")]
+           ("7", "Phases, hour estimate and timeline", "12")]
     rows = "".join(f"<li><span>{n}</span><span>{t}</span><i></i><span>{p}</span></li>" for n, t, p in toc)
     return _paper("Systems Roadmap", "Contents", f'<ol class="toc">{rows}</ol>')
 

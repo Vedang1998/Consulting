@@ -11,7 +11,7 @@ INDUSTRIES = [
         "title": "Shopify and Odoo for apparel and footwear brands",
         "h1": "Shopify and Odoo for apparel and footwear brands",
         "desc": ("Size and color stock that stays right across your store, your shops and wholesale. Shopify and "
-                 "Odoo set up and connected for apparel brands, for a fixed fee."),
+                 "Odoo set up and connected for apparel brands, on prepaid hours."),
         "lead": ("One style can run to dozens of sizes and colors, sold online, in your own shops and to wholesale "
                  "accounts at once. Trouble starts when each of those keeps its own count."),
         "card": "The last medium in navy sells twice: once online, once at the counter.",
@@ -66,7 +66,7 @@ INDUSTRIES = [
         "title": "Shopify and Odoo for furniture and home goods sellers",
         "h1": "Shopify and Odoo for furniture and home goods sellers",
         "desc": ("Landed costs, made-to-order pieces and long lead times handled in Odoo and shown in Shopify. "
-                 "Set up and connected for furniture sellers, for a fixed fee."),
+                 "Set up and connected for furniture sellers, on prepaid hours."),
         "lead": ("Big pieces, long lead times and freight bills that arrive after the sale. A furniture business "
                  "can look profitable in Shopify and still lose money on the delivery."),
         "card": "The sofa's margin looks fine until the freight bill arrives a month later.",
@@ -117,7 +117,7 @@ INDUSTRIES = [
         "title": "Shopify and Odoo for food and beverage brands",
         "h1": "Shopify and Odoo for food and beverage brands",
         "desc": ("Lot numbers, best-by dates and oldest-first picking in Odoo, with Shopify selling from the same "
-                 "count. Set up for food and beverage brands, for a fixed fee."),
+                 "count. Set up for food and beverage brands, on prepaid hours."),
         "lead": ("Every case has a lot number and a best-by date. Shopify doesn't track either on its own, so the "
                  "oldest stock waits at the back while fresh stock ships first."),
         "card": "A recall call comes in, and the lot numbers are in four spreadsheets.",
@@ -165,7 +165,7 @@ INDUSTRIES = [
         "title": "Shopify and Odoo for health and beauty brands",
         "h1": "Shopify and Odoo for health and beauty brands",
         "desc": ("Batches, expiry dates, kits and packaging stock in Odoo, with one count behind Shopify and your "
-                 "other channels. Set up for beauty brands, for a fixed fee."),
+                 "other channels. Set up for beauty brands, on prepaid hours."),
         "lead": ("Batches with expiry dates, gift sets made from other products, and bottles, pumps and labels "
                  "that run out before the product does. Most of it ends up in spreadsheets beside Shopify."),
         "card": "A full batch is ready to fill, and the pumps are three weeks away.",
@@ -215,7 +215,7 @@ INDUSTRIES = [
         "title": "Shopify and Odoo for wholesalers and distributors",
         "h1": "Shopify and Odoo for wholesalers and distributors",
         "desc": ("Account price lists, payment terms and orders entered once. Shopify B2B and Odoo set up and "
-                 "connected for small wholesalers and distributors, for a fixed fee."),
+                 "connected for small wholesalers and distributors, on prepaid hours."),
         "lead": ("Orders arrive by email, phone and spreadsheet, each account has its own prices, and someone "
                  "retypes it all into QuickBooks. Fixing it starts in the back office."),
         "card": "Every order gets typed twice, and one account keeps getting last year's price.",
